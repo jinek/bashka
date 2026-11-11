@@ -1,0 +1,33 @@
+<MenuItem xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:abstract="clr-namespace:Bashka.Plugins.Core.Abstract"
+          xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime"
+          xmlns:data="clr-namespace:Bashka.Plugins.Core.Abstract.Data"
+          x:Class="Bashka.Plugins.Core.Orthodox.UI.SortingMenuItem"
+          d:DataContext="{x:Type abstract:IPanel}"
+          Header="Sorting">
+    <MenuItem.ItemTemplate>
+        <DataTemplate x:DataType="data:SortMode" DataType="data:SortMode">
+            <TextBlock Text="{Binding Printable}"
+                       AttachedToVisualTree="MenuItem_OnAttachedToVisualTree" 
+                       DetachedFromVisualTree="MenuItem_OnDetachedFromVisualTree"/>
+        </DataTemplate>
+    </MenuItem.ItemTemplate>
+    <MenuItem.ItemsSource>
+        <collections:ArrayList>
+            <data:SortMode Key="Unsorted"/>
+            <data:SortMode Key="Name" Descending="False"/>
+            <data:SortMode Key="Name" Descending="True"/>
+        
+            <data:SortMode Key="Extension" Descending="False"/>
+            <data:SortMode Key="Extension" Descending="True"/>
+        
+            <data:SortMode Key="Size" Descending="False"/>
+            <data:SortMode Key="Size" Descending="True"/>
+        
+            <data:SortMode Key="TimeStamp" Descending="False"/>
+            <data:SortMode Key="TimeStamp" Descending="True"/>
+        </collections:ArrayList>
+    </MenuItem.ItemsSource>
+</MenuItem>

@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Bashka.Helpers\Bashka.Helpers.csproj" />
+    <ProjectReference Include="..\Bashka.Plugins.Core\Bashka.Plugins.Core.csproj" />
+    <ProjectReference Include="..\Bashka.Plugins.Foundation\Bashka.Plugins.Foundation.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="OpenBsdtarArchiveCommand.cs">
+      <DependentUpon>BsdtarArchiveCatalog.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

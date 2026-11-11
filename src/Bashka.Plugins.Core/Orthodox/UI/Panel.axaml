@@ -1,0 +1,220 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:brushes="https://github.com/consolonia"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:core="clr-namespace:Bashka.Plugins.Core.Abstract;assembly=Bashka.Plugins.Core"
+                    xmlns:autFac1="clr-namespace:Bashka.Plugins.Core;assembly=Bashka.Plugins.Core"
+                    xmlns:helpers="clr-namespace:Bashka.Helpers;assembly=Bashka.Helpers"
+                    xmlns:data="clr-namespace:Bashka.Plugins.Core.Abstract.Data"
+                    xmlns:helpers1="clr-namespace:Bashka.Plugins.Core.Orthodox.UI.Helpers">
+    <helpers1:EntryToForegroundConverter x:Key="EntryToForegroundConverter"
+                                         DirectoryBrush="{DynamicResource ThemeForegroundBrush}"
+                                         ItemBrush="{DynamicResource ThemeForegroundBrush}"
+                                         HiddenBrush="{DynamicResource ThemeBorderBrush}"
+                                         ImportantBrush="{DynamicResource BashkaImportantBrush}"
+                                         ExecutableBrush="{DynamicResource BashkaExecutableBrush}"
+                                         MarkedBrush="{DynamicResource BashkaMarkedBrush}"
+                                         DeletedBrush="{DynamicResource BashkaDeletedBrush}" />
+
+    <DataTemplate DataType="{x:Type core:IPanel}"
+                  x:Key="{x:Type core:IPanel}">
+        <Grid RowDefinitions="* Auto">
+            <Grid.Styles>
+                <Style Selector="brushes|CaretControl">
+                    <Setter Property="Template">
+                        <ControlTemplate>
+                            <Grid Background="{TemplateBinding Background}">
+                                <!--todo: tune core template not to override the template, but just adjust style of the Line inside-->
+                                <ContentPresenter Name="PART_ContentPresenter"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  Content="{TemplateBinding Content}"
+                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter>
+                </Style>
+            </Grid.Styles>
+
+            <!--Catalog datagrid-->
+            <helpers1:VerticalScrollDataGrid Grid.Row="0"
+                                             ItemsSource="{Binding CurrentChildren}"
+                                             SelectedItem="{Binding SelectedEntry}"
+                                             SelectedIndex="{Binding SelectedIndex}"
+                                             RowBackground="{DynamicResource ThemeBackgroundBrush}"
+                                             AutoGenerateColumns="False"
+                                             SelectionMode="Single"
+                                             IsReadOnly="True"
+                                             d:DataContext="{d:DesignInstance core:IPanel}">
+                <DataGrid.Styles>
+                    <!--<Style Selector="DataGridRow:selected /template/ Rectangle#SelectionRectangle">
+                         <Setter Property="IsVisible"
+                                 Value="False" />
+                     </Style>-->
+                </DataGrid.Styles>
+                <Interaction.Behaviors>
+                    <helpers1:OrthodoxColumnsBehavior />
+                    <!--<helpers1:PagingScrollBehavior/>-->
+                    <EventTriggerBehavior EventName="GotFocus">
+                        <ChangePropertyAction PropertyName="IsFocused"
+                                              Value="True"
+                                              TargetObject="{Binding}" />
+                    </EventTriggerBehavior>
+                    <EventTriggerBehavior EventName="LostFocus">
+                        <ChangePropertyAction PropertyName="IsFocused"
+                                              Value="False"
+                                              TargetObject="{Binding}" />
+                    </EventTriggerBehavior>
+                    <DataTriggerBehavior Binding="{Binding IsFocused, Mode=OneWay}"
+                                         Value="True">
+                        <FocusControlAction />
+                    </DataTriggerBehavior>
+                    <EventTriggerBehavior EventName="SelectionChanged">
+                        <helpers1:ScrollIntoViewAction />
+                    </EventTriggerBehavior>
+                    <helpers1:FocusOnEnabledAndIsFocusedBehavior />
+                    <helpers1:PageNavigationBehavior />
+                </Interaction.Behaviors>
+                <DataGrid.KeyBindings>
+                    <KeyBinding Command="{Binding EntrySelected}"
+                                Gesture="ENTER" />
+                </DataGrid.KeyBindings>
+                <DataGrid.Styles>
+                    <Style Selector="DataGridRow"
+                           d:DataContext="{x:Type data:Entry}"
+                           x:DataType="data:Entry">
+                        <Setter Property="Foreground"
+                                Value="{Binding Path=SelfHack, Converter={StaticResource EntryToForegroundConverter}}" />
+                    </Style>
+                </DataGrid.Styles>
+                <DataGrid.BorderBrush>
+                    <brushes:LineBrush LineStyle="DoubleLine"
+                                       Brush="{DynamicResource ThemeBorderBrush}" />
+                </DataGrid.BorderBrush>
+            </helpers1:VerticalScrollDataGrid>
+
+            <!--Roots-->
+            <Panel HorizontalAlignment="Center"
+                   VerticalAlignment="Top">
+                <ComboBox ItemsSource="{Binding Roots}"
+                          SelectedItem="{Binding SelectedRoot}"
+                          IsDropDownOpen="{Binding IsRootsVisible, Mode=TwoWay}"
+                          IsTabStop="False">
+                    <ComboBox.PlaceholderText>
+                        <Binding Path="CurrentCatalog.Title"
+                                 FallbackValue="Select a catalog" />
+                    </ComboBox.PlaceholderText>
+                    <Interaction.Behaviors>
+                        <DataTriggerBehavior Binding="{Binding IsRootsVisible}"
+                                             Value="True">
+                            <FocusControlAction />
+                            <helpers1:FocusSelectedItemIfAnyViaDispatcherAction />
+                        </DataTriggerBehavior>
+                    </Interaction.Behaviors>
+                    <!--<ComboBox.KeyBindings>
+                    <KeyBinding Gesture="Enter"
+                                Command="{Binding RootSelected}" />
+                </ComboBox.KeyBindings>-->
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="data:Entry">
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Border BorderThickness="0"
+                        IsHitTestVisible="False"
+                        VerticalAlignment="Bottom"
+                        MinWidth="3"
+                        Margin="0,0,1,0">
+                    <TextBlock Margin="1,0"
+                               HorizontalAlignment="Center"
+                               MinWidth="1">
+                        <TextBlock.Text>
+                            <Binding Path="CurrentCatalog.Title"
+                                     FallbackValue="Select a catalog" />
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Border>
+            </Panel>
+
+            <!--Selected Item info-->
+            <Border Grid.Row="1"
+                    Margin="0,-1,0,0"
+                    BorderThickness="1">
+                <Border.BorderBrush>
+                    <brushes:LineBrush Brush="{DynamicResource ThemeBorderBrush}"
+                                       LineStyle="DoubleLine" />
+                </Border.BorderBrush>
+                <DockPanel LastChildFill="True">
+                    <ItemsControl DockPanel.Dock="Right"
+                                  ItemsSource="{Binding SelectedEntry.Details}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="1,0,0,0"
+                                           Text="{Binding}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Text="{Binding SelectedEntry.Path}" />
+                </DockPanel>
+            </Border>
+
+            <!--ShellConnection Info-->
+            <Border BorderThickness="0"
+                    Background="{DynamicResource ThemeBackgroundBrush}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom">
+                <TextBlock Margin="1,0"
+                           d:DataContext="{x:Type core:IPanel}"
+                           x:DataType="core:IPanel"
+                           Text="{Binding  CurrentCatalog.ShellSession.ShellConnection.Title}" />
+            </Border>
+            <!--Quick search-->
+            <Panel Grid.RowSpan="2"
+                   IsVisible="{Binding IsQuickSearchActive}"
+                   Background="{DynamicResource ThemeAlternativeBackgroundBrush}"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom"
+                   Margin="0,1,1,1">
+                <Panel>
+                    <Border Margin="1,0"
+                            BorderThickness="1">
+                        <Border.BorderBrush>
+                            <brushes:LineBrush Brush="{DynamicResource ThemeBorderBrush}"
+                                               LineStyle="DoubleLine" />
+                        </Border.BorderBrush>
+                        <TextBox Text="{Binding QuickSearchPattern, Mode=TwoWay}"
+                                 MinWidth="15"
+                                 MaxWidth="25"
+                                 Margin="1,0"
+                                 IsTabStop="False">
+                            <Interaction.Behaviors>
+                                <DataTriggerBehavior Binding="{Binding IsQuickSearchActive}"
+                                                     Value="True">
+                                    <FocusControlAction />
+                                </DataTriggerBehavior>
+                                <EventTriggerBehavior EventName="LostFocus">
+                                    <ChangePropertyAction PropertyName="IsQuickSearchActive"
+                                                          Value="False"
+                                                          TargetObject="{Binding}" />
+                                </EventTriggerBehavior>
+                                <helpers1:QuickSearchBehavior />
+                            </Interaction.Behaviors>
+                        </TextBox>
+                    </Border>
+                    <TextBlock Text=" Search "
+                               ClipToBounds="False"
+                               VerticalAlignment="Top"
+                               HorizontalAlignment="Center"
+                               ZIndex="100" />
+                </Panel>
+            </Panel>
+        </Grid>
+
+    </DataTemplate>
+</ResourceDictionary>

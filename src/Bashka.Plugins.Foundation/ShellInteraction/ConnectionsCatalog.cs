@@ -1,0 +1,79 @@
+using Autofac;
+using Bashka.Plugins.Core.Abstract;
+using Bashka.Plugins.Core.Abstract.Data;
+using Bashka.Plugins.Core.Orthodox;
+using Bashka.Plugins.Core.Scoping;
+using Bashka.Plugins.Foundation.FileSystem;
+
+namespace Bashka.Plugins.Foundation.ShellInteraction;
+
+/// <summary>
+/// SSH Connections
+/// </summary>
+public class ConnectionsCatalog : BaseObject, IPtyExecutor
+{
+    private const string Connections = "Connections";
+
+    public static readonly string ConnectionsDirectory = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Bashka", Connections);
+
+    private readonly FileSystemCatalog _inner;
+
+    public ConnectionsCatalog(ILifetimeScope scope)
+    {
+        var localSystemScope = scope.BeginLifetimeScope(builder =>
+        {
+            var shellConnection = scope.ResolveKeyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey);
+
+            builder.RegisterInstance(shellConnection);
+        });
+
+        _inner = localSystemScope.Resolve<FileSystemCatalog>();
+        Directory.CreateDirectory(ConnectionsDirectory);
+        _inner.PropertyChanged += (_, args) => OnPropertyChanged(args.PropertyName);
+    }
+
+    public string CurrentPath => Connections;
+
+    public string Title => Connections;
+
+    public IEnumerable<Entry> Children
+    {
+        get
+        {
+            return
+            [
+                new NewConnectionEntry(this)
+                ,.._inner.Children
+                    .Select(ToConnectionEntry)
+                    .Where(entry => entry != null)
+                    .Cast<Entry>()
+            ];
+        }
+    }
+
+    private Entry? ToConnectionEntry(Entry entry)
+    {
+        if (entry is not FileEntry { IsDirectory: false } fileEntry ||
+            !fileEntry.Name.EndsWith(".ini", StringComparison.OrdinalIgnoreCase))
+            return null;
+
+        return new SwitchConnectionEntry(Path.GetFileNameWithoutExtension(fileEntry.Name), this,
+            () => new SshShellConnection(SshConnectionSettings.Load(fileEntry.FullPath).ToConnectionInfo()));
+    }
+
+    public Task NavigateAsync(string path)
+    {
+        return path != string.Empty
+            ? throw new NotSupportedException()
+            : _inner.NavigateAsync(ConnectionsDirectory);
+    }
+
+    public bool CanNavigateBack => false;
+
+    public Task NavigateBack() => throw new NotSupportedException();
+
+    public Task ExecuteAsResidentAsync(string workingDir, string applicationName, string arguments,
+        CancellationToken cancellationToken) =>
+        _inner.ExecuteAsResidentAsync(workingDir, applicationName, arguments, cancellationToken);
+}

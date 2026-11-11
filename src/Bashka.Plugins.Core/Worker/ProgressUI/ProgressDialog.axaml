@@ -1,0 +1,41 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:helpers="clr-namespace:Bashka.Helpers;assembly=Bashka.Helpers"
+                    xmlns:progressUi="clr-namespace:Bashka.Plugins.Core.Worker.ProgressUI">
+    <helpers:InvertBooleanConverter x:Key="InvertBoolean" />
+    <DataTemplate DataType="{x:Type progressUi:IProgressPresenter}"
+                  x:Key="{x:Type progressUi:IProgressPresenter}">
+        <Panel>
+            <ItemsControl ItemsSource="{Binding ProgressViewModels}"
+                          Padding="2,1,2,-1">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type progressUi:ProgressViewModel}">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{Binding Title}"
+                                       TextWrapping="Wrap" />
+                            <DockPanel>
+                                <Button Content="Cancel"
+                                        Command="{Binding Cancel}"
+                                        IsDefault="True"
+                                        DockPanel.Dock="Right" />
+                                <TextBlock Text="{Binding Status}"
+                                           TextWrapping="Wrap"
+                                           DockPanel.Dock="Bottom"/>
+                                <ProgressBar IsIndeterminate="{Binding IsIndeterminate}"
+                                             ShowProgressText="{Binding IsIndeterminate, Converter={StaticResource InvertBoolean}}"
+                                             Value="{Binding Progress}"
+                                             Height="1"
+                                             Margin="0,0,1,0" />
+                            </DockPanel>
+                            <Border Height="1"
+                                    BorderBrush="{DynamicResource ThemeBorderBrush}"
+                                    BorderThickness="1"
+                                    Margin="-2,0,-2, 0">
+                            </Border>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Panel>
+    </DataTemplate>
+</ResourceDictionary>

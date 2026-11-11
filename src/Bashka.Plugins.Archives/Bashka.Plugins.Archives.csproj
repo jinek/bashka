@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Bashka.Helpers\Bashka.Helpers.csproj" />
+    <ProjectReference Include="..\Bashka.Plugins.Core\Bashka.Plugins.Core.csproj" />
+    <ProjectReference Include="..\Bashka.Plugins.Foundation\Bashka.Plugins.Foundation.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Implementations\OpenGZipArchiveCommand.cs">
+      <DependentUpon>GZipArchiveCatalog.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Implementations\OpenTarArchiveCommand.cs">
+      <DependentUpon>TarArchiveCatalog.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Implementations\OpenTarGzArchiveCommand.cs">
+      <DependentUpon>TarGzArchiveCatalog.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Implementations\OpenZipArchiveCommand.cs">
+      <DependentUpon>ZipArchiveCatalog.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

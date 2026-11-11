@@ -1,0 +1,20 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:basic="clr-namespace:Bashka.Plugins.Core.Dialog.Basic">
+    <DataTemplate DataType="{x:Type basic:StringInputDialog}"
+                  x:Key="{x:Type basic:StringInputDialog}">
+        <StackPanel Orientation="Vertical" Margin="1,0,1,0">
+            <TextBlock Text="{Binding Question}"
+                       TextWrapping="Wrap" />
+            <TextBox Text="{Binding Input}">
+                <Interaction.Behaviors>
+                    <FocusOnAttachedToVisualTreeBehavior />
+                    <!--<SelectAllOnGotFocusBehavior />-->
+                </Interaction.Behaviors>
+            </TextBox>
+            <TextBlock Text="{Binding ErrorText}"
+                       MinHeight="1"
+                       Foreground="{DynamicResource ThemeErrorBrush}" />
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

@@ -1,0 +1,14 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:foundation="clr-namespace:Bashka.Plugins.Foundation">
+    <DataTemplate DataType="{x:Type foundation:AboutDialogContent}"
+                  x:Key="{x:Type foundation:AboutDialogContent}">
+        <TextBlock Text="Navigator is powerfull cross-platform file manager"
+                   Focusable="True"
+                   TextWrapping="Wrap">
+            <Interaction.Behaviors>
+                <FocusOnAttachedToVisualTreeBehavior />
+            </Interaction.Behaviors>
+        </TextBlock>
+    </DataTemplate>
+</ResourceDictionary>

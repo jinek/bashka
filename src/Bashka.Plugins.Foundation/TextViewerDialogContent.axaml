@@ -1,0 +1,19 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:foundation="clr-namespace:Bashka.Plugins.Foundation">
+    <DataTemplate DataType="{x:Type foundation:TextViewerDialogContent}"
+                  x:Key="{x:Type foundation:TextViewerDialogContent}">
+        <Grid>
+            <ScrollViewer VerticalScrollBarVisibility="Visible"
+                          HorizontalScrollBarVisibility="Disabled"
+                          Focusable="True"
+                          Margin="0,0,-1,0">
+                <Interaction.Behaviors>
+                    <FocusOnAttachedToVisualTreeBehavior/>
+                </Interaction.Behaviors>
+                <TextBlock TextWrapping="Wrap"
+                           Text="{Binding Text}"/>
+            </ScrollViewer>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

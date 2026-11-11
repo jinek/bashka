@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Bashka.Plugins.Core\Bashka.Plugins.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="HelloDialogContent.cs">
+      <DependentUpon>HelpCommand.cs</DependentUpon>
+    </Compile>
+    <Compile Update="AboutDialogContent.cs">
+      <DependentUpon>AboutCommand.cs</DependentUpon>
+    </Compile>
+    <Compile Update="TextViewerDialogContent.cs">
+      <DependentUpon>FileCatCommand.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaXaml Update="AboutDialogContent.axaml">
+      <DependentUpon>AboutCommand.cs</DependentUpon>
+    </AvaloniaXaml>
+    <AvaloniaXaml Update="TextViewerDialogContent.axaml">
+      <DependentUpon>FileCatCommand.cs</DependentUpon>
+    </AvaloniaXaml>
+    <AvaloniaXaml Update="TestDialog.axaml">
+      <DependentUpon>HelpCommand.cs</DependentUpon>
+    </AvaloniaXaml>
+    <AvaloniaXaml Update="TestDialogStyles.axaml">
+      <DependentUpon>HelpCommand.cs</DependentUpon>
+    </AvaloniaXaml>
+  </ItemGroup>
+</Project>

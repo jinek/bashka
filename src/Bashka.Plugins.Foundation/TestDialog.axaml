@@ -1,0 +1,11 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:foundation="clr-namespace:Bashka.Plugins.Foundation;assembly=Bashka.Plugins.Foundation">
+    <DataTemplate DataType="{x:Type foundation:HelloDialogContent}"
+                  x:Key="{x:Type foundation:HelloDialogContent}">
+        <StackPanel Orientation="Vertical">
+            <ProgressBar IsIndeterminate="True" />
+            <TextBlock Text="Test progress dialog" />
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

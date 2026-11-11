@@ -1,0 +1,154 @@
+digraph Bashka {
+    graph [
+        rankdir=TB,
+        fontname="Segoe UI",
+        fontsize=20,
+        label="Bashka \u2014 Target Modular Architecture",
+        labelloc=t,
+        labeljust=c,
+        splines=spline,
+        nodesep=0.5,
+        ranksep=0.85,
+        pad=0.4,
+        bgcolor="#0f1117"
+    ];
+    node [
+        shape=box,
+        style="rounded,filled",
+        fontname="Segoe UI",
+        fontsize=12,
+        fontcolor="#0f1117",
+        color="#ffffff00",
+        margin=0.15
+    ];
+    edge [
+        fontname="Segoe UI",
+        fontsize=9,
+        fontcolor="#c9d1d9",
+        color="#8b949e",
+        penwidth=1.2,
+        arrowsize=0.7
+    ];
+
+    subgraph cluster_app {
+        label="App layer";
+        style="rounded,filled";
+        color="#30363d";
+        fillcolor="#161b22";
+        fontcolor="#e6edf3";
+        Program [label="Program / App\n(bootstrap)", fillcolor="#58a6ff"];
+        PluginLoader [label="PluginLoader", fillcolor="#58a6ff"];
+    }
+
+    subgraph cluster_orthodox {
+        label="Orthodox plugin (default host)";
+        style="rounded,filled";
+        color="#30363d";
+        fillcolor="#161b22";
+        fontcolor="#e6edf3";
+        CommanderEngine [label="CommanderEngine\n(was MalinaNavigator)", fillcolor="#3fb950"];
+        Panel [label="Panel\n(was MalinaPanel)", fillcolor="#3fb950"];
+        FToolBox [label="FToolBox", fillcolor="#3fb950"];
+        KeyBindingService [label="KeyBindingService", fillcolor="#3fb950"];
+        DialogProvider [label="DialogProvider", fillcolor="#3fb950"];
+        ProgressViewModel [label="ProgressViewModel", fillcolor="#3fb950"];
+        CommandExecutionContext [label="CommandExecutionContext", fillcolor="#3fb950"];
+    }
+
+    subgraph cluster_foundation {
+        label="Foundation (default features)";
+        style="rounded,filled";
+        color="#30363d";
+        fillcolor="#161b22";
+        fontcolor="#e6edf3";
+        FSCatalog [label="FSCatalog", fillcolor="#d29922"];
+        ShellCatalog [label="ShellCatalog\n(abstract)", fillcolor="#d29922"];
+        SFTPCatalog [label="SFTPCatalog", fillcolor="#d29922"];
+        ArchiveCatalog [label="ArchiveCatalog", fillcolor="#d29922"];
+        RootsCatalog [label="RootsCatalog", fillcolor="#d29922"];
+        Entry [label="Entry", fillcolor="#d29922"];
+        BashExecutor [label="BashExecutor", fillcolor="#d29922"];
+        ShellSession [label="ShellSession", fillcolor="#d29922"];
+        SftpSession [label="SftpSession", fillcolor="#d29922"];
+        CatalogCommand [label="CatalogCommand\n(+ Copy/Delete/Mkdir/...)", fillcolor="#d29922"];
+    }
+
+    subgraph cluster_core {
+        label="Core (contracts + base classes)";
+        style="rounded,filled";
+        color="#30363d";
+        fillcolor="#161b22";
+        fontcolor="#e6edf3";
+        ICatalog [label="ICatalog", fillcolor="#f778ba"];
+        ICommand [label="ICommand", fillcolor="#f778ba"];
+        ICommandSelector [label="ICommandSelector", fillcolor="#f778ba"];
+        IUiRoot [label="IUiRoot", fillcolor="#f778ba"];
+        IMalinaPanel [label="IMalinaPanel", fillcolor="#f778ba"];
+        IShellConnection [label="IShellConnection", fillcolor="#f778ba"];
+        IArchiveCatalog [label="IArchiveCatalog", fillcolor="#f778ba"];
+        IReadStreamCatalog [label="IReadStreamCatalog", fillcolor="#f778ba"];
+        IDialogProvider [label="IDialogProvider", fillcolor="#f778ba"];
+        IProgressShower [label="IProgressShower", fillcolor="#f778ba"];
+        ITypeKeyedObject [label="ITypeKeyedObject", fillcolor="#f778ba"];
+        BaseObject [label="BaseObject", fillcolor="#f778ba"];
+        TypeKeyedObject [label="TypeKeyedObject", fillcolor="#f778ba"];
+
+        {rank=same; ICatalog; ICommand; ICommandSelector; IUiRoot; IMalinaPanel; IShellConnection; ITypeKeyedObject}
+        {rank=same; IArchiveCatalog; IReadStreamCatalog; IDialogProvider; IProgressShower; BaseObject; TypeKeyedObject}
+        edge [style=invis];
+        ICatalog -> ICommand -> ICommandSelector -> IUiRoot -> IMalinaPanel -> IShellConnection -> ITypeKeyedObject;
+        IArchiveCatalog -> IReadStreamCatalog -> IDialogProvider -> IProgressShower -> BaseObject -> TypeKeyedObject;
+        ICatalog -> IArchiveCatalog [style=invis];
+        edge [style=solid];
+    }
+
+    Plugins [label="3rd-party Plugins\n(*.dll)", shape=folder, fillcolor="#a371f7"];
+
+    Program -> PluginLoader [label="instantiates at startup"];
+    Program -> CommanderEngine [label="resolves IUiRoot"];
+    Plugins -> PluginLoader [style=dashed, color="#a371f7", label="discovered by"];
+
+    CommanderEngine -> Panel [label="instantiates 2 panels"];
+    CommanderEngine -> FToolBox [label="owns ToolBox"];
+    CommanderEngine -> KeyBindingService [label="forwards key events to"];
+    CommanderEngine -> DialogProvider [label="shows dialogs through"];
+    FToolBox -> CommandExecutionContext [label="builds per-slot context for"];
+    FToolBox -> ICommandSelector [style=dotted, label="picks command for slot"];
+    KeyBindingService -> ICommand [label="resolves keyed command,\ninvokes Execute()"];
+
+    Panel -> FSCatalog [label="navigates/lists entries in"];
+    Panel -> SFTPCatalog [label="navigates/lists entries in"];
+    Panel -> ArchiveCatalog [label="navigates/lists entries in"];
+    Panel -> RootsCatalog [label="navigates/lists entries in"];
+    FSCatalog -> ShellCatalog [style=dotted, label="derives"];
+    ShellCatalog -> ShellSession [label="auto-wires,\nruns scripts through"];
+    ShellSession -> BashExecutor [label="picks as best-match\nIScriptExecutor for script"];
+    SFTPCatalog -> SftpSession [label="opens SFTP connection via"];
+    ArchiveCatalog -> Entry [label="wraps archive items as"];
+    FSCatalog -> Entry [label="wraps directory listing as"];
+    CatalogCommand -> ICommand [style=dotted, label="implements"];
+    CatalogCommand -> ICatalog [label="executes against"];
+    ProgressViewModel -> IProgressShower [style=dotted, label="implements"];
+    DialogProvider -> IDialogProvider [style=dotted, label="implements"];
+
+    CommanderEngine -> IUiRoot [style=dotted, label="implements"];
+    Panel -> IMalinaPanel [style=dotted, label="implements"];
+    ShellCatalog -> ICatalog [style=dotted, label="implements"];
+    SFTPCatalog -> ICatalog [style=dotted, label="implements"];
+    SFTPCatalog -> IReadStreamCatalog [style=dotted, label="implements"];
+    ArchiveCatalog -> IArchiveCatalog [style=dotted, label="implements"];
+    ArchiveCatalog -> IReadStreamCatalog [style=dotted, label="implements"];
+    FToolBox -> ICommand [style=dotted, label="implements"];
+    BashExecutor -> IShellConnection [label="writes command,\nreads output lines via"];
+    TypeKeyedObject -> ITypeKeyedObject [style=dotted, label="implements"];
+    ICatalog -> ITypeKeyedObject [style=dotted, label="extends"];
+
+    CommanderEngine -> BaseObject [style=dotted, label="derives"];
+    Panel -> BaseObject [style=dotted, label="derives"];
+    FToolBox -> BaseObject [style=dotted, label="derives"];
+    KeyBindingService -> BaseObject [style=dotted, label="derives"];
+    ShellCatalog -> BaseObject [style=dotted, label="derives"];
+    SFTPCatalog -> BaseObject [style=dotted, label="derives"];
+    ArchiveCatalog -> BaseObject [style=dotted, label="derives"];
+    ShellSession -> BaseObject [style=dotted, label="derives"];
+}

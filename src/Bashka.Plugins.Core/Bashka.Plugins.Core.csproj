@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <ProjectReference Include="..\Bashka.Helpers\Bashka.Helpers.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Iciclecreek.Avalonia.Terminal" Version="2.0.3"/>
+    </ItemGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="Orthodox\UI\DarkTheme.axaml"/>
+        <AdditionalFiles Include="Worker\ProgressUI\ProgressDialog.axaml"/>
+        <AdditionalFiles Include="Worker\ProgressUI\ProgressDialogStyle.axaml"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="keybindings.ini">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    <ItemGroup>
+        <AvaloniaXaml Update="Orthodox\UI\Commander.SortingMenu.axaml">
+            <DependentUpon>VolkovCommander.axaml</DependentUpon>
+        </AvaloniaXaml>
+    </ItemGroup>
+</Project>

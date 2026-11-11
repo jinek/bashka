@@ -1,0 +1,25 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:drawing="clr-namespace:Consolonia.Core.Drawing;assembly=Consolonia.Core"
+        xmlns:themes="https://github.com/consolonia">
+
+    <!--<themes:TurboVisionTheme />-->
+    <!--<StyleInclude Source="avares://Consolonia.TurboVision/" />-->
+    <!--dark theme <StyleInclude Source="avares://Consolonia.Themes.TurboVision/Themes/TurboVisionDark/TurboVisionDark.axaml" />-->
+    <Styles.Resources>
+        <!--Overrides-->
+        <SolidColorBrush x:Key="ThemeActionBackgroundBrush"
+                         Color="DarkGoldenrod" />
+        <!--<drawing:FourBitColorBrush x:Key="ThemeChooserBackgroundBrush"
+                                   Color="DarkCyan" />-->
+        <!--Additional-->
+        <SolidColorBrush x:Key="BashkaImportantBrush"
+                         Color="Cyan" />
+        <SolidColorBrush x:Key="BashkaExecutableBrush"
+                         Color="Magenta" />
+        <SolidColorBrush x:Key="BashkaDeletedBrush"
+                         Color="DarkRed" />
+        <SolidColorBrush x:Key="BashkaMarkedBrush"
+                         Color="Yellow" />
+    </Styles.Resources>
+</Styles>
