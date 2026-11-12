@@ -1,6 +1,6 @@
 using Autofac;
 using Bashka.Plugins.Core.Abstract;
-using Bashka.Plugins.Core.FunctionBar;
+using Bashka.Plugins.Core.FunctionKeys;
 using Bashka.Plugins.Core.Scoping;
 
 namespace Bashka.Plugin.Template;
