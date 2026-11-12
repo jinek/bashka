@@ -29,7 +29,7 @@ namespace Bashka.Plugins.Foundation.ShellInteraction
                 Debug.WriteLine("> " + input);
                 _shellStream.WriteLine(input);
 
-                string line;
+                string? line;
 
                 while ((line = _shellStream.ReadLine()) != null)
                 {

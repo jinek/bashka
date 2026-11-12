@@ -51,7 +51,7 @@ public sealed class ShellSession : BaseObject, IDisposable
         //todo: try this to see black magic: Thread.Sleep(new Random(Environment.TickCount).Next(10000));//todo: remove
 
         ShellScriptAttribute shellScript =
-            ShellHelper.BestMatch(AvailableBackends, shellMultiScript, out IScriptExecutor executor);
+            ShellHelper.BestMatch(AvailableBackends!, shellMultiScript, out IScriptExecutor executor);
 
         IEnumerable<string> resultStrings = executor.PrepareScriptExecution(ShellConnection,
             string.Format(shellScript.ScriptFormat, shellMultiScript.Arguments));
@@ -71,8 +71,8 @@ public sealed class ShellSession : BaseObject, IDisposable
                 {
                     //todo: also can be primitive types
                     return parameterInfo.ParameterType.IsArray
-                        ? (object)match.Groups[parameterInfo.Name].Captures.Select(capture => capture.Value).ToArray()
-                        : match.Groups[parameterInfo.Name].Value;
+                        ? (object)match.Groups[parameterInfo.Name!].Captures.Select(capture => capture.Value).ToArray()
+                        : match.Groups[parameterInfo.Name!].Value;
                 }).ToArray();
 
                 yield return constructorInfo.Invoke(parameters);                

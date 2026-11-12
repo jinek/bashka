@@ -119,7 +119,7 @@ public class FileSystemCatalog : ShellCatalog, IReadStreamCatalog, IWriteStreamC
             ShellSession.ExecuteNonQuery(new ChangeDirectoryShellMultiScript(currentPath));
         }
         
-        return Task.FromResult(currentPath == string.Empty ? GetDrives() : GetEntries(currentPath));
+        return Task.FromResult(currentPath == string.Empty ? GetDrives() : GetEntries(currentPath!));
     }
 
     /// <summary>

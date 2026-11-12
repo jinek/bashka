@@ -7,7 +7,7 @@ namespace Bashka.Plugins.Foundation.FileSystem
     {
         public FileEntry((string Path, string Name, string FullPath, long Size, DateTime TimeStamp, EntryCategory Catetgory) pathAndName,
             bool isDirectory, ICatalog catalog)
-            : base((pathAndName.Path, pathAndName.Name, size: pathAndName.Size, timeStamp: pathAndName.TimeStamp, pathAndName.Catetgory),
+            : base((pathAndName.Path, pathAndName.Name, pathAndName.Size, pathAndName.TimeStamp, pathAndName.Catetgory),
                 isDirectory,catalog)
         {
             FullPath = pathAndName.FullPath;

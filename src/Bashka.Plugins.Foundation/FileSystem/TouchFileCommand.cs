@@ -38,7 +38,7 @@ public class TouchFileCommand : TypeKeyedObject, IFunctionBarCommand<ShellCatalo
 
         await _workerTaskFactory.StartNewWorkerTask(async (cts, progress, _) =>
         {
-            string path = Path.Combine(context.Catalog!.CurrentPath, fileName);
+            string path = Path.Combine(context.Catalog!.CurrentPath!, fileName);
             ((ShellCatalog)context.Catalog)
                 .ShellSession
                 .ExecuteNonQuery(new TouchFileMultiScript(path));

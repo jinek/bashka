@@ -85,8 +85,8 @@ public abstract class CopyOrMoveCommandBase : CatalogCommand<ShellCatalog, FileE
         {
             foreach (FileEntry entry in entries)
             {
-                string sourcePath = Path.Combine(context.Catalog!.CurrentPath, entry.Name);
-                string destinationPath = Path.Combine(destinationCatalog.CurrentPath, singleFileName ?? entry.Name);
+                string sourcePath = Path.Combine(context.Catalog!.CurrentPath!, entry.Name);
+                string destinationPath = Path.Combine(destinationCatalog.CurrentPath!, singleFileName ?? entry.Name);
                 ((ShellCatalog)context.Catalog)
                     .ShellSession
                     .ExecuteNonQuery(CreateScript(sourcePath, destinationPath));

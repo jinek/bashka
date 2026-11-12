@@ -6,5 +6,7 @@ namespace Bashka.Plugins.Foundation.ShellInteraction;
 
 public abstract class ShellCatalog : PathCatalog
 {
-    [AutoWire] public ShellSession ShellSession { get; [UsedImplicitly] internal set; } // почему то сюда не попадает дефолтовый шел
+    [AutoWire]
+    public ShellSession
+        ShellSession { get; [UsedImplicitly] internal set; } = null!; // почему то сюда не попадает дефолтовый шел
 }

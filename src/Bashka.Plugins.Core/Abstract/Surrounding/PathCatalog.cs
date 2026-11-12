@@ -15,7 +15,7 @@ public abstract class PathCatalog : BaseObject, ICatalog
     {
         await EnsureCurrentPathLoaded();
         _currentPath  = newPath;
-        OnCurrentPathChanged();
+        RaiseCurrentPathChanged();
         await EnsureCurrentPathLoaded();
     }
 
@@ -29,10 +29,9 @@ public abstract class PathCatalog : BaseObject, ICatalog
     [DependsOn(nameof(CurrentPath))]
     public abstract string Title { get; }
 
-    [UsedImplicitly]
-    private void OnCurrentPathChanged()
+    private void RaiseCurrentPathChanged()
     {
-        OnPropertyChanged(nameof(CurrentPath));//todo: why are we calling this again?
+        OnPropertyChanged(nameof(CurrentPath));
         StartLoadingChildren();
     }
 

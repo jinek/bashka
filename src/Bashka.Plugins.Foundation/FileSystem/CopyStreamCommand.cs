@@ -35,7 +35,7 @@ public class CopyStreamCommand : CatalogCommand<IReadStreamCatalog, FileEntry>
 
         await _workerTaskFactory.StartNewWorkerTask(async (cts, progress, _) =>
         {
-            string destinationPath = Path.Combine(context.AnotherCatalog!.CurrentPath, fileName);
+            string destinationPath = Path.Combine(context.AnotherCatalog!.CurrentPath!, fileName);
             await using Stream sourceStream =
                 ((IReadStreamCatalog)context.Catalog!).ReadStream(entry.FullPath);
             ((IWriteStreamCatalog)context.AnotherCatalog).WriteStream(destinationPath, sourceStream);
