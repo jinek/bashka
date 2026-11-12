@@ -1077,7 +1077,6 @@ resharper_class_cannot_be_instantiated_highlighting = warning
 resharper_class_can_be_sealed_global_highlighting = none
 resharper_class_can_be_sealed_local_highlighting = none
 resharper_class_never_instantiated_global_highlighting = none # this is because everything goes to IOC container
-resharper_class_never_instantiated_global_highlighting = none # this is because everything goes to IOC container
 resharper_class_never_instantiated_local_highlighting = suggestion
 resharper_class_with_virtual_members_never_inherited_global_highlighting = hint
 resharper_class_with_virtual_members_never_inherited_local_highlighting = suggestion
