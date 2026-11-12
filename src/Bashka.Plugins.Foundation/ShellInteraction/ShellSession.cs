@@ -54,7 +54,7 @@ public sealed class ShellSession : BaseObject, IDisposable
             ShellHelper.BestMatch(AvailableBackends!, shellMultiScript, out IScriptExecutor executor);
 
         IEnumerable<string> resultStrings = executor.PrepareScriptExecution(ShellConnection,
-            string.Format(shellScript.ScriptFormat, shellMultiScript.Arguments));
+            string.Format(shellScript.ScriptFormat, shellMultiScript.Arguments.ToArray()));
 
         if (shellScript.ParseExpression != null)
         {
