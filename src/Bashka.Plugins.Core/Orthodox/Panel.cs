@@ -122,7 +122,7 @@ public class Panel : BaseObject, IPanel
         [.. CurrentCatalog?.Children.Where(entry => entry is { IsMarked: true, IsGone: false }) ?? []];
 
     public Entry SelectedRoot { get; set; }
-    public Entry SelectedEntry { get; set; }
+    public Entry? SelectedEntry { get; set; }
     public int SelectedIndex { get; set; }
 
     public SortMode SortMode { get; set; } = new(SortKey.Unsorted, false);

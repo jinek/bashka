@@ -38,11 +38,6 @@ public abstract class PathCatalog : BaseObject, ICatalog
     private void StartLoadingChildren()
     {
         _children = null;
-        if (CurrentPath == null)
-        {
-            OnPropertyChanged(nameof(Children));
-            return;
-        }
         
         _currentPathLoadingTask = Worker.StartNewWorkerTask(async (cancellationToken, progress, uiTaskFactory) =>
         {

@@ -6,7 +6,7 @@ namespace Bashka.Plugins.Core.Abstract;
 
 public interface ICatalog : ITypeKeyedObject, INotifyPropertyChanged 
 {
-    string CurrentPath { get; }
+    string? CurrentPath { get; }
     string Title { get; }
     IEnumerable<Entry> Children { get; }
     
