@@ -6,7 +6,7 @@ using SortKey = Bashka.Plugins.Core.Abstract.Data.SortKey;
 namespace Bashka.Plugins.Core.Orthodox.UI.Helpers;
 
 /// <summary>
-/// Parameter must go as "field:Up"
+///     Parameter must go as "field:Up"
 /// </summary>
 public class SortModeToArrowVisibilityConverter : IValueConverter
 {

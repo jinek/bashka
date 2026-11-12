@@ -3,6 +3,7 @@ using System.Reactive;
 using Autofac;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
+using Bashka.Plugins.Core.FunctionKeys;
 using Bashka.Plugins.Core.Scoping;
 using DynamicData.Binding;
 using ReactiveUI;
@@ -11,13 +12,12 @@ namespace Bashka.Plugins.Core.Orthodox;
 
 public class OrthodoxCommander : BaseObject, IUIRoot
 {
-    public FunctionKeys.FunctionBar FunctionBar { get; }
     private readonly Func<IShellConnection> _connectionFactory;
     private readonly KeyBindingService _keyBindingsService;
-    public Interaction<Unit, Unit> FocusMenuInteraction { get; } = new();
 
 
-    public OrthodoxCommander(Func<IShellConnection> connectionFactory, KeyBindingService keyBindingsService, FunctionKeys.FunctionBar functionBar)
+    public OrthodoxCommander(Func<IShellConnection> connectionFactory, KeyBindingService keyBindingsService,
+        FunctionBar functionBar)
     {
         FunctionBar = functionBar;
         _connectionFactory = connectionFactory;
@@ -29,24 +29,18 @@ public class OrthodoxCommander : BaseObject, IUIRoot
             }
             .Select((str, index) => new ToolboxItem { Name = str, Number = index + 1 }).ToArray();*/
 
-        this.WhenChanged(navigator => navigator.LeftPanel!.IsFocused, 
+        this.WhenChanged(navigator => navigator.LeftPanel!.IsFocused,
                 navigator => navigator.RightPanel!.IsFocused,
-                (navigator, _, _) => navigator.LeftPanel!.IsFocused ^navigator.RightPanel!.IsFocused)
-            .Subscribe(_ =>
-            {
-                OnPropertyChanged(nameof(CurrentPanel));
-            });
+                (navigator, _, _) => navigator.LeftPanel!.IsFocused ^ navigator.RightPanel!.IsFocused)
+            .Subscribe(_ => { OnPropertyChanged(nameof(CurrentPanel)); });
 
         this.WhenPropertyChanged(navigator => navigator.CurrentPanel!.CurrentCatalog)
-            .Subscribe(value =>
-            {
-                FunctionBar.CatalogType = value.Value?.GetType();
-            });
-        
+            .Subscribe(value => { FunctionBar.CatalogType = value.Value?.GetType(); });
+
         #region Updating FunctionBar
 
         // keeping dependency properties separate because it stops updating under various conditions
-        
+
         this.WhenChanged(navigator => navigator.LeftPanel!.SelectedIndex,
                 navigator => navigator.RightPanel!.SelectedIndex,
                 navigator => navigator.LeftPanel!.IsFocused,
@@ -62,11 +56,34 @@ public class OrthodoxCommander : BaseObject, IUIRoot
                 (navigator, _) => navigator)
             .Subscribe(_ => RefreshFunctionBarContext());
 
-        void RefreshFunctionBarContext() => FunctionBar.Context = new CommandExecutionContext(this);
+        void RefreshFunctionBarContext()
+        {
+            FunctionBar.Context = new CommandExecutionContext(this);
+        }
+
         #endregion
-        
+
         KeyDownCommand = ReactiveCommand.Create<KeyDownModel>(KeyDown);
     }
+
+    public FunctionBar FunctionBar { get; }
+    public Interaction<Unit, Unit> FocusMenuInteraction { get; } = new();
+
+    /// <summary>
+    ///     Can be null during initialization only
+    /// </summary>
+    public IPanel? LeftPanel { get; private set; }
+
+
+    /// <summary>
+    ///     <see cref="LeftPanel" />
+    /// </summary>
+    public IPanel? RightPanel { get; private set; }
+
+    public IPanel? CurrentPanel => RightPanel?.IsFocused ?? false ? RightPanel : LeftPanel;
+    public IPanel? AnotherPanel => RightPanel?.IsFocused ?? false ? LeftPanel : RightPanel;
+
+    public ReactiveCommand<KeyDownModel, Unit> KeyDownCommand { get; }
 
     protected override void OnScopeInitialized()
     {
@@ -82,17 +99,6 @@ public class OrthodoxCommander : BaseObject, IUIRoot
         RecreatePanel(null, _connectionFactory());
     }
 
-    /// <summary>
-    /// Can be null during initialization only
-    /// </summary>
-    public IPanel? LeftPanel { get; private set; }
-
-    
-    /// <summary>
-    /// <see cref="LeftPanel"/>
-    /// </summary>
-    public IPanel? RightPanel { get; private set; }
-
     public IPanel RecreatePanel(IPanel? panelToRecreate, IShellConnection shellConnection)
     {
         ILifetimeScope newScope = LifetimeScope.BeginLifetimeScope(builder =>
@@ -100,7 +106,7 @@ public class OrthodoxCommander : BaseObject, IUIRoot
             builder.RegisterInstance(shellConnection).As<IShellConnection>();
         });
         var panelFactory = newScope.Resolve<Func<IPanel>>();
-        
+
         bool isLeft = panelToRecreate == LeftPanel;
         IPanel newPanel = panelFactory();
         if (isLeft)
@@ -116,15 +122,13 @@ public class OrthodoxCommander : BaseObject, IUIRoot
             RightPanel = newPanel;
             OnPropertyChanged(nameof(RightPanel));
         }
-        else throw new InvalidOperationException("Unknown panelToRecreate to change");
+        else
+        {
+            throw new InvalidOperationException("Unknown panelToRecreate to change");
+        }
 
         return newPanel;
     }
-
-    public IPanel? CurrentPanel => (RightPanel?.IsFocused??false) ? RightPanel : LeftPanel;
-    public IPanel? AnotherPanel => (RightPanel?.IsFocused ?? false) ? LeftPanel : RightPanel;
-
-    public ReactiveCommand<KeyDownModel, Unit> KeyDownCommand { get; }
 
     private async void KeyDown(KeyDownModel parameter)
     {
@@ -155,7 +159,9 @@ public class OrthodoxCommander : BaseObject, IUIRoot
             string key = combination.MainKey;
             ch = key switch
             {
-                { Length: 1 } when char.IsLetter(key[0]) => combination.Shift ? key[0] : char.ToLower(key[0], CultureInfo.InvariantCulture),
+                { Length: 1 } when char.IsLetter(key[0]) => combination.Shift
+                    ? key[0]
+                    : char.ToLower(key[0], CultureInfo.InvariantCulture),
                 ['D', var digit] when char.IsDigit(digit) => digit,
                 "MULTIPLY" => '*',
                 "OEMPERIOD" => '.',

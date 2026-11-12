@@ -28,7 +28,7 @@ public class DeleteDirOrFileCommand : CatalogCommand<ShellCatalog, FileEntry>, I
             $"Are you sure you want to delete {what}?");
 
         bool result = await _dialogProvider.ShowDialogAsync(okCancelDialogContent);
-        if(!result)
+        if (!result)
             return;
 
         foreach (FileEntry entry in entries)

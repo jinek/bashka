@@ -4,18 +4,17 @@ using Bashka.Plugins.Core.FunctionKeys;
 using Bashka.Plugins.Foundation.FileSystem;
 using Bashka.Plugins.Foundation.ShellInteraction;
 
-namespace Bashka.Plugins.Foundation
+namespace Bashka.Plugins.Foundation;
+
+public class NanoCatalogCommand()
+    : CatalogCommand<IPtyExecutor, FileEntry>(TextFileSupport.SupportedExtensions, false, true),
+        IFunctionBarCatalogCommand
 {
-    public class NanoCatalogCommand()
-        : CatalogCommand<IPtyExecutor, FileEntry>(TextFileSupport.SupportedExtensions, false, true),
-            IFunctionBarCatalogCommand
+    public override async Task ExecuteAsync(CatalogCommandContext<IPtyExecutor, FileEntry> context)
     {
-        public override async Task ExecuteAsync(CatalogCommandContext<IPtyExecutor, FileEntry> context)
-        {
-            var ptyExecutorCatalog = (IPtyExecutor)context.CommandExecutionContext.Catalog!;
-            await NanoLauncher.OpenAsync(ptyExecutorCatalog,
-                await ptyExecutorCatalog.ResolveCurrentPathAsync(),
-                context.SingleEntry.Path);
-        }
+        var ptyExecutorCatalog = (IPtyExecutor)context.CommandExecutionContext.Catalog!;
+        await NanoLauncher.OpenAsync(ptyExecutorCatalog,
+            await ptyExecutorCatalog.ResolveCurrentPathAsync(),
+            context.SingleEntry.Path);
     }
 }

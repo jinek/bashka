@@ -1,9 +1,8 @@
-namespace Bashka.Plugins.Core.Dialog.Basic
+namespace Bashka.Plugins.Core.Dialog.Basic;
+
+public enum InputValidationMode
 {
-    public enum InputValidationMode
-    {
-        None,
-        NotEmpty,
-        FileName
-    }
+    None,
+    NotEmpty,
+    FileName
 }

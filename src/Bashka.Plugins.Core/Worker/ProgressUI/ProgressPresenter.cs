@@ -3,37 +3,36 @@ using Avalonia.Threading;
 using Bashka.Helpers;
 using Bashka.Plugins.Core.Dialog.Abstract;
 
-namespace Bashka.Plugins.Core.Worker.ProgressUI
+namespace Bashka.Plugins.Core.Worker.ProgressUI;
+
+public class ProgressPresenter : DialogContent, IProgressPresenter
 {
-    public class ProgressPresenter : DialogContent ,IProgressPresenter
+    private readonly IDialogProvider _dialogProvider;
+
+    public ProgressPresenter(
+        IDialogProvider dialogProvider /*, [KeyFilter(TaskFactoryHelper.UITaskFactoryKey)] TaskFactory iuiTaskFactory*/)
+        : base("Processing", "centered", "min_size", "negative_padding")
     {
-        private readonly IDialogProvider _dialogProvider;
-    
-        public AvaloniaList<ProgressViewModel> ProgressViewModels { get; } = new();
+        _dialogProvider = dialogProvider;
+        //_uiTaskFactory = iuiTaskFactory;
+    }
 
-        public ProgressPresenter(
-            IDialogProvider dialogProvider /*, [KeyFilter(TaskFactoryHelper.UITaskFactoryKey)] TaskFactory iuiTaskFactory*/)
-            : base("Processing", "centered", "min_size", "negative_padding")
-        {
-            _dialogProvider = dialogProvider;
-            //_uiTaskFactory = iuiTaskFactory;
-        }
-    
+    public AvaloniaList<ProgressViewModel> ProgressViewModels { get; } = new();
 
-        public void ShowProgress(ProgressViewModel viewModel)
-        {
-            Dispatcher.UIThread.VerifyAccess();
-            ProgressViewModels.Add(viewModel);
-            if(ProgressViewModels.Count==1)
-                _dialogProvider.ShowDialogAsync(this).HandleErrors();
-        }
 
-        public void HideProgress(ProgressViewModel viewModel)
-        {
-            Dispatcher.UIThread.VerifyAccess();
-            ProgressViewModels.Remove(viewModel);
-            if (ProgressViewModels.Count == 0)
-                RaiseClose();
-        }
+    public void ShowProgress(ProgressViewModel viewModel)
+    {
+        Dispatcher.UIThread.VerifyAccess();
+        ProgressViewModels.Add(viewModel);
+        if (ProgressViewModels.Count == 1)
+            _dialogProvider.ShowDialogAsync(this).HandleErrors();
+    }
+
+    public void HideProgress(ProgressViewModel viewModel)
+    {
+        Dispatcher.UIThread.VerifyAccess();
+        ProgressViewModels.Remove(viewModel);
+        if (ProgressViewModels.Count == 0)
+            RaiseClose();
     }
 }

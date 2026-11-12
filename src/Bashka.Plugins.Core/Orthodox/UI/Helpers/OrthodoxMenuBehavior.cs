@@ -38,9 +38,9 @@ public class OrthodoxMenuBehavior : Behavior<Menu>
         _subscription?.Dispose();
         _subscription = null;
 
-        if (AssociatedObject!.DataContext !=null)
+        if (AssociatedObject!.DataContext != null)
         {
-            OrthodoxCommander commander = (OrthodoxCommander)AssociatedObject!.DataContext;
+            var commander = (OrthodoxCommander)AssociatedObject!.DataContext;
             _subscription = commander!.FocusMenuInteraction.RegisterHandler(interaction =>
             {
                 FocusMenu(commander);
@@ -57,7 +57,7 @@ public class OrthodoxMenuBehavior : Behavior<Menu>
             commander.CurrentPanel == commander.LeftPanel
                 ? item.Name == "PART_LeftMenuItem"
                 : item.Name == "PART_RightMenuItem");
-        
+
         targetItem.Focus(NavigationMethod.Directional);
     }
 }

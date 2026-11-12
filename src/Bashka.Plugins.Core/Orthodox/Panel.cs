@@ -15,14 +15,12 @@ namespace Bashka.Plugins.Core.Orthodox;
 
 public class Panel : BaseObject, IPanel
 {
-    public IShellConnection ShellConnection { get; }
-    public ICatalog RootsCatalog { get; }
-    private readonly ICommandSelector _commandSelector;
+    private readonly Stack<(ICatalog, int)> _catalogStack = new();
     private readonly IIndex<string, ICatalog> _catalogsFactory;
+    private readonly ICommandSelector _commandSelector;
 
-    public IEnumerable<Entry> Roots => RootsCatalog.Children;
-
-    public Panel(ICommandSelector commandSelector, IIndex<string, ICatalog> catalogsFactory, IShellConnection shellConnection)
+    public Panel(ICommandSelector commandSelector, IIndex<string, ICatalog> catalogsFactory,
+        IShellConnection shellConnection)
     {
         ShellConnection = shellConnection;
         RootsCatalog = catalogsFactory[ICatalog.RootCatalogKey];
@@ -31,7 +29,7 @@ public class Panel : BaseObject, IPanel
 
         this.WhenPropertyChanged(panel => panel.IsRootsVisible)
             .Skip(1)
-            .ObserveOn(ThreadPoolScheduler.Instance) 
+            .ObserveOn(ThreadPoolScheduler.Instance)
             .ObserveOn(AvaloniaScheduler.Instance)
             .Subscribe(b =>
             {
@@ -41,17 +39,14 @@ public class Panel : BaseObject, IPanel
                     SelectedIndex = 0;
                 IsFocused = true;
             });
-        
+
         this.WhenChanged(panel => panel.CurrentCatalog, panel => panel.CurrentCatalog!.Children,
                 (panel, _, _) => panel.CurrentCatalog?.Children)
             .Subscribe(_ => { OnPropertyChanged(nameof(CurrentChildren)); });
 
         RootsCatalog.WhenPropertyChanged(catalog => catalog.Children)
             .Skip(1)
-            .Subscribe(_ =>
-            {
-                OnPropertyChanged(nameof(Roots));
-            });
+            .Subscribe(_ => { OnPropertyChanged(nameof(Roots)); });
 
         this.WhenPropertyChanged(panel => panel.CurrentCatalog)
             .Where(value => value.Value != null)
@@ -59,25 +54,22 @@ public class Panel : BaseObject, IPanel
             {
                 if (SelectedRoot == null)
                     return;
-                
-                if(SelectedRoot.ParentCatalog.TypeKey!=value.Value!.TypeKey)
+
+                if (SelectedRoot.ParentCatalog.TypeKey != value.Value!.TypeKey)
                     SelectedRoot = null;
             });
 
         RootsCatalog.NavigateAsync(ICatalog.RootFavoritesPath).HandleErrors();
-        
+
         OpenDefaultCatalogAsync().HandleErrors();
     }
 
-    public async Task OpenDefaultCatalogAsync()
-    {
-        ICatalog catalog = _catalogsFactory[ICatalog.DefeaultCatalogTypeKey];
-        _catalogStack.Clear();
-        
-        await catalog.NavigateAsync(await catalog.ResolveCurrentPathAsync());
-        
-        Push(catalog);
-    }
+    [AutoWire] public Lazy<OrthodoxCommander> Commander { get; [UsedImplicitly] internal init; } = null!;
+
+    public IShellConnection ShellConnection { get; }
+    public ICatalog RootsCatalog { get; }
+
+    public IEnumerable<Entry> Roots => RootsCatalog.Children;
 
     public void Push(ICatalog catalog)
     {
@@ -87,8 +79,6 @@ public class Panel : BaseObject, IPanel
 
 
     public bool IsRootsVisible { get; set; }
-
-    private readonly Stack<(ICatalog, int)> _catalogStack = new();
     public ICatalog? CurrentCatalog => _catalogStack.TryPeek(out (ICatalog, int) peek) ? peek.Item1 : null;
 
     public void Pop()
@@ -108,9 +98,7 @@ public class Panel : BaseObject, IPanel
 
             GoBackEntry[]? goBackEntries = null;
             if (CurrentCatalog!.CanNavigateBack || _catalogStack.Count > 1)
-            {
                 goBackEntries = [new GoBackEntry(CurrentCatalog)];
-            }
 
             IEnumerable<Entry> children = CurrentCatalog.Children;
             children = ApplySort(children);
@@ -126,6 +114,35 @@ public class Panel : BaseObject, IPanel
     public int SelectedIndex { get; set; }
 
     public SortMode SortMode { get; set; } = new(SortKey.Unsorted, false);
+
+    public async void EntrySelected()
+    {
+        var commandExecutionContext =
+            new CommandExecutionContext([SelectedEntry!], CurrentCatalog, this, Commander.Value, null);
+        ICommand[] selectCommands = _commandSelector.SelectCommands(commandExecutionContext);
+        ICommand command = selectCommands.Last(); //the latest registered in IOC overrides previous ones
+        await command.ExecuteAsync(commandExecutionContext);
+    }
+
+    public bool IsFocused { get; set; }
+
+    public bool IsQuickSearchActive { get; set; }
+    public string QuickSearchPattern { get; set; } = string.Empty;
+
+    public void QuickSearchNext()
+    {
+        JumpToMatch(SelectedIndex + 1, true);
+    }
+
+    public async Task OpenDefaultCatalogAsync()
+    {
+        ICatalog catalog = _catalogsFactory[ICatalog.DefeaultCatalogTypeKey];
+        _catalogStack.Clear();
+
+        await catalog.NavigateAsync(await catalog.ResolveCurrentPathAsync());
+
+        Push(catalog);
+    }
 
     [UsedImplicitly]
     public void OnSortModeChanged()
@@ -163,8 +180,15 @@ public class Panel : BaseObject, IPanel
 
         return [.. ordered];
 
-        static string NameOf(Entry entry) => entry.Name;
-        static string ExtensionOf(Entry entry) => Path.GetExtension(entry.Name);
+        static string NameOf(Entry entry)
+        {
+            return entry.Name;
+        }
+
+        static string ExtensionOf(Entry entry)
+        {
+            return Path.GetExtension(entry.Name);
+        }
     }
 
     [UsedImplicitly]
@@ -183,22 +207,11 @@ public class Panel : BaseObject, IPanel
         await command.ExecuteAsync(commandExecutionContext);
     }
 
-    public async void EntrySelected()
-    {
-        var commandExecutionContext =
-            new CommandExecutionContext([SelectedEntry!], CurrentCatalog, this, Commander.Value, null);
-        ICommand[] selectCommands = _commandSelector.SelectCommands(commandExecutionContext);
-        ICommand command = selectCommands.Last(); //the latest registered in IOC overrides previous ones
-        await command.ExecuteAsync(commandExecutionContext);
-    }
-
-    public bool IsFocused { get; set; }
-
-    public bool IsQuickSearchActive { get; set; }
-    public string QuickSearchPattern { get; set; } = string.Empty;
-
     [UsedImplicitly]
-    public void OnQuickSearchPatternChanged() => JumpToMatch(SelectedIndex, false);
+    public void OnQuickSearchPatternChanged()
+    {
+        JumpToMatch(SelectedIndex, false);
+    }
 
     [UsedImplicitly]
     public void OnIsQuickSearchActiveChanged(bool _, bool newValue)
@@ -207,8 +220,6 @@ public class Panel : BaseObject, IPanel
         QuickSearchPattern = string.Empty;
         IsFocused = true;
     }
-
-    public void QuickSearchNext() => JumpToMatch(SelectedIndex + 1, true);
 
     private void JumpToMatch(int startIndex, bool wrap)
     {
@@ -220,7 +231,7 @@ public class Panel : BaseObject, IPanel
         string pattern = QuickSearchPattern.EndsWith("*", StringComparison.Ordinal)
             ? QuickSearchPattern
             : QuickSearchPattern + '*';
-        
+
         startIndex = Math.Max(startIndex, 0);
         int count = wrap ? children.Length : children.Length - startIndex;
         for (int offset = 0; offset < count; offset++)
@@ -233,7 +244,4 @@ public class Panel : BaseObject, IPanel
             }
         }
     }
-    
-    [AutoWire]
-    public Lazy<OrthodoxCommander> Commander { get; [UsedImplicitly] internal init; } = null!;
 }

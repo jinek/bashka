@@ -8,7 +8,7 @@ using Bashka.Plugins.Foundation.FileSystem;
 namespace Bashka.Plugins.Foundation.ShellInteraction;
 
 /// <summary>
-/// SSH Connections
+///     SSH Connections
 /// </summary>
 public class ConnectionsCatalog : BaseObject, IPtyExecutor
 {
@@ -21,7 +21,7 @@ public class ConnectionsCatalog : BaseObject, IPtyExecutor
 
     public ConnectionsCatalog(ILifetimeScope scope)
     {
-        var localSystemScope = scope.BeginLifetimeScope(builder =>
+        ILifetimeScope localSystemScope = scope.BeginLifetimeScope(builder =>
         {
             var shellConnection = scope.ResolveKeyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey);
 
@@ -43,23 +43,12 @@ public class ConnectionsCatalog : BaseObject, IPtyExecutor
         {
             return
             [
-                new NewConnectionEntry(this)
-                ,.._inner.Children
+                new NewConnectionEntry(this), .._inner.Children
                     .Select(ToConnectionEntry)
                     .Where(entry => entry != null)
                     .Cast<Entry>()
             ];
         }
-    }
-
-    private Entry? ToConnectionEntry(Entry entry)
-    {
-        if (entry is not FileEntry { IsDirectory: false } fileEntry ||
-            !fileEntry.Name.EndsWith(".ini", StringComparison.OrdinalIgnoreCase))
-            return null;
-
-        return new SwitchConnectionEntry(Path.GetFileNameWithoutExtension(fileEntry.Name), this,
-            () => new SshShellConnection(SshConnectionSettings.Load(fileEntry.FullPath).ToConnectionInfo()));
     }
 
     public Task NavigateAsync(string path)
@@ -71,9 +60,24 @@ public class ConnectionsCatalog : BaseObject, IPtyExecutor
 
     public bool CanNavigateBack => false;
 
-    public Task NavigateBack() => throw new NotSupportedException();
+    public Task NavigateBack()
+    {
+        throw new NotSupportedException();
+    }
 
     public Task ExecuteAsResidentAsync(string workingDir, string applicationName, string arguments,
-        CancellationToken cancellationToken) =>
-        _inner.ExecuteAsResidentAsync(workingDir, applicationName, arguments, cancellationToken);
+        CancellationToken cancellationToken)
+    {
+        return _inner.ExecuteAsResidentAsync(workingDir, applicationName, arguments, cancellationToken);
+    }
+
+    private Entry? ToConnectionEntry(Entry entry)
+    {
+        if (entry is not FileEntry { IsDirectory: false } fileEntry ||
+            !fileEntry.Name.EndsWith(".ini", StringComparison.OrdinalIgnoreCase))
+            return null;
+
+        return new SwitchConnectionEntry(Path.GetFileNameWithoutExtension(fileEntry.Name), this,
+            () => new SshShellConnection(SshConnectionSettings.Load(fileEntry.FullPath).ToConnectionInfo()));
+    }
 }

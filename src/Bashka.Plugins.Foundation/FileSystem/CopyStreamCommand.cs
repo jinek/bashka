@@ -11,7 +11,8 @@ public class CopyStreamCommand : CatalogCommand<IReadStreamCatalog, FileEntry>
     private readonly IDialogProvider _dialogProvider;
     private readonly WorkerTaskFactory _workerTaskFactory;
 
-    public CopyStreamCommand(IDialogProvider dialogProvider, WorkerTaskFactory workerTaskFactory) : base(null, true, true)
+    public CopyStreamCommand(IDialogProvider dialogProvider, WorkerTaskFactory workerTaskFactory) : base(null, true,
+        true)
     {
         _dialogProvider = dialogProvider;
         _workerTaskFactory = workerTaskFactory;
@@ -39,14 +40,11 @@ public class CopyStreamCommand : CatalogCommand<IReadStreamCatalog, FileEntry>
                 ((IReadStreamCatalog)innerContext.Catalog!).ReadStream(entry.FullPath);
             ((IWriteStreamCatalog)innerContext.AnotherCatalog).WriteStream(destinationPath, sourceStream);
         });
-        
+
         await innerContext.AnotherCatalog!.NavigateAsync(string.Empty);
-        
+
         Entry? newEntry = innerContext.AnotherCatalog.Children.SingleOrDefault(entry2 => entry2.Path == fileName);
-        if (newEntry == null)
-        {
-            throw new UserErrorException("File was removed");
-        }
+        if (newEntry == null) throw new UserErrorException("File was removed");
 
         innerContext.AnotherPanel!.SelectedEntry = newEntry;
     }

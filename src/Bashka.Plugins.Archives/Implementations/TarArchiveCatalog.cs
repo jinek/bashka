@@ -8,7 +8,7 @@ namespace Bashka.Plugins.Archives.Implementations;
 public class TarArchiveCatalog(Stream stream, Entry entry) : ArchiveCatalogBase(stream, entry)
 {
     /// <summary>
-    /// Tar has to be read from a seekable stream
+    ///     Tar has to be read from a seekable stream
     /// </summary>
     protected override Stream PrepareStream(Stream stream)
     {

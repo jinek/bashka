@@ -23,10 +23,11 @@ public partial class MainWindow : Window
         {
             var dialogProvider = new DialogProvider(this);
 
-            Scope = Scope.BeginLifetimeScope(RegistrationHelper.Hierarchy,builder =>
+            Scope = Scope.BeginLifetimeScope(RegistrationHelper.Hierarchy, builder =>
             {
                 builder.RegisterInstance(dialogProvider).As<IDialogProvider>();
-                builder.RegisterType<UITaskFactory>().As<IUITaskFactory>().Keyed<IUITaskFactory>(TaskFactoryHelper.UITaskFactoryKey)
+                builder.RegisterType<UITaskFactory>().As<IUITaskFactory>()
+                    .Keyed<IUITaskFactory>(TaskFactoryHelper.UITaskFactoryKey)
                     .SingleInstance();
                 builder.RegisterType<ProgressPresenter>().As<IProgressPresenter>().SingleInstance();
                 builder.RegisterType<WorkerTaskFactory>().As<TaskFactory>().AsSelf()

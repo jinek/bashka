@@ -16,14 +16,14 @@
                     Value="{DynamicResource ThemeBackgroundBrush}" />
         </Style.Setters>
     </Style>
-    
+
     <Style Selector="modal|ModalWindow.error_background">
         <Style.Setters>
             <Setter Property="Background"
                     Value="{DynamicResource ThemeErrorBrush}" />
         </Style.Setters>
     </Style>
-    
+
     <Style Selector="modal|ModalWindow.min_size">
         <Style.Setters>
             <Setter Property="MinWidth"

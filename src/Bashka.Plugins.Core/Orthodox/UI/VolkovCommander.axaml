@@ -1,6 +1,5 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-
                     xmlns:helpers="https://github.com/consolonia"
                     xmlns:core="clr-namespace:Bashka.Plugins.Core.Abstract;assembly=Bashka.Plugins.Core"
                     xmlns:orthodox="clr-namespace:Bashka.Plugins.Core.Orthodox;assembly=Bashka.Plugins.Core"
@@ -13,7 +12,7 @@
     </ResourceDictionary.MergedDictionaries>
 
     <helpers1:KeyEventToModelConverter x:Key="KeyEventToModelConverter" />
-    
+
     <!--https://www.mikrocontroller.net/attachment/483578/Turbo_Vision.gif-->
     <!--<system:Double x:Key="FontSizeNormal">1</system:Double>-->
     <DataTemplate DataType="{x:Type orthodox:OrthodoxCommander}"
@@ -32,7 +31,7 @@
                     <KeyDownEventTrigger>
                         <InvokeCommandAction PassEventArgsToCommand="True"
                                              InputConverter="{StaticResource KeyEventToModelConverter}"
-                                             Command="{Binding KeyDownCommand}"/>
+                                             Command="{Binding KeyDownCommand}" />
                     </KeyDownEventTrigger>
                 </Interaction.Behaviors>
                 <Menu Grid.Row="0"
@@ -44,20 +43,24 @@
                     <MenuItem Header="Left"
                               IsTabStop="False"
                               x:Name="PART_LeftMenuItem">
-                        <ui:SortingMenuItem DataContext="{Binding LeftPanel}"/>
-                        <MenuItem Header="NotSorting"></MenuItem>
+                        <ui:SortingMenuItem DataContext="{Binding LeftPanel}" />
+                        <MenuItem Header="NotSorting" />
                     </MenuItem>
-                    <MenuItem Header="Files" IsTabStop="False"/>
-                    <MenuItem Header="Commands" IsTabStop="False"/>
-                    <MenuItem Header="Options" IsTabStop="False"/>
-                    <MenuItem Header="Right" IsTabStop="False"
+                    <MenuItem Header="Files"
+                              IsTabStop="False" />
+                    <MenuItem Header="Commands"
+                              IsTabStop="False" />
+                    <MenuItem Header="Options"
+                              IsTabStop="False" />
+                    <MenuItem Header="Right"
+                              IsTabStop="False"
                               x:Name="PART_RightMenuItem">
-                        <ui:SortingMenuItem DataContext="{Binding RightPanel}"/>
+                        <ui:SortingMenuItem DataContext="{Binding RightPanel}" />
                     </MenuItem>
                 </Menu>
                 <ContentControl Grid.Row="1"
                                 Content="{Binding LeftPanel}"
-                                ContentTemplate="{StaticResource {x:Type core:IPanel}}"/>
+                                ContentTemplate="{StaticResource {x:Type core:IPanel}}" />
                 <ContentControl Grid.Row="1"
                                 Grid.Column="1"
                                 Content="{Binding RightPanel}"
@@ -67,11 +70,10 @@
                         Grid.ColumnSpan="2"
                         Grid.Row="2"
                         Height="1"
-                        BorderThickness="0"
-                        >
+                        BorderThickness="0">
                     <Panel>
                         <TextBlock
-                            Text="{Binding Path = CurrentPanel.CurrentCatalog.CurrentPath, Mode=OneWay, FallbackValue='>', StringFormat='{}{0}/>'}"/>
+                            Text="{Binding Path = CurrentPanel.CurrentCatalog.CurrentPath, Mode=OneWay, FallbackValue='>', StringFormat='{}{0}/>'}" />
                     </Panel>
                 </Border>
 
@@ -83,7 +85,7 @@
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate DataType="functionKeys:FunctionBarItem">
                             <DockPanel LastChildFill="True">
-                                <TextBlock Text="{Binding Number}" 
+                                <TextBlock Text="{Binding Number}"
                                            DockPanel.Dock="Left" />
                                 <Button Content="{Binding CurrentCommandWrapper.Name}"
                                         Command="{Binding Path=Execute}"
@@ -93,9 +95,8 @@
                                         IsEnabled="{Binding CurrentCommandWrapper.CanExecute}"
                                         IsTabStop="False">
                                     <Interaction.Behaviors>
-                                        <DataTriggerBehavior
-                                            Binding="{Binding CurrentCommandWrapper.IsDelete}"
-                                            Value="True">
+                                        <DataTriggerBehavior Binding="{Binding CurrentCommandWrapper.IsDelete}"
+                                                             Value="True">
                                             <DataTriggerBehavior.Actions>
                                                 <ChangePropertyAction PropertyName="Background"
                                                                       Value="{DynamicResource ThemeErrorBrush}" />
@@ -108,7 +109,8 @@
                                                     Value="False" />
                                             <Setter Property="Margin"
                                                     Value="0,0,0,0" />
-                                            <Setter Property="Padding" Value="-1,0"/>
+                                            <Setter Property="Padding"
+                                                    Value="-1,0" />
                                         </Style>
                                         <Style Selector="Button /template/ helpers|SymbolsControl">
                                             <Setter Property="IsVisible"
@@ -120,7 +122,7 @@
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
                     <ItemsRepeater.Layout>
-                        <ui:FunctionBarLayout Gap="0"/>
+                        <ui:FunctionBarLayout Gap="0" />
                         <!--<templates:GridLayout Gap="0"/>-->
                         <!--<UniformGridLayout Orientation="Horizontal"
                                            ItemsStretch="None"

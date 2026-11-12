@@ -28,21 +28,16 @@ public class FocusOnEnabledAndIsFocusedBehavior : Behavior<DataGrid>
     private void OnAssociatedObjectOnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs args)
     {
         if (args.Property == InputElement.IsEffectivelyEnabledProperty)
-        {
             if ((bool)args.NewValue! && IsFocused)
-            {
                 ThreadPool.QueueUserWorkItem(_ =>
                 {
                     Dispatcher.UIThread.Post(() =>
                     {
-                        if(AssociatedObject!.SelectedIndex<=0)
+                        if (AssociatedObject!.SelectedIndex <= 0)
                             AssociatedObject.SelectedIndex = 0;
                         AssociatedObject?.Focus();
                     });
                 });
-                
-            }
-        }
     }
 
     protected override void OnDetachedFromVisualTree()

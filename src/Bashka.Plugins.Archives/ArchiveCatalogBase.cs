@@ -6,8 +6,8 @@ namespace Bashka.Plugins.Archives;
 
 public abstract class ArchiveCatalogBase : PathCatalog, IArchiveCatalog, IDisposable
 {
-    private readonly Stream _stream;
     private readonly Lazy<IReadOnlyList<FileEntry>> _allEntries;
+    private readonly Stream _stream;
 
     protected ArchiveCatalogBase(Stream stream, Entry entry)
     {
@@ -20,36 +20,7 @@ public abstract class ArchiveCatalogBase : PathCatalog, IArchiveCatalog, IDispos
     protected Entry ArchiveEntry { get; }
     protected Stream? ArchiveStream { get; private set; }
 
-    protected virtual Stream PrepareStream(Stream stream) => stream;
-
-    protected abstract IReadOnlyList<FileEntry> ReadAllEntries();
-
-    public abstract Stream ReadStream(string fullPath);
-
     protected IReadOnlyList<FileEntry> Entries => _allEntries.Value;
-    
-    protected FileEntry CreateEntry(string fullPath, long size, DateTime timeStamp, bool isDirectory)
-    {
-        string normalizedPath = ArchivePath.Normalize(fullPath);
-        string name = Path.GetFileName(normalizedPath);
-
-        return new FileEntry((name, name, normalizedPath, size, timeStamp,
-            name.StartsWith('.') ? EntryCategory.Hidden : EntryCategory.Default), isDirectory, this);
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            ArchiveStream?.Dispose();
-        }
-    }
 
     private string ShortArchiveName
     {
@@ -61,14 +32,48 @@ public abstract class ArchiveCatalogBase : PathCatalog, IArchiveCatalog, IDispos
         }
     }
 
+    public abstract Stream ReadStream(string fullPath);
+
     public override string Title => string.IsNullOrEmpty(CurrentPath)
         ? ArchiveEntry.Name
         : $"{ShortArchiveName}{ArchivePath.Separator}{CurrentPath}";
 
+    /// <summary>
+    ///     The root of the archive is an empty path, so the amount of path segments can not be used here
+    /// </summary>
+    public override bool CanNavigateBack => !string.IsNullOrEmpty(CurrentPath);
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual Stream PrepareStream(Stream stream)
+    {
+        return stream;
+    }
+
+    protected abstract IReadOnlyList<FileEntry> ReadAllEntries();
+
+    protected FileEntry CreateEntry(string fullPath, long size, DateTime timeStamp, bool isDirectory)
+    {
+        string normalizedPath = ArchivePath.Normalize(fullPath);
+        string name = Path.GetFileName(normalizedPath);
+
+        return new FileEntry((name, name, normalizedPath, size, timeStamp,
+            name.StartsWith('.') ? EntryCategory.Hidden : EntryCategory.Default), isDirectory, this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing) ArchiveStream?.Dispose();
+    }
+
     protected override Task<IEnumerable<Entry>> GetChildrenInternal()
     {
         ArchiveStream ??= PrepareStream(_stream);
-        
+
         string currentPath = CurrentPath!;
         string prefix = currentPath == string.Empty ? string.Empty : currentPath + ArchivePath.Separator;
 
@@ -81,7 +86,7 @@ public abstract class ArchiveCatalogBase : PathCatalog, IArchiveCatalog, IDispos
                 continue;
 
             string relativePath = archiveEntry.FullPath[prefix.Length..];
-            
+
             if (relativePath == string.Empty)
                 //this directory itself
                 continue;
@@ -107,9 +112,4 @@ public abstract class ArchiveCatalogBase : PathCatalog, IArchiveCatalog, IDispos
             .. files
         ]);
     }
-
-    /// <summary>
-    /// The root of the archive is an empty path, so the amount of path segments can not be used here
-    /// </summary>
-    public override bool CanNavigateBack => !string.IsNullOrEmpty(CurrentPath);
 }

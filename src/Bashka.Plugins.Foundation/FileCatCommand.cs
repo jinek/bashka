@@ -10,14 +10,15 @@ using Bashka.Plugins.Foundation.ShellInteraction.Scripting.Scripts;
 
 namespace Bashka.Plugins.Foundation;
 
-public class FileCatCommand : CatalogCommand<ShellCatalog /*Could be ISttreamCatalog too*/, FileEntry>, IFunctionBarCatalogCommand
+public class FileCatCommand : CatalogCommand<ShellCatalog /*Could be ISttreamCatalog too*/, FileEntry>,
+    IFunctionBarCatalogCommand
 {
     public const long MaxFileSize = 1024 * 1024; // 10 MB
 
     private readonly IDialogProvider _dialogProvider;
     private readonly WorkerTaskFactory _workerTaskFactory;
 
-    public FileCatCommand(IDialogProvider dialogProvider, WorkerTaskFactory workerTaskFactory) : base(regexp: null, false, true)
+    public FileCatCommand(IDialogProvider dialogProvider, WorkerTaskFactory workerTaskFactory) : base(null, false, true)
     {
         _dialogProvider = dialogProvider;
         _workerTaskFactory = workerTaskFactory;
@@ -48,12 +49,12 @@ public class FileCatCommand : CatalogCommand<ShellCatalog /*Could be ISttreamCat
                 result.Append(line);
                 result.Append(Environment.NewLine);
             }
-            if(result.Length>0)
+
+            if (result.Length > 0)
                 result.Remove(result.Length - 1, 1);
             return Task.CompletedTask;
-            
         });
-        
+
         await _dialogProvider.ShowDialogAsync(
             new TextViewerDialogContent(entry.Name, result.ToString()));
     }

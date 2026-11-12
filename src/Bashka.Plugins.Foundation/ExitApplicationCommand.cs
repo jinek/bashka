@@ -25,7 +25,7 @@ public class ExitApplicationCommand : IFunctionBarCatalogCommand
     {
         var dialogContent = new OkCancelQuestionDialogContent("Exit", "Are you sure you want to exit?");
 
-        if(await _dialogProvider.ShowDialogAsync(dialogContent))
+        if (await _dialogProvider.ShowDialogAsync(dialogContent))
             ((IControlledApplicationLifetime)Application.Current!.ApplicationLifetime!).Shutdown();
     }
 }

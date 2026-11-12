@@ -6,14 +6,14 @@ using Bashka.Plugins.Core.Dialog.Abstract;
 using Bashka.Plugins.Core.Dialog.Basic;
 using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Core.Worker.Schedulers;
-using JetBrains.Annotations;
 using Bashka.Plugins.Foundation.FileSystem;
 using Bashka.Plugins.Foundation.ShellInteraction;
+using JetBrains.Annotations;
 
 namespace Bashka.Plugins.Archives.Bsdtar;
 
 /// <summary>
-/// Extracts the selected entries of a browsed archive into the directory of the other panel.
+///     Extracts the selected entries of a browsed archive into the directory of the other panel.
 /// </summary>
 public class ExtractBsdtarEntriesCommand() : CatalogCommand<BsdtarArchiveCatalog, FileEntry>(null, true, true)
 {

@@ -8,19 +8,6 @@ internal static class UITestHelper
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(20);
 
-    extension(UnitTestConsole test)
-    {
-        public async Task WaitText(string regex)
-        {
-            await WaitForMatch(test, regex, true);
-        }
-
-        public async Task WaitNoText(string regex)
-        {
-            await WaitForMatch(test, regex, false);
-        }
-    }
-
     private static async Task WaitForMatch(UnitTestConsole test, string regex, bool shouldMatch)
     {
         DateTime deadline = DateTime.UtcNow + Timeout;
@@ -43,6 +30,19 @@ internal static class UITestHelper
             }
 
             await Task.Delay(200);
+        }
+    }
+
+    extension(UnitTestConsole test)
+    {
+        public async Task WaitText(string regex)
+        {
+            await WaitForMatch(test, regex, true);
+        }
+
+        public async Task WaitNoText(string regex)
+        {
+            await WaitForMatch(test, regex, false);
         }
     }
 }

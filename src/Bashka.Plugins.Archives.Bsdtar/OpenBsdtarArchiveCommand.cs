@@ -7,7 +7,8 @@ using Bashka.Plugins.Foundation.ShellInteraction;
 
 namespace Bashka.Plugins.Archives.Bsdtar;
 
-public class OpenBsdtarArchiveCommand() : CatalogCommand<ShellCatalog, FileEntry>(BsdtarSupport.SupportedExtensions, false, true)
+public class OpenBsdtarArchiveCommand()
+    : CatalogCommand<ShellCatalog, FileEntry>(BsdtarSupport.SupportedExtensions, false, true)
 {
     [AutoWire] internal Func<FileEntry, BsdtarArchiveCatalog> CatalogFactory { get; set; } = null!;
 

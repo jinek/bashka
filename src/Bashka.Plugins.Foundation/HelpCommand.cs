@@ -2,25 +2,24 @@ using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Dialog.Abstract;
 using Bashka.Plugins.Core.FunctionKeys;
 
-namespace Bashka.Plugins.Foundation
+namespace Bashka.Plugins.Foundation;
+
+public class HelpCatalogCommand : IFunctionBarCatalogCommand
 {
-    public class HelpCatalogCommand : IFunctionBarCatalogCommand
+    private readonly IDialogProvider _dialogProvider;
+
+    public HelpCatalogCommand(IDialogProvider dialogProvider)
     {
-        private readonly IDialogProvider _dialogProvider;
+        _dialogProvider = dialogProvider;
+    }
 
-        public HelpCatalogCommand(IDialogProvider dialogProvider)
-        {
-            _dialogProvider = dialogProvider;
-        }
+    public bool CanExecute(CommandExecutionContext context)
+    {
+        return true;
+    }
 
-        public bool CanExecute(CommandExecutionContext context)
-        {
-            return true;
-        }
-
-        public Task ExecuteAsync(CommandExecutionContext context)
-        {
-            return _dialogProvider.ShowDialogAsync(new HelloDialogContent());
-        }
+    public Task ExecuteAsync(CommandExecutionContext context)
+    {
+        return _dialogProvider.ShowDialogAsync(new HelloDialogContent());
     }
 }

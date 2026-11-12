@@ -29,6 +29,8 @@ public record SshConnectionSettings(string Host, int Port, string Username, stri
         new FileIniDataParser().WriteFile(filePath, iniData);
     }
 
-    public ConnectionInfo ToConnectionInfo() =>
-        new(Host, Port, Username, new PasswordAuthenticationMethod(Username, Password));
+    public ConnectionInfo ToConnectionInfo()
+    {
+        return new ConnectionInfo(Host, Port, Username, new PasswordAuthenticationMethod(Username, Password));
+    }
 }

@@ -5,10 +5,6 @@ namespace Bashka.Plugins.Core.Abstract;
 
 public interface IPanel : INotifyPropertyChanged
 {
-    void Push(ICatalog catalog);
-
-    void Pop();
-
     IEnumerable<Entry>? CurrentChildren { get; }
 
     ICatalog? CurrentCatalog { get; }
@@ -18,17 +14,21 @@ public interface IPanel : INotifyPropertyChanged
     Entry? SelectedEntry { get; set; }
 
     /// <summary>
-    /// Entries marked in the current catalog (Far manager style selection)
+    ///     Entries marked in the current catalog (Far manager style selection)
     /// </summary>
     IReadOnlyList<Entry> MarkedEntries { get; }
+
     int SelectedIndex { get; set; }
     bool IsFocused { get; set; }
     SortMode SortMode { get; set; }
     ICatalog RootsCatalog { get; }
     IShellConnection ShellConnection { get; }
-    void EntrySelected();
-    
+
     bool IsQuickSearchActive { get; set; }
     string QuickSearchPattern { get; set; }
+    void Push(ICatalog catalog);
+
+    void Pop();
+    void EntrySelected();
     void QuickSearchNext();
 }

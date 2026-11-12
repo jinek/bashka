@@ -20,8 +20,10 @@ public class QuickSearchBehavior : Behavior<TextBox>
         AssociatedObject!.CaretIndex = AssociatedObject!.Text!.Length;
     }
 
-    protected override void OnDetaching() =>
+    protected override void OnDetaching()
+    {
         AssociatedObject!.RemoveHandler(InputElement.KeyDownEvent, OnKeyDown);
+    }
 
     private void OnKeyDown(object? sender, KeyEventArgs e)
     {

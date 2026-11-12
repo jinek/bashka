@@ -5,14 +5,15 @@ using Bashka.Plugins.Core.Dialog.Abstract;
 using Bashka.Plugins.Core.Dialog.Basic;
 using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Core.Worker.Schedulers;
-using JetBrains.Annotations;
 using Bashka.Plugins.Foundation.FileSystem;
 using Bashka.Plugins.Foundation.ShellInteraction;
+using JetBrains.Annotations;
 
 namespace Bashka.Plugins.Archives.Bsdtar;
 
 /// <summary>
-/// Packs the selected entries into a new archive created next to them. Format is detected by bsdtar from the entered extension.
+///     Packs the selected entries into a new archive created next to them. Format is detected by bsdtar from the entered
+///     extension.
 /// </summary>
 public class AddToBsdtarArchiveCommand() : CatalogCommand<ShellCatalog, FileEntry>(null, true, true)
 {
@@ -38,7 +39,7 @@ public class AddToBsdtarArchiveCommand() : CatalogCommand<ShellCatalog, FileEntr
 
         string archiveName = await DialogProvider.ShowOkCancelDialogAsync(
             new StringInputDialog("Enter archive name", entries[0].Name + DefaultArchiveExtension));
-        
+
         await WorkerTaskFactory.StartNewWorkerTask(async (_, _, _) =>
         {
             catalog.ShellSession.ExecuteNonQuery(new BsdtarCreateShellMultiScript(catalog.CurrentPath!,

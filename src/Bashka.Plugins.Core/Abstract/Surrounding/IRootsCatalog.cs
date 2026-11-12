@@ -1,6 +1,5 @@
-namespace Bashka.Plugins.Core.Abstract.Surrounding
+namespace Bashka.Plugins.Core.Abstract.Surrounding;
+
+public interface IRootsCatalog : ICatalog
 {
-    public interface IRootsCatalog : ICatalog
-    {
-    }
 }

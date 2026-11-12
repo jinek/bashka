@@ -22,19 +22,19 @@ public abstract class CopyOrMoveCommandBase : CatalogCommand<ShellCatalog, FileE
     [AutoWire] public WorkerTaskFactory WorkerTaskFactory { get; [UsedImplicitly] internal set; } = null!;
 
     /// <summary>
-    /// When false the entry stays in the current catalog, i.e. it is just renamed
+    ///     When false the entry stays in the current catalog, i.e. it is just renamed
     /// </summary>
     protected virtual bool ToAnotherPanel => true;
 
     /// <summary>
-    /// When true the source entry disappears from its catalog, so it is marked as moved
+    ///     When true the source entry disappears from its catalog, so it is marked as moved
     /// </summary>
     protected virtual bool SourceIsGone => false;
 
     protected abstract string DialogTitle { get; }
 
     /// <summary>
-    /// Renaming (staying in the same catalog) makes sense for a single entry only
+    ///     Renaming (staying in the same catalog) makes sense for a single entry only
     /// </summary>
     protected override bool SupportsMultipleEntries => ToAnotherPanel;
 
@@ -52,9 +52,9 @@ public abstract class CopyOrMoveCommandBase : CatalogCommand<ShellCatalog, FileE
             return false;
 
         return ((ShellCatalog)context.Catalog!)
-               .ShellSession
-               .ShellConnection
-               .IsEquivalentTo(shellCatalog.ShellSession.ShellConnection);
+            .ShellSession
+            .ShellConnection
+            .IsEquivalentTo(shellCatalog.ShellSession.ShellConnection);
     }
 
     public override async Task ExecuteAsync(CatalogCommandContext<ShellCatalog, FileEntry> context)
@@ -106,11 +106,8 @@ public abstract class CopyOrMoveCommandBase : CatalogCommand<ShellCatalog, FileE
             return;
 
         Entry? newEntry = destinationCatalog.Children.SingleOrDefault(child => child.Path == singleFileName);
-        if (newEntry == null)
-        {
-            throw new UserErrorException("File was removed after this command");
-        }
-        
+        if (newEntry == null) throw new UserErrorException("File was removed after this command");
+
         destinationPanel.SelectedEntry = newEntry;
     }
 }

@@ -24,18 +24,20 @@ public class RootsCatalog : PathCatalog, IRootsCatalog
         {
             _catalogs = await _iuiTaskFactory.StartNew(() =>
             {
-                ICatalog[] catalogs = _catalogsFunction().Where(catalog=>catalog.TypeKey!=GetType().GetTypeKey()).ToArray();
+                ICatalog[] catalogs = _catalogsFunction().Where(catalog => catalog.TypeKey != GetType().GetTypeKey())
+                    .ToArray();
                 return catalogs;
             });
-            
+
             Task[] tasks = await _iuiTaskFactory.StartNew(() =>
-            {//todo: can be merged into one task
+            {
+                //todo: can be merged into one task
                 return _catalogs.Select(catalog => catalog.NavigateAsync(string.Empty)).ToArray();
             });
 
             await Task.WhenAll((IEnumerable<Task>)tasks);
         }
-        
+
         const string catalogsPath = "catalogs";
 
         switch (CurrentPath)
@@ -53,7 +55,7 @@ public class RootsCatalog : PathCatalog, IRootsCatalog
                     .GroupBy(entry => entry.ParentCatalog)
                     .SelectMany(group => group.Take(3))
                     .ToArray();
-            
+
             default: throw new InvalidPathException(CurrentPath);
         }
     }

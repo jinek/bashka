@@ -1,7 +1,6 @@
-namespace Bashka.Plugins.Core.FunctionKeys
+namespace Bashka.Plugins.Core.FunctionKeys;
+
+public class FunctionBarPage
 {
-    public class FunctionBarPage
-    {
-        public IReadOnlyList<FunctionBarItem?> Items { get; internal init; } = null!;
-    }
+    public IReadOnlyList<FunctionBarItem?> Items { get; internal init; } = null!;
 }

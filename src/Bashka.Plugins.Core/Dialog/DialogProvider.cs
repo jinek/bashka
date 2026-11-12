@@ -23,10 +23,10 @@ public class DialogProvider(Control parentControl) : IDialogProvider
 
         IReadOnlyList<string> classes = dialogContent.Classes;
         dialogWindow.Classes.AddRange(classes);
-        
+
         TResult? dialogResult = default;
         dialogContent.OnClose += OnClose;
-        
+
         /*_mainWindow.FindDescendantOfType<Control>().Focus();*/
         await dialogWindow.ShowModalAsync(parentControl).ContinueWith(_ => dialogContent.OnClose -= OnClose);
 

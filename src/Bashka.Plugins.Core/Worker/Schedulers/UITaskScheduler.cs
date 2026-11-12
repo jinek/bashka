@@ -36,6 +36,5 @@ public class UITaskScheduler : TaskScheduler
         if (!Dispatcher.UIThread.CheckAccess()) return false;
         TryExecuteTask(task);
         return true;
-
     }
 }

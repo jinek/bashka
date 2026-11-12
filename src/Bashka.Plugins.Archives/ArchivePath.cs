@@ -1,7 +1,7 @@
 namespace Bashka.Plugins.Archives;
 
 /// <summary>
-/// Paths inside of archives are always slash separated and never start or end with a slash.
+///     Paths inside of archives are always slash separated and never start or end with a slash.
 /// </summary>
 public static class ArchivePath
 {

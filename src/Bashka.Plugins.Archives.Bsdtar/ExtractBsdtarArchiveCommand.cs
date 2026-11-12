@@ -6,14 +6,14 @@ using Bashka.Plugins.Core.Dialog.Abstract;
 using Bashka.Plugins.Core.Dialog.Basic;
 using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Core.Worker.Schedulers;
-using JetBrains.Annotations;
 using Bashka.Plugins.Foundation.FileSystem;
 using Bashka.Plugins.Foundation.ShellInteraction;
+using JetBrains.Annotations;
 
 namespace Bashka.Plugins.Archives.Bsdtar;
 
 /// <summary>
-/// Extracts the selected archives into the directory of the other panel.
+///     Extracts the selected archives into the directory of the other panel.
 /// </summary>
 public class ExtractBsdtarArchiveCommand()
     : CatalogCommand<ShellCatalog, FileEntry>(BsdtarSupport.SupportedExtensions, false, true)
@@ -54,12 +54,10 @@ public class ExtractBsdtarArchiveCommand()
         await WorkerTaskFactory.StartNewWorkerTask(async (_, _, _) =>
         {
             foreach (FileEntry entry in entries)
-            {
                 catalog.ShellSession.ExecuteNonQuery(new BsdtarExtractToDirectoryShellMultiScript(
                     Path.Combine(catalog.CurrentPath!, entry.Name),
                     destinationCatalog.CurrentPath!,
                     string.Empty));
-            }
         });
 
         foreach (FileEntry entry in entries)

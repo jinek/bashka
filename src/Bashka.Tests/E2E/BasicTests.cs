@@ -15,7 +15,7 @@ public class BasicTests() : ConsoloniaAppTestBase<App>(new PixelBufferSize(140, 
     private const string CopiedFileName = "sample_copy.txt";
 
     public string Buffer => UITest.PixelBuffer.PrintBuffer();
-    
+
     [Test]
     public async Task CheckBasics()
     {

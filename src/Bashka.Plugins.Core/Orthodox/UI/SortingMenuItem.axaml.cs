@@ -26,13 +26,7 @@ public partial class SortingMenuItem : MenuItem
         bool isCurrent = (SortMode)menuItem.DataContext! == panel.SortMode;
         menuItem.IsChecked = isCurrent;
         if (isCurrent)
-        {
-            Dispatcher.Post(() =>
-            {
-                menuItem.Focus();
-            },DispatcherPriority.ApplicationIdle);
-            
-        }
+            Dispatcher.Post(() => { menuItem.Focus(); }, DispatcherPriority.ApplicationIdle);
 
         menuItem.Click += MenuItemOnKeyDown!;
     }

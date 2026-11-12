@@ -7,10 +7,6 @@ namespace Bashka.Plugins.Foundation.ShellInteraction.Scripting;
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class ShellScriptAttribute : Attribute
 {
-    public Type ExecutorType { get; }
-    public string ScriptFormat { get; }
-    public string? ParseExpression { get; }
-
     public ShellScriptAttribute(Type executorType, string scriptFormat, [RegexPattern] string? parseExpression = null)
     {
         if (!executorType.IsAssignableTo<IScriptExecutor>())
@@ -19,4 +15,8 @@ public sealed class ShellScriptAttribute : Attribute
         ScriptFormat = scriptFormat;
         ParseExpression = parseExpression;
     }
+
+    public Type ExecutorType { get; }
+    public string ScriptFormat { get; }
+    public string? ParseExpression { get; }
 }

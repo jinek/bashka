@@ -42,10 +42,10 @@
     <ItemGroup Condition="'$(IsPackable)' != 'false'">
         <None Include="$(SolutionDir)/../Icon.png"
               Pack="True"
-              PackagePath="\"/>
+              PackagePath="\" />
         <None Include="readme.md"
               Pack="true"
-              PackagePath="\"/>
+              PackagePath="\" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -59,7 +59,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All"/>
+        <PackageReference Include="PropertyChanged.Fody"
+                          Version="4.1.0"
+                          PrivateAssets="All" />
     </ItemGroup>
 
 </Project>
