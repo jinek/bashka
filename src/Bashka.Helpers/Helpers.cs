@@ -10,7 +10,7 @@ namespace Bashka.Helpers
         public static T GetElement<T>(this ILogical visual, [CallerMemberName] string? elementName = null)
             where T : class, ILogical
         {
-            return visual.Get<T>(elementName);
+            return visual.Get<T>(elementName!);
         }
 
         public static void HandleErrors(this Task task)

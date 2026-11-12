@@ -9,7 +9,7 @@ public interface IPanel : INotifyPropertyChanged
 
     void Pop();
 
-    IEnumerable<Entry> CurrentChildren { get; }
+    IEnumerable<Entry>? CurrentChildren { get; }
 
     ICatalog? CurrentCatalog { get; }
     IEnumerable<Entry> Roots { get; }
