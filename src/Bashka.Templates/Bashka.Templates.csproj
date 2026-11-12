@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <PackageType>Template</PackageType>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <IncludeContentInPack>true</IncludeContentInPack>
+        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
+        <Description>Executable, packable Bashka plugin project template.</Description>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Update="PropertyChanged.Fody" ExcludeAssets="all" />
+        <Content Include="../Bashka.Plugin.Template/**"
+                 Exclude="../Bashka.Plugin.Template/bin/**;../Bashka.Plugin.Template/obj/**"
+                 PackagePath="content/Bashka.Plugin.Template/%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+    
+    <Target Name="StampPluginTemplateVersion" BeforeTargets="_GetPackageFiles">
+        <PropertyGroup>
+            <_PluginTemplateProject>$(IntermediateOutputPath)template/Bashka.Plugin.Template.csproj</_PluginTemplateProject>
+        </PropertyGroup>
+        <MakeDir Directories="$(IntermediateOutputPath)template" />
+        <Copy SourceFiles="../Bashka.Plugin.Template/Bashka.Plugin.Template.csproj"
+              DestinationFiles="$(_PluginTemplateProject)" />
+        <XmlPoke XmlInputPath="$(_PluginTemplateProject)"
+                 Query="/Project/ItemGroup/PackageReference[@Include='Bashka.Plugins' or @Include='Bashka.Launcher']/@Version"
+                 Value="$(PackageVersion)" />
+        <ItemGroup>
+            <Content Remove="../Bashka.Plugin.Template/Bashka.Plugin.Template.csproj" />
+            <Content Include="$(_PluginTemplateProject)"
+                     PackagePath="content/Bashka.Plugin.Template/Bashka.Plugin.Template.csproj" />
+        </ItemGroup>
+    </Target>
+</Project>

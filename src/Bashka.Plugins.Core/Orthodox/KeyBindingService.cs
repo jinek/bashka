@@ -19,8 +19,8 @@ public class KeyBindingService
     {
         _commandFactory = commandFactory;
         var fileIniDataParser = new FileIniDataParser();
-        IniData bindingsData = fileIniDataParser.ReadFile("keybindings.ini");
-
+        IniData bindingsData = fileIniDataParser.ReadFile(Path.Combine(AppContext.BaseDirectory, "keybindings.ini"));
+        
         // Process sections
         foreach (SectionData sectionData in bindingsData.Sections)
         {

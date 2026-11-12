@@ -170,6 +170,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom">
                 <TextBlock Margin="1,0"
+                           Classes="Bashka ShellConnectionInfo"
                            d:DataContext="{x:Type core:IPanel}"
                            x:DataType="core:IPanel"
                            Text="{Binding  CurrentCatalog.ShellSession.ShellConnection.Title}" />

@@ -90,8 +90,8 @@ internal partial class Program
     builder.RegisterFCommand<FileCatCommand, ShellCatalog>(FunctionPage.Default, FunctionKey.F3, "View");
     builder.RegisterFCommand<ExitApplicationCommand, ICatalog>(FunctionPage.Default, FunctionKey.F10, "Exit");
     builder.RegisterFCommand<TouchFileCommand, ShellCatalog>(FunctionPage.Shift, FunctionKey.F4, "Touch");
-    builder.RegisterFCommand<CopyCommand, ShellCatalog>(FunctionPage.Default, FunctionKey.F5, "Copy");
     builder.RegisterFCommand<CopyStreamCommand, IReadStreamCatalog>(FunctionPage.Default, FunctionKey.F5, "CopyS");
+    builder.RegisterFCommand<CopyCommand, ShellCatalog>(FunctionPage.Default, FunctionKey.F5, "Copy");
     builder.RegisterFCommand<MoveCommand, ShellCatalog>(FunctionPage.Default, FunctionKey.F6, "RenMov");
     builder.RegisterFCommand<RenameCommand, ShellCatalog>(FunctionPage.Shift, FunctionKey.F6, "Rename");
     builder.RegisterFCommand<MkdirCommand, ShellCatalog>(FunctionPage.Default, FunctionKey.F7, "MkFold");
@@ -119,6 +119,9 @@ internal partial class Program
 //builder.FullRegister<VolkovCommander,IUIRoot>();
 
     builder.RegisterModule<AttributedMetadataModule>();
+    if (DevelopmentHost.PluginModule is { } pluginModule)
+        builder.RegisterModule(pluginModule);
+
     IContainer container = builder.Build();
     MainWindow.Scope = container.BeginLifetimeScope();
 }

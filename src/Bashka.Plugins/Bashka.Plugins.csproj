@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <Description>Shared Bashka plugin APIs and built-in plugins.</Description>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="_._" Pack="true" PackagePath="lib/$(TargetFramework)/" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Bashka.Plugins.Core/Bashka.Plugins.Core.csproj" />
+        <ProjectReference Include="../Bashka.Plugins.Foundation/Bashka.Plugins.Foundation.csproj" />
+        <ProjectReference Include="../Bashka.Plugins.Archives/Bashka.Plugins.Archives.csproj" />
+        <ProjectReference Include="../Bashka.Plugins.Archives.Bsdtar/Bashka.Plugins.Archives.Bsdtar.csproj" />
+    </ItemGroup>
+</Project>

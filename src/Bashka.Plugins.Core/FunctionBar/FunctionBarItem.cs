@@ -46,8 +46,8 @@ namespace Bashka.Plugins.Core.FunctionBar
                 return;
             }
 
-            FunctionBarBinding finalCommand = CommandWrappers.First();
-            finalCommand = CommandWrappers.FirstOrDefault(c => c.CanExecute) ?? finalCommand;
+            FunctionBarBinding finalCommand = CommandWrappers.Last();
+            finalCommand = CommandWrappers.LastOrDefault(c => c.CanExecute) ?? finalCommand;
             CurrentCommandWrapper = finalCommand;
         }
     }

@@ -1,0 +1,9 @@
+<Project>
+    <ItemGroup Condition="'$(IsPackable)' == 'true'">
+        <None Remove="$(SolutionDir)/../Icon.png;readme.md" />
+        <None Include="$(MSBuildThisFileDirectory)../Icon.png" Pack="true" PackagePath="/" />
+        <None Include="readme.md" Pack="true" PackagePath="/" Condition="Exists('readme.md')" />
+        <None Include="$(MSBuildThisFileDirectory)../readme.md" Pack="true" PackagePath="/"
+              Condition="!Exists('readme.md')" />
+    </ItemGroup>
+</Project>

@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -42,6 +45,11 @@
     
     <ItemGroup>
         <InternalsVisibleTo Include="Bashka.Tests"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="../Bashka.Plugins.Core/keybindings.ini" Pack="true"
+              PackagePath="contentFiles/any/any/" PackageCopyToOutput="true" PackageFlatten="true" />
     </ItemGroup>
 
 </Project>

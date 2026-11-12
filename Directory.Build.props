@@ -11,6 +11,11 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+        <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+        <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
+    </PropertyGroup>
+
     <PropertyGroup>
         <ProjectVersion>1.0</ProjectVersion>
         <ConsoloniaVersion>12.0.3</ConsoloniaVersion>
@@ -25,7 +30,7 @@
 
     <PropertyGroup>
         <Authors>Evgeny Gorbovoy</Authors>
-        <Copyright>© 2021–2025 Evgeny Gorbovoy</Copyright>
+        <Copyright>© 2026 Evgeny Gorbovoy</Copyright>
         <ProjectUrl>https://github.com/jinek/bashka</ProjectUrl>
         <RepositoryUrl>https://github.com/jinek/bashka</RepositoryUrl>
         <PackageIcon>Icon.png</PackageIcon>
