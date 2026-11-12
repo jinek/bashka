@@ -8,7 +8,7 @@ using Bashka.Plugins.Core;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
-using Bashka.Plugins.Core.FunctionBar;
+using Bashka.Plugins.Core.FunctionKeys;
 using Bashka.Plugins.Core.Orthodox;
 using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Foundation;

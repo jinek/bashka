@@ -1,7 +1,7 @@
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 
-namespace Bashka.Plugins.Core.FunctionBar;
+namespace Bashka.Plugins.Core.FunctionKeys;
 
 public class FunctionBarActivationCommand : ICommand
 {

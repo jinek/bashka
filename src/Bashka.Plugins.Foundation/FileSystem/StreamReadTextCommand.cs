@@ -1,7 +1,7 @@
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Core.Dialog.Abstract;
-using Bashka.Plugins.Core.FunctionBar;
+using Bashka.Plugins.Core.FunctionKeys;
 using Bashka.Plugins.Core.Worker.Schedulers;
 
 namespace Bashka.Plugins.Foundation.FileSystem;

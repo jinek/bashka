@@ -3,7 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Dialog.Abstract;
 using Bashka.Plugins.Core.Dialog.Basic;
-using Bashka.Plugins.Core.FunctionBar;
+using Bashka.Plugins.Core.FunctionKeys;
 
 namespace Bashka.Plugins.Foundation;
 

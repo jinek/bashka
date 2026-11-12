@@ -2,7 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Xaml.Interactivity;
-using Bashka.Plugins.Core.FunctionBar;
+using Bashka.Plugins.Core.FunctionKeys;
 using PropertyChanged;
 
 namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
@@ -45,14 +45,16 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
                 _ => null
             };
 
+#pragma warning disable CA1508 // todo: low what??? why this error here????
             if (modifier == null) return null;
+#pragma warning restore CA1508
 
             // solo modifier only, so ALT+CTRL is not treated as a page switch
             KeyModifiers otherModifiers = e.KeyModifiers & ~modifier.Value.ownModifier;
             return otherModifiers == KeyModifiers.None ? modifier.Value.page : null;
         }
 
-        private FunctionBar.FunctionBar? FunctionBar =>
+        private FunctionKeys.FunctionBar? FunctionBar =>
             (AssociatedObject?.DataContext as OrthodoxCommander)?.FunctionBar;
 
         private void OnKeyDown(object? sender, KeyEventArgs e)
@@ -60,7 +62,7 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
             FunctionPage? page = GetMomentaryPage(e);
             if (page == null) return;
 
-            FunctionBar.FunctionBar? functionBar = FunctionBar;
+            FunctionKeys.FunctionBar? functionBar = FunctionBar;
             if (functionBar == null) return;
 
             if (_momentaryKey == e.Key) return;
@@ -83,7 +85,7 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
         {
             if (_pageBeforeMomentary == null) return;
 
-            FunctionBar.FunctionBar? functionBar = FunctionBar;
+            FunctionKeys.FunctionBar? functionBar = FunctionBar;
             if (functionBar != null)
                 functionBar.CurrentPageIndex = _pageBeforeMomentary.Value;
 

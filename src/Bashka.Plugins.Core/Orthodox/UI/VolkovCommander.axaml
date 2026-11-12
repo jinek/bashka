@@ -6,7 +6,7 @@
                     xmlns:orthodox="clr-namespace:Bashka.Plugins.Core.Orthodox;assembly=Bashka.Plugins.Core"
                     xmlns:helpers1="clr-namespace:Bashka.Plugins.Core.Orthodox.UI.Helpers"
                     xmlns:ui="clr-namespace:Bashka.Plugins.Core.Orthodox.UI"
-                    xmlns:functionBar="clr-namespace:Bashka.Plugins.Core.FunctionBar">
+                    xmlns:functionKeys="clr-namespace:Bashka.Plugins.Core.FunctionKeys">
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="avares://Bashka.Plugins.Core/Orthodox/UI/Panel.axaml" />
         <ResourceInclude Source="Commander.SortingMenu.axaml" />
@@ -81,7 +81,7 @@
                                Grid.ColumnSpan="2"
                                Grid.Row="3">
                     <ItemsRepeater.ItemTemplate>
-                        <DataTemplate DataType="functionBar:FunctionBarItem">
+                        <DataTemplate DataType="functionKeys:FunctionBarItem">
                             <DockPanel LastChildFill="True">
                                 <TextBlock Text="{Binding Number}" 
                                            DockPanel.Dock="Left" />

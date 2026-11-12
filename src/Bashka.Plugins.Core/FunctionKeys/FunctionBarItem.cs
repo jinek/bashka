@@ -1,6 +1,6 @@
 using Bashka.Plugins.Core.Scoping;
 
-namespace Bashka.Plugins.Core.FunctionBar
+namespace Bashka.Plugins.Core.FunctionKeys
 {
     public class FunctionBarItem : BaseObject
     {
@@ -13,7 +13,7 @@ namespace Bashka.Plugins.Core.FunctionBar
     
         public int Number { get; init; }
     
-        public required FunctionBarBinding[] CommandWrappers { get; init; }
+        public required IReadOnlyList<FunctionBarBinding> CommandWrappers { get; init; }
         public FunctionBarBinding CurrentCommandWrapper { get; private set; } = EmptyWrapper;
 
         public async void Execute()
@@ -23,13 +23,13 @@ namespace Bashka.Plugins.Core.FunctionBar
 
         public void ChooseCommand()
         {
-            if (!CommandWrappers.Any())
+            if (CommandWrappers.Count == 0)
             {
                 CurrentCommandWrapper = EmptyWrapper;
                 return;
             }
 
-            FunctionBarBinding finalCommand = CommandWrappers.Last();
+            FunctionBarBinding finalCommand = CommandWrappers[^1];
             finalCommand = CommandWrappers.LastOrDefault(c => c.CanExecute) ?? finalCommand;
             CurrentCommandWrapper = finalCommand;
         }

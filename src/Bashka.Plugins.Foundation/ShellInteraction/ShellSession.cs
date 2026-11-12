@@ -22,7 +22,7 @@ public sealed class ShellSession : BaseObject, IDisposable
     /// <summary>
     /// Null if not determined yet. You can enforce it by calling <see cref="DetermineShell"/>
     /// </summary>
-    public IScriptExecutor[]? AvailableBackends { get; private set; }
+    public IReadOnlyList<IScriptExecutor>? AvailableBackends { get; private set; }
 
     public T ExecuteScalar<T>(AttributedShellMultiScript<T> shellMultiScript)
     {

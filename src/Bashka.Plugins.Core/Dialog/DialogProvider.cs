@@ -21,7 +21,7 @@ public class DialogProvider(Control parentControl) : IDialogProvider
             Title = dialogContent.Title
         };
 
-        string[] classes = dialogContent.Classes;
+        IReadOnlyList<string> classes = dialogContent.Classes;
         dialogWindow.Classes.AddRange(classes);
         
         TResult? dialogResult = default;

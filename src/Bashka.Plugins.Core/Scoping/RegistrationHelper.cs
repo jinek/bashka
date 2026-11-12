@@ -4,7 +4,7 @@ using Autofac;
 using Autofac.Builder;
 using Autofac.Features.AttributeFilters;
 using Bashka.Plugins.Core.Abstract;
-using Bashka.Plugins.Core.FunctionBar;
+using Bashka.Plugins.Core.FunctionKeys;
 
 namespace Bashka.Plugins.Core.Scoping;
 

@@ -1,7 +1,7 @@
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Scoping;
 
-namespace Bashka.Plugins.Core.FunctionBar
+namespace Bashka.Plugins.Core.FunctionKeys
 {
     public class FunctionPageChangeCatalogCommand : BaseObject, IFunctionBarCatalogCommand
     {

@@ -103,7 +103,7 @@ public class BsdtarArchiveCatalog : ShellCatalog, IReadStreamCatalog
             : DateTime.Now;
     }
 
-    protected override Task<IEnumerable<Entry>> GetChildren()
+    protected override Task<IEnumerable<Entry>> GetChildrenInternal()
     {
         //todo: low: this duplictaes ArchiveCatalogBase
         string currentPath = CurrentPath!;

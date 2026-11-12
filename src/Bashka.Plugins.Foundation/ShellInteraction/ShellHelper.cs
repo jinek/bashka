@@ -5,7 +5,7 @@ namespace Bashka.Plugins.Foundation.ShellInteraction;
 
 public static class ShellHelper
 {
-    public static ShellScriptAttribute BestMatch(IScriptExecutor[] availableBackends,
+    public static ShellScriptAttribute BestMatch(IEnumerable<IScriptExecutor> availableBackends,
         ShellMultiScript shellMultiScript, out IScriptExecutor scriptExecutor)
     {
         foreach (ShellScriptAttribute script in shellMultiScript.Scripts)

@@ -218,7 +218,7 @@ public class Panel : BaseObject, IPanel
         Entry[] children = [.. CurrentChildren!];
         if (children.Length == 0) return;
 
-        string pattern = QuickSearchPattern.EndsWith("*")
+        string pattern = QuickSearchPattern.EndsWith("*", StringComparison.Ordinal)
             ? QuickSearchPattern
             : QuickSearchPattern + '*';
         

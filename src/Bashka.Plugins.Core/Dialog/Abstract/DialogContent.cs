@@ -12,7 +12,7 @@ public class DialogContent<TResult> : BaseObject, IDialogContent<TResult>
 
     public event Action<TResult>? OnClose;
     public string Title { get; }
-    public string[] Classes { get; protected set; } //todo: make readonly
+    public IReadOnlyList<string> Classes { get; protected set; }
 
     protected virtual void RaiseClose(TResult result)
     {

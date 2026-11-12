@@ -41,7 +41,7 @@ public abstract class PathCatalog : BaseObject, ICatalog
         
         _currentPathLoadingTask = Worker.StartNewWorkerTask(async (cancellationToken, progress, uiTaskFactory) =>
         {
-            _children = (await GetChildren()).ToArray() /*we have to enumerate in this thread!*/;
+            _children = (await GetChildrenInternal()).ToArray() /*we have to enumerate in this thread!*/;
             // Thread.Sleep(2000);
             
             // ReSharper disable once MethodSupportsCancellation
@@ -70,7 +70,7 @@ public abstract class PathCatalog : BaseObject, ICatalog
 
     public IEnumerable<Entry> Children => _children ?? Array.Empty<Entry>();//todo: create empty static array
 
-    protected abstract Task<IEnumerable<Entry>> GetChildren();
+    protected abstract Task<IEnumerable<Entry>> GetChildrenInternal();
 
     public virtual async Task NavigateAsync(string path)
     {

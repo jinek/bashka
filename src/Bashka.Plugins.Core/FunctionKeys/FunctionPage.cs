@@ -1,4 +1,4 @@
-namespace Bashka.Plugins.Core.FunctionBar
+namespace Bashka.Plugins.Core.FunctionKeys
 {
     public enum FunctionPage
     {

@@ -18,7 +18,7 @@ public class RootsCatalog : PathCatalog, IRootsCatalog
 
     public override string Title => "Roots";
 
-    protected override async Task<IEnumerable<Entry>> GetChildren()
+    protected override async Task<IEnumerable<Entry>> GetChildrenInternal()
     {
         if (_catalogs == null)
         {

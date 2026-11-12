@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 namespace Bashka.Plugins.Core.Orthodox;
 
 [UsedImplicitly]
-public class ShowRightRootsCatalogCommand : ShowLeftRootsCatalogCommand
+public sealed class ShowRightRootsCatalogCommand : ShowLeftRootsCatalogCommand
 {
     public ShowRightRootsCatalogCommand()
     {

@@ -56,7 +56,7 @@ public abstract class ArchiveCatalogBase : PathCatalog, IArchiveCatalog, IDispos
         ? ArchiveEntry.Name
         : $"{ShortArchiveName}{ArchivePath.Separator}{CurrentPath}";
 
-    protected override Task<IEnumerable<Entry>> GetChildren()
+    protected override Task<IEnumerable<Entry>> GetChildrenInternal()
     {
         string currentPath = CurrentPath!;
         string prefix = currentPath == string.Empty ? string.Empty : currentPath + ArchivePath.Separator;

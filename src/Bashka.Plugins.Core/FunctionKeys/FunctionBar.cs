@@ -5,7 +5,7 @@ using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Scoping;
 
-namespace Bashka.Plugins.Core.FunctionBar;
+namespace Bashka.Plugins.Core.FunctionKeys;
 
 public class FunctionBar : BaseObject
 {
@@ -21,7 +21,7 @@ public class FunctionBar : BaseObject
     private CommandExecutionContext? _context;
 
     public FunctionPage CurrentPageIndex { get; set; }
-    public FunctionBarPage[] AllPages { get; private set; }
+    public IReadOnlyList<FunctionBarPage> AllPages { get; private set; }
     
     public FunctionBarPage CurrentPage => AllPages[(int)CurrentPageIndex];
 
@@ -99,9 +99,10 @@ public class FunctionBar : BaseObject
 
         for (int iPage = 0; iPage < 4; iPage++)
         {
+            var items = new FunctionBarItem?[12];
             allPages[iPage] = new FunctionBarPage
             {
-                Items = new FunctionBarItem[12]
+                Items = items
             };
 
             for (int iFSlot = 0; iFSlot < 12; iFSlot++)
@@ -122,7 +123,7 @@ public class FunctionBar : BaseObject
                     }).ToArray<FunctionBarBinding>(),
                     Number = iFSlot + 1
                 };
-                allPages[iPage].Items[iFSlot] = item;
+                items[iFSlot] = item;
             }
         }
         

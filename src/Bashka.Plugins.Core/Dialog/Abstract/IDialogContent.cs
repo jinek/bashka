@@ -5,5 +5,5 @@ public interface IDialogContent<out TResult>
     Type TemplateKey => GetType();
     event Action<TResult> OnClose;
     string Title { get; }
-    string[] Classes { get; }
+    IReadOnlyList<string> Classes { get; }
 }

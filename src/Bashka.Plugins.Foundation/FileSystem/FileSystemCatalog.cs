@@ -111,7 +111,7 @@ public class FileSystemCatalog : ShellCatalog, IReadStreamCatalog, IWriteStreamC
         return Task.FromResult(currentDirectory.Line);
     }
 
-    protected override Task<IEnumerable<Entry>> GetChildren()
+    protected override Task<IEnumerable<Entry>> GetChildrenInternal()
     {
         string? currentPath = CurrentPath;
         if (!string.IsNullOrEmpty(currentPath))

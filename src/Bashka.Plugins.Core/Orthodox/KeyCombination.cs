@@ -1,3 +1,4 @@
+using System.Globalization;
 using Avalonia.Input;
 
 namespace Bashka.Plugins.Core.Orthodox
@@ -7,8 +8,9 @@ namespace Bashka.Plugins.Core.Orthodox
         public KeyCombination(KeyEventArgs keyEventArgs) : this(keyEventArgs.KeyModifiers.HasFlag(KeyModifiers.Control),
             keyEventArgs.KeyModifiers.HasFlag(KeyModifiers.Shift),
             keyEventArgs.KeyModifiers.HasFlag(KeyModifiers.Alt),
-            keyEventArgs.Key.ToString().ToUpper())
+            keyEventArgs.Key.ToString().ToUpper(CultureInfo.InvariantCulture))
         {
+            
         }
 
         public KeyCombination(string keyCombinationString) : this(false, false, false, "")
@@ -16,7 +18,7 @@ namespace Bashka.Plugins.Core.Orthodox
             string[] parts = keyCombinationString.Split('+');
             foreach (string part in parts)
             {
-                string trimmedPart = part.Trim().ToUpper();
+                string trimmedPart = part.Trim().ToUpper(CultureInfo.InvariantCulture);
                 switch (trimmedPart)
                 {
                     case "CTRL":

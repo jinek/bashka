@@ -36,4 +36,9 @@ public abstract class VisualExtension
     {
         return (T)AvaloniaXamlLoader.Load(new Uri(uri));
     }
+
+    protected static T Load<T>(Uri uri)
+    {
+        return (T)AvaloniaXamlLoader.Load(uri);
+    }
 }

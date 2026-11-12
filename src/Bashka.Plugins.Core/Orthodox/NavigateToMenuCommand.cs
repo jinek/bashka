@@ -1,7 +1,7 @@
 using System.Reactive;
 using System.Reactive.Linq;
 using Bashka.Plugins.Core.Abstract.Data;
-using Bashka.Plugins.Core.FunctionBar;
+using Bashka.Plugins.Core.FunctionKeys;
 using JetBrains.Annotations;
 
 namespace Bashka.Plugins.Core.Orthodox;

@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Reactive;
 using Autofac;
 using Bashka.Plugins.Core.Abstract;
@@ -13,14 +14,14 @@ namespace Bashka.Plugins.Core.Orthodox;
 
 public class OrthodoxCommander : BaseObject, IUIRoot
 {
-    public FunctionBar.FunctionBar FunctionBar { get; }
+    public FunctionKeys.FunctionBar FunctionBar { get; }
     private readonly Func<IShellConnection> _connectionFactory;
     private readonly KeyBindingService _keyBindingsService;
     private readonly IDialogProvider _dialogProvider;
     public Interaction<Unit, Unit> FocusMenuInteraction { get; } = new();
 
 
-    public OrthodoxCommander(Func<IShellConnection> connectionFactory, KeyBindingService keyBindingsService, FunctionBar.FunctionBar functionBar, IDialogProvider dialogProvider)
+    public OrthodoxCommander(Func<IShellConnection> connectionFactory, KeyBindingService keyBindingsService, FunctionKeys.FunctionBar functionBar, IDialogProvider dialogProvider)
     {
         FunctionBar = functionBar;
         _connectionFactory = connectionFactory;
@@ -159,7 +160,7 @@ public class OrthodoxCommander : BaseObject, IUIRoot
             string key = combination.MainKey;
             ch = key switch
             {
-                { Length: 1 } when char.IsLetter(key[0]) => combination.Shift ? key[0] : char.ToLower(key[0]),
+                { Length: 1 } when char.IsLetter(key[0]) => combination.Shift ? key[0] : char.ToLower(key[0], CultureInfo.InvariantCulture),
                 ['D', var digit] when char.IsDigit(digit) => digit,
                 "MULTIPLY" => '*',
                 "OEMPERIOD" => '.',
