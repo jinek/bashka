@@ -17,12 +17,12 @@ public class GoBackCommand : CatalogCommand<ICatalog,GoBackEntry>
 
         if (catalog.CanNavigateBack)
         {
-            string lastDirName = PathCatalog.PathSegments(catalog.CurrentPath)[^1];
+            string lastDirName = PathCatalog.PathSegments(catalog.CurrentPath!)[^1];
 
             await catalog.NavigateBack();
 
-            IEnumerable<Entry> currentChildren = panel.CurrentChildren;
-            Entry lastEntry =currentChildren.Single(entry1 => entry1.Path == lastDirName);//todo: double enumeration?
+            Entry[] currentChildren = [.. panel.CurrentChildren!];
+            Entry lastEntry =currentChildren.Single(entry1 => entry1.Path == lastDirName);
             int index = currentChildren.IndexOf(lastEntry);
             panel.SelectedIndex = index;
         }

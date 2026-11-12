@@ -20,7 +20,7 @@ public class ToggleMarkCommand(int moveDelta) : ICommand
     public Task ExecuteAsync(CommandExecutionContext context)
     {
         IPanel panel = context.Panel!;
-        Entry entry = panel.SelectedEntry;
+        Entry entry = panel.SelectedEntry!;
         entry.IsMarked = !entry.IsMarked;
         int newIndex = panel.SelectedIndex + moveDelta;
         if (newIndex >= 0 && newIndex < (panel.CurrentChildren?.Count() ?? 0))

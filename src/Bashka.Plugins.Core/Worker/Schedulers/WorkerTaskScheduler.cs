@@ -16,7 +16,7 @@ internal class WorkerTaskScheduler : TaskScheduler
         _uiTaskFactory = uiTaskFactory;
     }
 
-    private readonly ConcurrentDictionary<Task, object> _schedule = new();
+    private readonly ConcurrentDictionary<Task, object?> _schedule = new();
 
     protected override IEnumerable<Task>? GetScheduledTasks()
     {
@@ -54,7 +54,7 @@ internal class WorkerTaskScheduler : TaskScheduler
                 }).Wait();
             }
         }
-        _schedule.TryAdd(task, default);
+        _schedule.TryAdd(task, null);
         
         if (!subtask)
         {
@@ -94,9 +94,9 @@ internal class WorkerTaskScheduler : TaskScheduler
             }
             finally
             {
-                WorkerTaskFactory.InternalCurrentCancellationToken.Value = default;
-                WorkerTaskFactory.InternalCurrentProgress.Value = default;
-                WorkerTaskFactory.InternalCurrentUITaskFactory.Value = default;
+                WorkerTaskFactory.InternalCurrentCancellationToken.Value = null;
+                WorkerTaskFactory.InternalCurrentProgress.Value = null;
+                WorkerTaskFactory.InternalCurrentUITaskFactory.Value = null;
                 cancellationTokenSource.Dispose();
 
                 if (!subtask)

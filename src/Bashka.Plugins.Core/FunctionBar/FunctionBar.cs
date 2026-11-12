@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Autofac;
 using Autofac.Features.Metadata;
 using Bashka.Plugins.Core.Abstract;
@@ -59,6 +60,7 @@ public class FunctionBar : BaseObject
         }
     }
 
+    [MemberNotNull(nameof(AllPages))]
     private void InitializeCatalogFunctionBar()
     {
         if (_catalogType == null)

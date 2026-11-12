@@ -6,7 +6,6 @@ namespace Bashka.Plugins.Core.Dialog.Basic;
 public class StringInputDialog : DialogWithResultBase<string>
 {
     private readonly InputValidationMode _validationMode;
-    private string _input;
 
     public StringInputDialog(string question,
         string defaultValue = "",
@@ -24,8 +23,8 @@ public class StringInputDialog : DialogWithResultBase<string>
 
     public string Input
     {
-        get => _input;
-        set => SetField(ref _input, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     [UsedImplicitly]

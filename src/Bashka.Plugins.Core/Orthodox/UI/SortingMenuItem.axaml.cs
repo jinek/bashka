@@ -23,7 +23,7 @@ public partial class SortingMenuItem : MenuItem
     private void MenuItem_OnAttachedToVisualTree(object sender, VisualTreeAttachmentEventArgs _)
     {
         var panel = (IPanel)DataContext!;
-        var menuItem = ((Visual)sender).FindAncestorOfType<MenuItem>();
+        var menuItem = ((Visual)sender).FindAncestorOfType<MenuItem>()!;
         bool isCurrent = (SortMode)menuItem.DataContext! == panel.SortMode;
         menuItem.IsChecked = isCurrent;
         if (isCurrent)
@@ -35,7 +35,7 @@ public partial class SortingMenuItem : MenuItem
             
         }
 
-        menuItem.Click += MenuItemOnKeyDown;
+        menuItem.Click += MenuItemOnKeyDown!;
     }
 
     private void MenuItemOnKeyDown(object sender, RoutedEventArgs e)
@@ -51,7 +51,7 @@ public partial class SortingMenuItem : MenuItem
 
     private void MenuItem_OnDetachedFromVisualTree(object sender, VisualTreeAttachmentEventArgs e)
     {
-        var menuItem = ((Visual)sender).FindAncestorOfType<MenuItem>();
-        menuItem.Click -= MenuItemOnKeyDown;
+        var menuItem = ((Visual)sender).FindAncestorOfType<MenuItem>()!;
+        menuItem.Click -= MenuItemOnKeyDown!;
     }
 }

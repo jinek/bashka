@@ -27,7 +27,7 @@ public class FunctionBarActivationCommand : ICommand
     {
         if (context.OrthodoxCommander == null) return false;
 
-        FunctionBarItem toolBoxItem = GetFunctionBarItem(context);
+        FunctionBarItem? toolBoxItem = GetFunctionBarItem(context);
          return toolBoxItem?.CurrentCommandWrapper.Command?.CanExecute(context) == true;
     } 
 

@@ -15,7 +15,7 @@ namespace Bashka.Plugins.Core.FunctionBar
     
         public int Number { get; init; }
     
-        public FunctionBarBinding[] CommandWrappers { get; init; }
+        public required FunctionBarBinding[] CommandWrappers { get; init; }
         public FunctionBarBinding CurrentCommandWrapper { get; private set; } = EmptyWrapper;
 
         public async void Execute()

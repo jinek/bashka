@@ -9,9 +9,6 @@ public static class OkCancelDialogContentExtensions
     {
         var okCancelDialogContentBase = new OkCancelDialogContentBase("Title", content);
         bool isOk = await dialogProvider.ShowDialogAsync(okCancelDialogContentBase);
-        if (!isOk)
-            throw new UserCancelException();
-
-        return content.Result;
+        return isOk ? content.Result! : throw new UserCancelException();
     }
 }
