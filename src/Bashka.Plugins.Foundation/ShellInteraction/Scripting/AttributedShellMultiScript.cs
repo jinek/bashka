@@ -1,8 +1,9 @@
 using System.Reflection;
+using DynamicData;
 
 namespace Bashka.Plugins.Foundation.ShellInteraction.Scripting;
 
-public record AttributedShellMultiScript(params object[] Arguments) : AttributedShellMultiScript<object>(Arguments);
+public record AttributedShellMultiScript(params IReadOnlyCollection<object> Arguments) : AttributedShellMultiScript<object>(Arguments);
 
 public record AttributedShellMultiScript<TResult> : ShellMultiScript
 {

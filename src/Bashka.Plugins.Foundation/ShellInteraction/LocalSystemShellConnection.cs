@@ -4,7 +4,7 @@ using Bashka.Plugins.Core.Scoping;
 
 namespace Bashka.Plugins.Foundation.ShellInteraction
 {
-    public class LocalSystemShellConnection : BaseObject, IShellConnection
+    public class LocalSystemShellConnection : BaseObject, IShellConnection, IDisposable
     {
         private readonly object _lock = new();
         private readonly Process _shellProcess;
@@ -51,6 +51,18 @@ namespace Bashka.Plugins.Foundation.ShellInteraction
         public bool IsEquivalentTo(object another)
         {
             return another is LocalSystemShellConnection;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if(disposing)
+                _shellProcess.Dispose();
         }
     }
 }

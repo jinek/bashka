@@ -39,12 +39,12 @@ public class ExtractBsdtarArchiveCommand()
             .IsEquivalentTo(destinationCatalog.ShellSession.ShellConnection);
     }
 
-    public override async Task ExecuteAsync(CatalogCommandContext<ShellCatalog, FileEntry> contextWrap)
+    public override async Task ExecuteAsync(CatalogCommandContext<ShellCatalog, FileEntry> context)
     {
-        CommandExecutionContext context = contextWrap.CommandExecutionContext;
-        var catalog = (ShellCatalog)context.Catalog!;
-        ICatalog destinationCatalog = context.AnotherCatalog!;
-        IReadOnlyList<FileEntry> entries = contextWrap.Entries;
+        CommandExecutionContext innerContext = context.CommandExecutionContext;
+        var catalog = (ShellCatalog)innerContext.Catalog!;
+        ICatalog destinationCatalog = innerContext.AnotherCatalog!;
+        IReadOnlyList<FileEntry> entries = context.Entries;
 
         bool confirmed = await DialogProvider.ShowDialogAsync<bool>(new OkCancelQuestionDialogContent("Confirm",
             $"Extract {entries.Count} archive(s) to {destinationCatalog.CurrentPath}?"));
@@ -56,8 +56,8 @@ public class ExtractBsdtarArchiveCommand()
             foreach (FileEntry entry in entries)
             {
                 catalog.ShellSession.ExecuteNonQuery(new BsdtarExtractToDirectoryShellMultiScript(
-                    Path.Combine(catalog.CurrentPath, entry.Name),
-                    destinationCatalog.CurrentPath,
+                    Path.Combine(catalog.CurrentPath!, entry.Name),
+                    destinationCatalog.CurrentPath!,
                     string.Empty));
             }
         });

@@ -4,7 +4,7 @@ using Renci.SshNet;
 
 namespace Bashka.Plugins.Foundation.ShellInteraction
 {
-    class SshShellConnection : IShellConnection
+    internal class SshShellConnection : IShellConnection, IDisposable
     {
         private readonly ConnectionInfo _connectionInfo;
         private readonly SshClient _sshClient;
@@ -48,6 +48,12 @@ namespace Bashka.Plugins.Foundation.ShellInteraction
             return another is SshShellConnection anotherSshShellConnection
                    && anotherSshShellConnection._connectionInfo.Host ==
                    _connectionInfo.Host; // different users can have different paths
+        }
+
+        public void Dispose()
+        {
+            _sshClient.Disconnect();
+            _sshClient.Dispose();
         }
     }
 }

@@ -31,11 +31,11 @@ public class AddToBsdtarArchiveCommand() : CatalogCommand<ShellCatalog, FileEntr
         return context.Catalog is not BsdtarArchiveCatalog && base.CanExecute(context);
     }
 
-    public override async Task ExecuteAsync(CatalogCommandContext<ShellCatalog, FileEntry> contextWrap)
+    public override async Task ExecuteAsync(CatalogCommandContext<ShellCatalog, FileEntry> context)
     {
-        CommandExecutionContext context = contextWrap.CommandExecutionContext;
-        var catalog = (ShellCatalog)context.Catalog!;
-        IReadOnlyList<FileEntry> entries = contextWrap.Entries;
+        CommandExecutionContext innerContext = context.CommandExecutionContext;
+        var catalog = (ShellCatalog)innerContext.Catalog!;
+        IReadOnlyList<FileEntry> entries = context.Entries;
 
         string? archiveName = await DialogProvider.ShowOkCancelDialogAsync(
             new StringInputDialog("Enter archive name", entries[0].Name + DefaultArchiveExtension));
@@ -44,7 +44,7 @@ public class AddToBsdtarArchiveCommand() : CatalogCommand<ShellCatalog, FileEntr
 
         await WorkerTaskFactory.StartNewWorkerTask(async (cts, progress, _) =>
         {
-            catalog.ShellSession.ExecuteNonQuery(new BsdtarCreateShellMultiScript(catalog.CurrentPath,
+            catalog.ShellSession.ExecuteNonQuery(new BsdtarCreateShellMultiScript(catalog.CurrentPath!,
                 archiveName,
                 BsdtarSupport.QuoteJoin(entries.Select(entry => entry.Name))));
         });
@@ -56,6 +56,6 @@ public class AddToBsdtarArchiveCommand() : CatalogCommand<ShellCatalog, FileEntr
 
         Entry? newEntry = catalog.Children.SingleOrDefault(child => child.Path == archiveName);
         if (newEntry != null)
-            context.Panel!.SelectedEntry = newEntry;
+            innerContext.Panel!.SelectedEntry = newEntry;
     }
 }

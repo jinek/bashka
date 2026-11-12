@@ -57,14 +57,14 @@ public abstract class CopyOrMoveCommandBase : CatalogCommand<ShellCatalog, FileE
                .IsEquivalentTo(shellCatalog.ShellSession.ShellConnection);
     }
 
-    public override async Task ExecuteAsync(CatalogCommandContext<ShellCatalog, FileEntry> contextWrap)
+    public override async Task ExecuteAsync(CatalogCommandContext<ShellCatalog, FileEntry> context)
     {
-        CommandExecutionContext context = contextWrap.CommandExecutionContext;
+        CommandExecutionContext innerContext = context.CommandExecutionContext;
 
-        ICatalog destinationCatalog = (ToAnotherPanel ? context.AnotherCatalog : context.Catalog)!;
-        IPanel destinationPanel = (ToAnotherPanel ? context.AnotherPanel : context.Panel)!;
+        ICatalog destinationCatalog = (ToAnotherPanel ? innerContext.AnotherCatalog : innerContext.Catalog)!;
+        IPanel destinationPanel = (ToAnotherPanel ? innerContext.AnotherPanel : innerContext.Panel)!;
 
-        IReadOnlyList<FileEntry> entries = contextWrap.Entries;
+        IReadOnlyList<FileEntry> entries = context.Entries;
 
         string? singleFileName = null;
         if (entries.Count == 1)
@@ -85,9 +85,9 @@ public abstract class CopyOrMoveCommandBase : CatalogCommand<ShellCatalog, FileE
         {
             foreach (FileEntry entry in entries)
             {
-                string sourcePath = Path.Combine(context.Catalog!.CurrentPath!, entry.Name);
+                string sourcePath = Path.Combine(innerContext.Catalog!.CurrentPath!, entry.Name);
                 string destinationPath = Path.Combine(destinationCatalog.CurrentPath!, singleFileName ?? entry.Name);
-                ((ShellCatalog)context.Catalog)
+                ((ShellCatalog)innerContext.Catalog)
                     .ShellSession
                     .ExecuteNonQuery(CreateScript(sourcePath, destinationPath));
             }

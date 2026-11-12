@@ -6,19 +6,20 @@ namespace Bashka.Plugins.Archives;
 
 public abstract class ArchiveCatalogBase : PathCatalog, IArchiveCatalog, IDisposable
 {
+    private readonly Stream _stream;
     private readonly Lazy<IReadOnlyList<FileEntry>> _allEntries;
 
     protected ArchiveCatalogBase(Stream stream, Entry entry)
     {
+        _stream = stream;
         ArchiveEntry = entry;
-        ArchiveStream = PrepareStream(stream);
         _allEntries = new Lazy<IReadOnlyList<FileEntry>>(ReadAllEntries);
         NotifyDependentProperties(nameof(CurrentPath), nameof(Title));
     }
 
     protected Entry ArchiveEntry { get; }
-    protected Stream ArchiveStream { get; }
-    
+    protected Stream? ArchiveStream { get; private set; }
+
     protected virtual Stream PrepareStream(Stream stream) => stream;
 
     protected abstract IReadOnlyList<FileEntry> ReadAllEntries();
@@ -36,12 +37,20 @@ public abstract class ArchiveCatalogBase : PathCatalog, IArchiveCatalog, IDispos
             name.StartsWith('.') ? EntryCategory.Hidden : EntryCategory.Default), isDirectory, this);
     }
 
-    public virtual void Dispose()
+    public void Dispose()
     {
-        ArchiveStream.Dispose();
+        Dispose(true);
         GC.SuppressFinalize(this);
     }
-    
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            ArchiveStream?.Dispose();
+        }
+    }
+
     private string ShortArchiveName
     {
         get
@@ -58,6 +67,8 @@ public abstract class ArchiveCatalogBase : PathCatalog, IArchiveCatalog, IDispos
 
     protected override Task<IEnumerable<Entry>> GetChildrenInternal()
     {
+        ArchiveStream ??= PrepareStream(_stream);
+        
         string currentPath = CurrentPath!;
         string prefix = currentPath == string.Empty ? string.Empty : currentPath + ArchivePath.Separator;
 

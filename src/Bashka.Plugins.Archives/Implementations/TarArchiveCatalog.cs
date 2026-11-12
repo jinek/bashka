@@ -27,7 +27,7 @@ public class TarArchiveCatalog(Stream stream, Entry entry) : ArchiveCatalogBase(
 
     protected override IReadOnlyList<FileEntry> ReadAllEntries()
     {
-        ArchiveStream.Position = 0;
+        ArchiveStream!.Position = 0;
         using var tarReader = new TarReader(ArchiveStream, true);
         var result = new List<FileEntry>();
         while (tarReader.GetNextEntry() is { } tarEntry)
@@ -42,7 +42,7 @@ public class TarArchiveCatalog(Stream stream, Entry entry) : ArchiveCatalogBase(
 
     public override Stream ReadStream(string fullPath)
     {
-        ArchiveStream.Position = 0;
+        ArchiveStream!.Position = 0;
         using var tarReader = new TarReader(ArchiveStream, true);
         while (tarReader.GetNextEntry() is { } tarEntry)
         {

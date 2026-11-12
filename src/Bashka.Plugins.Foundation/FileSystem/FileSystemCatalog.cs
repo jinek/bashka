@@ -59,7 +59,7 @@ public class FileSystemCatalog : ShellCatalog, IReadStreamCatalog, IWriteStreamC
             var category = EntryCategory.Default;
             string fullPath = PathJoin(path, name);
 
-            if (name.StartsWith("."))
+            if (name.StartsWith(".", StringComparison.Ordinal))
             {
                 category = EntryCategory.Hidden;
             }

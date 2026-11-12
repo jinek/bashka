@@ -19,7 +19,7 @@ public class GZipArchiveCatalog(Stream stream, Entry entry) : ArchiveCatalogBase
         if (fullPath != Entries[0].FullPath)
             throw new UserErrorException($"'{fullPath}' is not found in the archive");
 
-        if (ArchiveStream.CanSeek)
+        if (ArchiveStream!.CanSeek)
             ArchiveStream.Position = 0;
 
         return new GZipStream(ArchiveStream, CompressionMode.Decompress, true);

@@ -24,10 +24,10 @@ public class CopyStreamCommand : CatalogCommand<IReadStreamCatalog, FileEntry>
                base.CanExecute(context);
     }
 
-    public override async Task ExecuteAsync(CatalogCommandContext<IReadStreamCatalog, FileEntry> contextOuter)
+    public override async Task ExecuteAsync(CatalogCommandContext<IReadStreamCatalog, FileEntry> context)
     {
-        CommandExecutionContext context = contextOuter.CommandExecutionContext;
-        FileEntry entry = contextOuter.SingleEntry;
+        CommandExecutionContext innerContext = context.CommandExecutionContext;
+        FileEntry entry = context.SingleEntry;
 
         string fileName =
             await _dialogProvider.ShowOkCancelDialogAsync(new StringInputDialog("Enter file name",
@@ -35,20 +35,20 @@ public class CopyStreamCommand : CatalogCommand<IReadStreamCatalog, FileEntry>
 
         await _workerTaskFactory.StartNewWorkerTask(async (cts, progress, _) =>
         {
-            string destinationPath = Path.Combine(context.AnotherCatalog!.CurrentPath!, fileName);
+            string destinationPath = Path.Combine(innerContext.AnotherCatalog!.CurrentPath!, fileName);
             await using Stream sourceStream =
-                ((IReadStreamCatalog)context.Catalog!).ReadStream(entry.FullPath);
-            ((IWriteStreamCatalog)context.AnotherCatalog).WriteStream(destinationPath, sourceStream);
+                ((IReadStreamCatalog)innerContext.Catalog!).ReadStream(entry.FullPath);
+            ((IWriteStreamCatalog)innerContext.AnotherCatalog).WriteStream(destinationPath, sourceStream);
         });
         
-        await context.AnotherCatalog!.NavigateAsync(string.Empty);
+        await innerContext.AnotherCatalog!.NavigateAsync(string.Empty);
         
-        Entry? newEntry = context.AnotherCatalog.Children.SingleOrDefault(entry => entry.Path == fileName);
+        Entry? newEntry = innerContext.AnotherCatalog.Children.SingleOrDefault(entry => entry.Path == fileName);
         if (newEntry == null)
         {
             throw new UserErrorException("File was removed");
         }
 
-        context.AnotherPanel!.SelectedEntry = newEntry;
+        innerContext.AnotherPanel!.SelectedEntry = newEntry;
     }
 }
