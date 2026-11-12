@@ -12,7 +12,7 @@ public class EntryToForegroundConverter : AvaloniaObject, IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        var entry = (Entry)value;
+        var entry = (Entry)value!;
         if (entry.IsGone)
             return DeletedBrush;
         if (entry.IsMarked)

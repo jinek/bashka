@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
 using Autofac;
 using Bashka.Plugins.Core.Abstract;
@@ -5,6 +6,7 @@ using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Dialog.Abstract;
 using Bashka.Plugins.Core.Scoping;
 using DynamicData.Binding;
+using JetBrains.Annotations;
 using ReactiveUI;
 
 namespace Bashka.Plugins.Core.Orthodox;
@@ -39,7 +41,7 @@ public class OrthodoxCommander : BaseObject, IUIRoot
                 OnPropertyChanged(nameof(CurrentPanel));
             });
 
-        this.WhenPropertyChanged(navigator => navigator.CurrentPanel.CurrentCatalog)
+        this.WhenPropertyChanged(navigator => navigator.CurrentPanel!.CurrentCatalog)
             .Subscribe(value =>
             {
                 FunctionBar.CatalogType = value.Value?.GetType();
@@ -56,11 +58,11 @@ public class OrthodoxCommander : BaseObject, IUIRoot
                 (navigator, _, _, _, _) => new object())
             .Subscribe(_ => RefreshFunctionBarContext());
 
-        this.WhenChanged(navigator => navigator.LeftPanel.SelectedEntry.IsGone,
+        this.WhenChanged(navigator => navigator.LeftPanel.SelectedEntry!.IsGone,
                 (navigator, _) => navigator)
             .Subscribe(_ => RefreshFunctionBarContext());
 
-        this.WhenChanged(navigator => navigator.RightPanel.SelectedEntry.IsGone,
+        this.WhenChanged(navigator => navigator.RightPanel.SelectedEntry!.IsGone,
                 (navigator, _) => navigator)
             .Subscribe(_ => RefreshFunctionBarContext());
 
@@ -87,12 +89,13 @@ public class OrthodoxCommander : BaseObject, IUIRoot
     /// <summary>
     /// Can be null during initialization only
     /// </summary>
-    public IPanel LeftPanel { get; private set;}
+    public IPanel LeftPanel { get; private set; } = null!;
 
+    
     /// <summary>
     /// <see cref="LeftPanel"/>
     /// </summary>
-    public IPanel RightPanel { get; private set; }
+    public IPanel RightPanel { get; private set; } = null!;
 
     public IPanel RecreatePanel(IPanel? panelToRecreate, IShellConnection shellConnection)
     {
@@ -107,13 +110,13 @@ public class OrthodoxCommander : BaseObject, IUIRoot
         if (isLeft)
         {
             // null setups needed because of some avalonia binding issue
-            LeftPanel = null;
+            LeftPanel = null!;
             LeftPanel = newPanel;
             OnPropertyChanged(nameof(LeftPanel));
         }
         else if (panelToRecreate == RightPanel)
         {
-            RightPanel = null;
+            RightPanel = null!;
             RightPanel = newPanel;
             OnPropertyChanged(nameof(RightPanel));
         }

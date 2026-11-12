@@ -14,7 +14,7 @@ public interface IPanel : INotifyPropertyChanged
     ICatalog? CurrentCatalog { get; }
     IEnumerable<Entry> Roots { get; }
     bool IsRootsVisible { get; set; }
-    Entry SelectedRoot { get; set; }
+    Entry? SelectedRoot { get; set; }
     Entry? SelectedEntry { get; set; }
 
     /// <summary>

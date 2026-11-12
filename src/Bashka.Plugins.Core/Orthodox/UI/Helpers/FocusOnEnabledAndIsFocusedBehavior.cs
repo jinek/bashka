@@ -10,12 +10,11 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers;
 [DoNotNotify]
 public class FocusOnEnabledAndIsFocusedBehavior : Behavior<DataGrid>
 {
-    private IDisposable _subscribe;
     private bool IsFocused => AssociatedObject?.DataContext is IPanel { IsFocused: true };
 
     protected override void OnAttachedToVisualTree()
     {
-        AssociatedObject.PropertyChanged += OnAssociatedObjectOnPropertyChanged;
+        AssociatedObject!.PropertyChanged += OnAssociatedObjectOnPropertyChanged;
         /*_subscribe = AssociatedObject.WhenPropertyChanged(control => control.IsEffectivelyEnabled)
             .Subscribe(b =>
             {
@@ -25,7 +24,7 @@ public class FocusOnEnabledAndIsFocusedBehavior : Behavior<DataGrid>
         base.OnAttachedToVisualTree();
     }
 
-    private void OnAssociatedObjectOnPropertyChanged(object sender, AvaloniaPropertyChangedEventArgs args)
+    private void OnAssociatedObjectOnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs args)
     {
         if (args.Property == Control.IsEffectivelyEnabledProperty)
         {
@@ -35,7 +34,7 @@ public class FocusOnEnabledAndIsFocusedBehavior : Behavior<DataGrid>
                 {
                     Dispatcher.UIThread.Post(() =>
                     {
-                        if(AssociatedObject.SelectedIndex<=0)
+                        if(AssociatedObject!.SelectedIndex<=0)
                             AssociatedObject.SelectedIndex = 0;
                         AssociatedObject?.Focus();
                     });
@@ -47,7 +46,7 @@ public class FocusOnEnabledAndIsFocusedBehavior : Behavior<DataGrid>
 
     protected override void OnDetachedFromVisualTree()
     {
-        AssociatedObject.PropertyChanged -= OnAssociatedObjectOnPropertyChanged;
+        AssociatedObject!.PropertyChanged -= OnAssociatedObjectOnPropertyChanged;
         base.OnDetachedFromVisualTree();
     }
 }

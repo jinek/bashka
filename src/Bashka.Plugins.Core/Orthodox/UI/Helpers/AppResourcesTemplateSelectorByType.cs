@@ -11,7 +11,7 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
         {
             if (value is null)
                 return null;
-            object? result = Application.Current.FindResource(value);
+            object? result = Application.Current!.FindResource(value);
             return result;
         }
 

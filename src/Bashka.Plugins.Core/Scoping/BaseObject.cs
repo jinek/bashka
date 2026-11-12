@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Autofac;
 using JetBrains.Annotations;
@@ -7,7 +8,6 @@ namespace Bashka.Plugins.Core.Scoping;
 
 public class BaseObject : TypeKeyedObject, INotifyPropertyChanged
 {
-    private ILifetimeScope? _lifetimeScope = null!;
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
@@ -38,16 +38,17 @@ public class BaseObject : TypeKeyedObject, INotifyPropertyChanged
     }
 
     [AutoWire]
-    public ILifetimeScope? LifetimeScope
+    [field: MaybeNull]
+    public ILifetimeScope LifetimeScope
     {
-        get => _lifetimeScope;
+        get;
         [UsedImplicitly]
         internal set
         {
-            _lifetimeScope = value;
+            field = value;
             OnScopeInitialized();
         }
-    }
+    } = null!;
 
     protected virtual void OnScopeInitialized()
     {

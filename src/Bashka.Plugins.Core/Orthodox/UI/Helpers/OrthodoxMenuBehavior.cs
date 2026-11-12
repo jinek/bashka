@@ -52,7 +52,7 @@ public class OrthodoxMenuBehavior : Behavior<Menu>
 
     private void FocusMenu(OrthodoxCommander commander)
     {
-        IEnumerable<MenuItem> menuItems = AssociatedObject.Items.OfType<MenuItem>();
+        IEnumerable<MenuItem> menuItems = AssociatedObject!.Items.OfType<MenuItem>();
 
         MenuItem targetItem = menuItems.Single(item =>
             commander.CurrentPanel == commander.LeftPanel

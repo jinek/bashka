@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Core.Worker.Schedulers;
@@ -50,18 +51,18 @@ public abstract class PathCatalog : BaseObject, ICatalog
     }
 
     private IEnumerable<Entry>? _children;
-    private WorkerTaskFactory? _worker;
     private string? _currentPath;
 
     [AutoWire]
+    [field: MaybeNull]
     // ReSharper disable once MemberCanBePrivate.Global Required by Autofac
-    internal WorkerTaskFactory? Worker
+    internal WorkerTaskFactory Worker
     {
-        get => _worker;
+        get;
         [UsedImplicitly]
         set
         {
-            _worker = value;
+            field = value;
             OnInitialized?.Invoke();
         }
     }
@@ -100,12 +101,12 @@ public abstract class PathCatalog : BaseObject, ICatalog
 
         return result.AsEnumerable().Reverse().ToArray();
     }
-    
-    public virtual bool CanNavigateBack => PathSegments(CurrentPath).Length > 1;
+
+    public virtual bool CanNavigateBack => CurrentPath != null && PathSegments(CurrentPath).Length > 1;
 
     public virtual async Task NavigateBack()
     {
-        string[] pathSegments = PathSegments(CurrentPath);
+        string[] pathSegments = PathSegments(CurrentPath!);
         if (pathSegments.Length == 0)
             throw new NavigationException();
         string directoryName = PathJoin(pathSegments[..^1]);

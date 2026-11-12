@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Enumeration;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
@@ -42,7 +43,7 @@ public class Panel : BaseObject, IPanel
                 IsFocused = true;
             });
         
-        this.WhenChanged(panel => panel.CurrentCatalog, panel => panel.CurrentCatalog.Children,
+        this.WhenChanged(panel => panel.CurrentCatalog, panel => panel.CurrentCatalog!.Children,
                 (panel, _, _) => panel.CurrentCatalog?.Children)
             .Subscribe(_ => { OnPropertyChanged(nameof(CurrentChildren)); });
 
@@ -61,7 +62,7 @@ public class Panel : BaseObject, IPanel
                     return;
                 
                 if(SelectedRoot.ParentCatalog.TypeKey!=value.Value!.TypeKey)
-                    SelectedRoot = null;//todo: must be nullable
+                    SelectedRoot = null;
             });
 
         RootsCatalog.NavigateAsync(ICatalog.RootFavoritesPath).HandleErrors();
@@ -121,7 +122,7 @@ public class Panel : BaseObject, IPanel
     public IReadOnlyList<Entry> MarkedEntries =>
         [.. CurrentCatalog?.Children.Where(entry => entry is { IsMarked: true, IsGone: false }) ?? []];
 
-    public Entry SelectedRoot { get; set; }
+    public Entry? SelectedRoot { get; set; }
     public Entry? SelectedEntry { get; set; }
     public int SelectedIndex { get; set; }
 
@@ -186,7 +187,7 @@ public class Panel : BaseObject, IPanel
     public async void EntrySelected()
     {
         var commandExecutionContext =
-            new CommandExecutionContext([SelectedEntry], CurrentCatalog, this, Commander.Value, null);
+            new CommandExecutionContext([SelectedEntry!], CurrentCatalog, this, Commander.Value, null);
         ICommand[] selectCommands = _commandSelector.SelectCommands(commandExecutionContext);
         ICommand command = selectCommands.Last(); //the latest registered in IOC overrides previous ones
         await command.ExecuteAsync(commandExecutionContext);
@@ -214,7 +215,7 @@ public class Panel : BaseObject, IPanel
     {
         if (!IsQuickSearchActive || QuickSearchPattern == string.Empty) return;
 
-        Entry[] children = [.. CurrentChildren];
+        Entry[] children = [.. CurrentChildren!];
         if (children.Length == 0) return;
 
         string pattern = QuickSearchPattern.EndsWith("*")
@@ -234,5 +235,6 @@ public class Panel : BaseObject, IPanel
         }
     }
     
-    [AutoWire] public Lazy<OrthodoxCommander> Commander { get; [UsedImplicitly] internal set; }
+    [AutoWire]
+    public Lazy<OrthodoxCommander> Commander { get; [UsedImplicitly] internal init; } = null!;
 }

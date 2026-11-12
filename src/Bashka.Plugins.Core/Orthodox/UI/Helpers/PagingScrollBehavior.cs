@@ -5,6 +5,7 @@ using PropertyChanged;
 namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
 {
     [DoNotNotify]
+    // ReSharper disable once UnusedType.Global May be will use soon
     public class PagingScrollBehavior : Behavior<VerticalScrollDataGrid>
     {
         private bool _isScrolling;
@@ -12,13 +13,13 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
         {
             base.OnAttached();
         
-            AssociatedObject.SelectionChanged += OnSelectionChanged;
+            AssociatedObject!.SelectionChanged += OnSelectionChanged;
         }
 
         protected override void OnDetaching()
         {
             base.OnDetaching();
-            AssociatedObject.SelectionChanged -= OnSelectionChanged;
+            AssociatedObject!.SelectionChanged -= OnSelectionChanged;
         }
 
 

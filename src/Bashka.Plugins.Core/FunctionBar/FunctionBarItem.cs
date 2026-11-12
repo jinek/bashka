@@ -1,10 +1,8 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using Bashka.Plugins.Core.Scoping;
 
 namespace Bashka.Plugins.Core.FunctionBar
 {
-    public class FunctionBarItem : BaseObject, INotifyPropertyChanged
+    public class FunctionBarItem : BaseObject
     {
         private static readonly FunctionBarBinding EmptyWrapper = new()
         {
@@ -22,8 +20,6 @@ namespace Bashka.Plugins.Core.FunctionBar
         {
             await CurrentCommandWrapper.Command?.ExecuteAsync(CurrentCommandWrapper.Context!)!;
         }
-
-        public new event PropertyChangedEventHandler? PropertyChanged;
 
         public void ChooseCommand()
         {
