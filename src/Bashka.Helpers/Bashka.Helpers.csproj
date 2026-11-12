@@ -11,10 +11,10 @@
         <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="12.0.0"/>
         <PackageReference Include="Xaml.Behaviors" Version="12.0.0"/>
         <PackageReference Include="Avalonia.Skia" Version="$(AvaloniaVersion)"/>
-        <PackageReference Include="Consolonia" Version="12.0.3.13-alpha.2804"/>
+        <PackageReference Include="Consolonia" Version="$(ConsoloniaVersionLatest)"/>
         <PackageReference Include="Consolonia.Modal" Version="$(ConsoloniaVersionLatest)"/>
-        <PackageReference Include="Consolonia.Fonts" Version="12.0.3.13-alpha.2804"/>
-        <PackageReference Include="Consolonia.Controls.DataGrid" Version="12.0.3.13-alpha.2804"/>
+        <PackageReference Include="Consolonia.Fonts" Version="$(ConsoloniaVersionLatest)"/>
+        <PackageReference Include="Consolonia.Controls.DataGrid" Version="$(ConsoloniaVersionLatest)"/>
         <PackageReference Include="DynamicData" Version="9.4.33"/>
         <PackageReference Include="AsyncLocalRegion" Version="2.1.0.25"/>
         <PackageReference Include="Autofac" Version="9.3.2"/>

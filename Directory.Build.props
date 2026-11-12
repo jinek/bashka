@@ -18,13 +18,13 @@
 
     <PropertyGroup>
         <ProjectVersion>1.0</ProjectVersion>
-        <ConsoloniaVersion>12.0.3</ConsoloniaVersion>
+        <ConsoloniaVersion>12.1.4</ConsoloniaVersion>
         <ConsoloniaVersionLatest>$(ConsoloniaVersion).*</ConsoloniaVersionLatest>
         <!--If ran not by pipeline - defining for local run-->
         <BUILD_VERSION Condition="'$(BUILD_VERSION)' == ''">0</BUILD_VERSION>
         <VersionPrefix>$(ProjectVersion).$(BUILD_VERSION)</VersionPrefix>
-        <AvaloniaVersion>12.0.3</AvaloniaVersion>                        
-        <AvaloniaControlsDataGridVersion>12.0.0</AvaloniaControlsDataGridVersion>
+        <AvaloniaVersion>12.1.4</AvaloniaVersion>                        
+        <AvaloniaControlsDataGridVersion>12.1.2</AvaloniaControlsDataGridVersion>
         <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
     </PropertyGroup>
 

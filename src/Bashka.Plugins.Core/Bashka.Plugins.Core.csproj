@@ -6,7 +6,7 @@
         <ProjectReference Include="..\Bashka.Helpers\Bashka.Helpers.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Iciclecreek.Avalonia.Terminal" Version="2.0.3"/>
+        <PackageReference Include="Iciclecreek.Avalonia.Terminal" Version="4.1.4"/>
     </ItemGroup>
     <ItemGroup>
         <AdditionalFiles Include="Orthodox\UI\DarkTheme.axaml"/>
