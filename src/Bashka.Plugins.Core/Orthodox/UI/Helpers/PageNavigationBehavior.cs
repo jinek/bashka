@@ -44,7 +44,8 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
             if (grid.ItemsSource is not IEnumerable<object> items)
                 return;
 
-            int count = items.Count();
+            IEnumerable<object> array = items as object[] ?? [.. items];
+            int count = array.Count();
             if (count == 0)
                 return;
 
@@ -53,14 +54,14 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
 
             
             grid.SelectedIndex = targetIndex;
-            grid.ScrollIntoView(items.ElementAt(targetIndex), grid.Columns.First());
+            grid.ScrollIntoView(array.ElementAt(targetIndex), grid.Columns.First());
 
             e.Handled = true;
         }
 
         private static int GetPageSize(VerticalScrollDataGrid grid)
         {
-            double viewPortSize = grid._scrollBar!.ViewportSize;
+            double viewPortSize = grid.ScrollBar!.ViewportSize;
             return Math.Max(1, (int)viewPortSize - 1);
         }
     }

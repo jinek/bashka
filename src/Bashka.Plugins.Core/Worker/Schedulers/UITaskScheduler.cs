@@ -11,7 +11,7 @@ public class UITaskScheduler : TaskScheduler
     // everything else keeps the default (Normal) priority.
     public static readonly AsyncLocalParameter<DispatcherPriority> Priority = new();
 
-    protected override IEnumerable<Task>? GetScheduledTasks()
+    protected override IEnumerable<Task> GetScheduledTasks()
     {
         throw new NotImplementedException();
     }

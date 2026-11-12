@@ -1,4 +1,3 @@
-using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Core.Dialog.Abstract;
@@ -33,7 +32,7 @@ public class MkdirCommand : TypeKeyedObject, IFunctionBarCommand<ShellCatalog>
         
         string fileName = await _dialogProvider.ShowOkCancelDialogAsync(new StringInputDialog("Enter directory name"));
 
-        await _workerTaskFactory.StartNewWorkerTask(async (cts, progress, _) =>
+        await _workerTaskFactory.StartNewWorkerTask(async (_, _, _) =>
         {
             string path = Path.Combine(context.Catalog!.CurrentPath!, fileName);
             ((ShellCatalog)context.Catalog)

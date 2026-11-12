@@ -29,7 +29,7 @@ public class StreamReadTextCatalogCommand(IDialogProvider dialogProvider, Worker
             fileContent = streamReader.ReadToEnd();
             return Task.CompletedTask;
         });
-        await dialogProvider.ShowDialogAsync<object?>(
+        await dialogProvider.ShowDialogAsync(
             new TextViewerDialogContent(entry.Name, fileContent));
     }
 }

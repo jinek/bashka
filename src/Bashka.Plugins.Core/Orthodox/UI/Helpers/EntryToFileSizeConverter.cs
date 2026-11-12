@@ -22,10 +22,10 @@ public class EntryToFileSizeConverter : IValueConverter
 
     // code from https://www.c-sharpcorner.com/article/csharp-convert-bytes-to-kb-mb-gb/
     // Load all suffixes in an array  
-    static readonly string[] suffixes =
-        { "Bytes", "KB", "MB", "GB", "TB", "PB" };
+    private static readonly string[] Suffixes =
+        ["Bytes", "KB", "MB", "GB", "TB", "PB"];
 
-    public static string FormatSize(Int64 bytes)
+    private static string FormatSize(Int64 bytes)
     {
         int counter = 0;
         decimal number = bytes;
@@ -35,7 +35,7 @@ public class EntryToFileSizeConverter : IValueConverter
             counter++;
         }
 
-        return string.Format("{0:n1}{1}", number, suffixes[counter]);
+        return $"{number:n1}{Suffixes[counter]}";
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

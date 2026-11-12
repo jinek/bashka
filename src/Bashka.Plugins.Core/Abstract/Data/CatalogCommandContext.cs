@@ -1,5 +1,6 @@
 namespace Bashka.Plugins.Core.Abstract.Data
 {
+    // ReSharper disable once UnusedTypeParameter //whats going on here
     public record CatalogCommandContext<TCatalog, TEntry>(CommandExecutionContext CommandExecutionContext)
         where TCatalog : ICatalog where TEntry : Entry
     {

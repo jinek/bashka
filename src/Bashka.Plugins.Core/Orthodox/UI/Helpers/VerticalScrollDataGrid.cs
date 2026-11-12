@@ -10,12 +10,11 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             base.OnApplyTemplate(e);
-            _scrollBar = e.NameScope.Find<ScrollBar>("PART_VerticalScrollbar");
+            ScrollBar = e.NameScope.Find<ScrollBar>("PART_VerticalScrollbar");
         }
 
         protected override Type StyleKeyOverride => typeof(DataGrid);
 
-        internal ScrollBar? _scrollBar;
-
+        internal ScrollBar? ScrollBar;
     }
 }

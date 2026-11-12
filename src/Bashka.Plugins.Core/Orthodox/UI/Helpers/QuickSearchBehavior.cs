@@ -1,4 +1,3 @@
-using System.Reflection.PortableExecutable;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Xaml.Interactivity;

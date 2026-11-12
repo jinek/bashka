@@ -3,7 +3,7 @@ using Bashka.Plugins.Core.FunctionKeys;
 
 namespace Bashka.Plugins.Core.Abstract.Surrounding;
 
-public abstract class CatalogCommand<TCatalog, TEntry> : ICommand, IRegexCommand, IFunctionBarCommand<TCatalog>
+public abstract class CatalogCommand<TCatalog, TEntry> : IRegexCommand, IFunctionBarCommand<TCatalog>
     where TCatalog : ICatalog where TEntry : Entry
 {
     public string? Regexp { get; }

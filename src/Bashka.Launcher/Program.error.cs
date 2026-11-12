@@ -1,9 +1,10 @@
 using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using Bashka.Helpers;
-using Bashka.Launcher;
 
-internal partial class Program
+namespace Bashka.Launcher;
+
+internal static partial class Program
 {
     public const int ShutdownTimeoutSeconds = 60;
 
@@ -33,7 +34,7 @@ internal partial class Program
 #endif
         });
 
-        TaskScheduler.UnobservedTaskException += (_, args) =>
+        TaskScheduler.UnobservedTaskException += (_2, args) =>
         {
             if (args.Exception.InnerException is CrashAppException)
                 ThreadPool.QueueUserWorkItem(_ => throw new CrashAppException(args.Exception));

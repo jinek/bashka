@@ -3,8 +3,6 @@
                     xmlns:brushes="https://github.com/consolonia"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:core="clr-namespace:Bashka.Plugins.Core.Abstract;assembly=Bashka.Plugins.Core"
-                    xmlns:autFac1="clr-namespace:Bashka.Plugins.Core;assembly=Bashka.Plugins.Core"
-                    xmlns:helpers="clr-namespace:Bashka.Helpers;assembly=Bashka.Helpers"
                     xmlns:data="clr-namespace:Bashka.Plugins.Core.Abstract.Data"
                     xmlns:helpers1="clr-namespace:Bashka.Plugins.Core.Orthodox.UI.Helpers">
     <helpers1:EntryToForegroundConverter x:Key="EntryToForegroundConverter"
@@ -46,12 +44,12 @@
                                              SelectionMode="Single"
                                              IsReadOnly="True"
                                              d:DataContext="{d:DesignInstance core:IPanel}">
-                <DataGrid.Styles>
-                    <!--<Style Selector="DataGridRow:selected /template/ Rectangle#SelectionRectangle">
+                <!--<DataGrid.Styles>
+                    <Style Selector="DataGridRow:selected /template/ Rectangle#SelectionRectangle">
                          <Setter Property="IsVisible"
                                  Value="False" />
-                     </Style>-->
-                </DataGrid.Styles>
+                     </Style>
+                </DataGrid.Styles>-->
                 <Interaction.Behaviors>
                     <helpers1:OrthodoxColumnsBehavior />
                     <!--<helpers1:PagingScrollBehavior/>-->
@@ -80,11 +78,11 @@
                                 Gesture="ENTER" />
                 </DataGrid.KeyBindings>
                 <DataGrid.Styles>
-                    <Style Selector="DataGridRow"
-                           d:DataContext="{x:Type data:Entry}"
-                           x:DataType="data:Entry">
+                    <Style Selector="DataGridRow">
                         <Setter Property="Foreground"
-                                Value="{Binding Path=SelfHack, Converter={StaticResource EntryToForegroundConverter}}" />
+                                d:DataContext="{x:Type data:Entry}"
+                                x:DataType="data:Entry"
+                                Value="{Binding Path=SelfHack , Converter={StaticResource EntryToForegroundConverter}}" />
                     </Style>
                 </DataGrid.Styles>
                 <DataGrid.BorderBrush>
@@ -169,6 +167,10 @@
                     Background="{DynamicResource ThemeBackgroundBrush}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom">
+                <Border.Styles>
+                    <Style Selector="TextBlock.Bashka.ShellConnectionInfo"/>
+                </Border.Styles>
+                <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
                 <TextBlock Margin="1,0"
                            Classes="Bashka ShellConnectionInfo"
                            d:DataContext="{x:Type core:IPanel}"

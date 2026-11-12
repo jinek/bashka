@@ -1,5 +1,4 @@
 using Bashka.Plugins.Core.Abstract.Data;
-using DynamicData;
 
 namespace Bashka.Plugins.Core.Abstract.Surrounding;
 

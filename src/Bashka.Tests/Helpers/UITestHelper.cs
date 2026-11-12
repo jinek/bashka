@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Avalonia.Threading;
 using Consolonia.NUnit;
@@ -24,15 +23,12 @@ internal static class UITestHelper
 
     private static async Task WaitForMatch(UnitTestConsole test, string regex, bool shouldMatch)
     {
-        var deadline = DateTime.UtcNow + Timeout;
+        DateTime deadline = DateTime.UtcNow + Timeout;
         var compiledRegex = new Regex(regex);
-        string lastBuffer = string.Empty;
-
-        
 
         while (true)
         {
-            lastBuffer = await Dispatcher.UIThread.InvokeAsync(() => test.PixelBuffer.PrintBuffer());
+            string lastBuffer = await Dispatcher.UIThread.InvokeAsync(() => test.PixelBuffer.PrintBuffer());
             bool isMatch = compiledRegex.IsMatch(lastBuffer);
             if (isMatch == shouldMatch)
                 return;

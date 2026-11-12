@@ -1,13 +1,10 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reactive;
 using Autofac;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
-using Bashka.Plugins.Core.Dialog.Abstract;
 using Bashka.Plugins.Core.Scoping;
 using DynamicData.Binding;
-using JetBrains.Annotations;
 using ReactiveUI;
 
 namespace Bashka.Plugins.Core.Orthodox;
@@ -17,16 +14,14 @@ public class OrthodoxCommander : BaseObject, IUIRoot
     public FunctionKeys.FunctionBar FunctionBar { get; }
     private readonly Func<IShellConnection> _connectionFactory;
     private readonly KeyBindingService _keyBindingsService;
-    private readonly IDialogProvider _dialogProvider;
     public Interaction<Unit, Unit> FocusMenuInteraction { get; } = new();
 
 
-    public OrthodoxCommander(Func<IShellConnection> connectionFactory, KeyBindingService keyBindingsService, FunctionKeys.FunctionBar functionBar, IDialogProvider dialogProvider)
+    public OrthodoxCommander(Func<IShellConnection> connectionFactory, KeyBindingService keyBindingsService, FunctionKeys.FunctionBar functionBar)
     {
         FunctionBar = functionBar;
         _connectionFactory = connectionFactory;
         _keyBindingsService = keyBindingsService;
-        _dialogProvider = dialogProvider;
         /*ToolBoxItems = new[]
             {
                 "  Help ", "UserMn", "View", "Edit", "Copy", "RenMov", "MkFold", "Delete", "ConfMn", "Quit", "Plugin",
@@ -42,7 +37,7 @@ public class OrthodoxCommander : BaseObject, IUIRoot
                 OnPropertyChanged(nameof(CurrentPanel));
             });
 
-        this.WhenPropertyChanged(navigator => navigator.CurrentPanel!.CurrentCatalog)
+        this.WhenPropertyChanged(navigator => navigator.CurrentPanel.CurrentCatalog)
             .Subscribe(value =>
             {
                 FunctionBar.CatalogType = value.Value?.GetType();
@@ -56,7 +51,7 @@ public class OrthodoxCommander : BaseObject, IUIRoot
                 navigator => navigator.RightPanel.SelectedIndex,
                 navigator => navigator.LeftPanel.IsFocused,
                 navigator => navigator.RightPanel.IsFocused,
-                (navigator, _, _, _, _) => new object())
+                (_, _, _, _, _) => new object())
             .Subscribe(_ => RefreshFunctionBarContext());
 
         this.WhenChanged(navigator => navigator.LeftPanel.SelectedEntry!.IsGone,
@@ -82,7 +77,7 @@ public class OrthodoxCommander : BaseObject, IUIRoot
     {
         //left
         RecreatePanel(null, _connectionFactory());
-        LeftPanel!.IsFocused = true;
+        LeftPanel.IsFocused = true;
         //right
         RecreatePanel(null, _connectionFactory());
     }
@@ -124,12 +119,12 @@ public class OrthodoxCommander : BaseObject, IUIRoot
         else throw new InvalidOperationException("Unknown panelToRecreate to change");
 
         return newPanel;
-    } 
+    }
 
-    public IPanel? CurrentPanel => (RightPanel?.IsFocused??false) ? RightPanel : LeftPanel;
-    public IPanel? AnotherPanel => (RightPanel?.IsFocused ?? false) ? LeftPanel : RightPanel;
+    public IPanel CurrentPanel => RightPanel.IsFocused ? RightPanel : LeftPanel;
+    public IPanel AnotherPanel => RightPanel.IsFocused ? LeftPanel : RightPanel;
 
-    public ReactiveCommand<KeyDownModel, System.Reactive.Unit> KeyDownCommand { get; }
+    public ReactiveCommand<KeyDownModel, Unit> KeyDownCommand { get; }
 
     private async void KeyDown(KeyDownModel parameter)
     {

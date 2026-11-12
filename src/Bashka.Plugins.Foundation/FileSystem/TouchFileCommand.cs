@@ -36,7 +36,7 @@ public class TouchFileCommand : TypeKeyedObject, IFunctionBarCommand<ShellCatalo
         
         string fileName = await _dialogProvider.ShowOkCancelDialogAsync(new StringInputDialog("Enter file name"));
 
-        await _workerTaskFactory.StartNewWorkerTask(async (cts, progress, _) =>
+        await _workerTaskFactory.StartNewWorkerTask(async (_, _, _) =>
         {
             string path = Path.Combine(context.Catalog!.CurrentPath!, fileName);
             ((ShellCatalog)context.Catalog)

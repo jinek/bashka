@@ -46,12 +46,12 @@ public class ExtractBsdtarArchiveCommand()
         ICatalog destinationCatalog = innerContext.AnotherCatalog!;
         IReadOnlyList<FileEntry> entries = context.Entries;
 
-        bool confirmed = await DialogProvider.ShowDialogAsync<bool>(new OkCancelQuestionDialogContent("Confirm",
+        bool confirmed = await DialogProvider.ShowDialogAsync(new OkCancelQuestionDialogContent("Confirm",
             $"Extract {entries.Count} archive(s) to {destinationCatalog.CurrentPath}?"));
         if (!confirmed)
             return;
 
-        await WorkerTaskFactory.StartNewWorkerTask(async (cts, progress, _) =>
+        await WorkerTaskFactory.StartNewWorkerTask(async (_, _, _) =>
         {
             foreach (FileEntry entry in entries)
             {

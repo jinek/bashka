@@ -11,7 +11,7 @@ public class ScrollIntoViewAction : AvaloniaObject, IAction
     public object Execute(object? sender, object? parameter)
     {
         var dataGrid = (DataGrid)sender!;
-        object? item = ((SelectionChangedEventArgs)parameter!).AddedItems?.Cast<object>().FirstOrDefault();
+        object? item = ((SelectionChangedEventArgs)parameter!).AddedItems.Cast<object>().FirstOrDefault();
         if (item == null)
             return false;
         

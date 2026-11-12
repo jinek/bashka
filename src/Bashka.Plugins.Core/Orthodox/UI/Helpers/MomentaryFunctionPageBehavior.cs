@@ -54,7 +54,7 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
             return otherModifiers == KeyModifiers.None ? modifier.Value.page : null;
         }
 
-        private FunctionKeys.FunctionBar? FunctionBar =>
+        private FunctionBar? FunctionBar =>
             (AssociatedObject?.DataContext as OrthodoxCommander)?.FunctionBar;
 
         private void OnKeyDown(object? sender, KeyEventArgs e)
@@ -62,7 +62,7 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
             FunctionPage? page = GetMomentaryPage(e);
             if (page == null) return;
 
-            FunctionKeys.FunctionBar? functionBar = FunctionBar;
+            FunctionBar? functionBar = FunctionBar;
             if (functionBar == null) return;
 
             if (_momentaryKey == e.Key) return;
@@ -85,7 +85,7 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
         {
             if (_pageBeforeMomentary == null) return;
 
-            FunctionKeys.FunctionBar? functionBar = FunctionBar;
+            FunctionBar? functionBar = FunctionBar;
             if (functionBar != null)
                 functionBar.CurrentPageIndex = _pageBeforeMomentary.Value;
 

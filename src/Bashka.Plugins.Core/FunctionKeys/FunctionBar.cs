@@ -107,20 +107,22 @@ public class FunctionBar : BaseObject
 
             for (int iFSlot = 0; iFSlot < 12; iFSlot++)
             {
-                var allAssignedToSlot = Enumerable.Where(all, a => a!.fSlot == (FunctionKey)iFSlot && a.fSlotPage == (FunctionPage)iPage)
-                    .ToArray();
+                var allAssignedToSlot = all.Where(a => a.fSlot == (FunctionKey)iFSlot && a.fSlotPage == (FunctionPage)iPage).ToArray();
                 
                 
-                if (!Enumerable.Any(allAssignedToSlot)) continue;
+                if (!allAssignedToSlot.Any()) continue;
 
                 var item = new FunctionBarItem
                 {
-                    CommandWrappers = Enumerable.Select(allAssignedToSlot, arg => new FunctionBarBinding
-                    {
-                        IsDelete = arg.isDelete,
-                        Command = arg.command,
-                        Name = arg.fSlotName
-                    }).ToArray<FunctionBarBinding>(),
+                    CommandWrappers =
+                    [
+                        .. allAssignedToSlot.Select(arg => new FunctionBarBinding
+                        {
+                            IsDelete = arg.isDelete,
+                            Command = arg.command,
+                            Name = arg.fSlotName
+                        })
+                    ],
                     Number = iFSlot + 1
                 };
                 items[iFSlot] = item;

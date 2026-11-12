@@ -1,5 +1,4 @@
 using Bashka.Plugins.Archives.Bsdtar.Scripts;
-using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Core.Dialog.Abstract;
@@ -37,12 +36,10 @@ public class AddToBsdtarArchiveCommand() : CatalogCommand<ShellCatalog, FileEntr
         var catalog = (ShellCatalog)innerContext.Catalog!;
         IReadOnlyList<FileEntry> entries = context.Entries;
 
-        string? archiveName = await DialogProvider.ShowOkCancelDialogAsync(
+        string archiveName = await DialogProvider.ShowOkCancelDialogAsync(
             new StringInputDialog("Enter archive name", entries[0].Name + DefaultArchiveExtension));
-        if (archiveName == null)
-            return;
-
-        await WorkerTaskFactory.StartNewWorkerTask(async (cts, progress, _) =>
+        
+        await WorkerTaskFactory.StartNewWorkerTask(async (_, _, _) =>
         {
             catalog.ShellSession.ExecuteNonQuery(new BsdtarCreateShellMultiScript(catalog.CurrentPath!,
                 archiveName,

@@ -14,16 +14,12 @@ public class BsdtarArchiveCatalog : ShellCatalog, IReadStreamCatalog
 {
     private const char Separator = '/';
     private const int MaxArchiveNameLength = 20;
-    private readonly Lazy<IReadOnlyList<FileEntry>> _allEntries;
     internal FileEntry ArchiveEntry { get; }
 
 
     public BsdtarArchiveCatalog(FileEntry archiveEntry)
     {
         ArchiveEntry = archiveEntry;
-        _allEntries = new Lazy<IReadOnlyList<FileEntry>>(() => [
-            .. ShellSession.PrepareQuery(new BsdtarListShellMultiScript(ArchiveEntry.FullPath)).Select(CreateEntry)
-        ]);
         NotifyDependentProperties(nameof(CurrentPath), nameof(Title));
     }
 

@@ -5,20 +5,14 @@ using Bashka.Plugins.Core.Worker.ProgressUI;
 
 namespace Bashka.Plugins.Core.Worker.Schedulers;
 
-internal class WorkerTaskScheduler : TaskScheduler
+internal class WorkerTaskScheduler(
+    IProgressPresenter progressPresenter,
+    [KeyFilter(TaskFactoryHelper.UITaskFactoryKey)] TaskFactory taskFactory)
+    : TaskScheduler
 {
-    private readonly IProgressPresenter _progressPresenter;
-    private readonly TaskFactory _uiTaskFactory;
-
-    public WorkerTaskScheduler(IProgressPresenter progressPresenter, [KeyFilter(TaskFactoryHelper.UITaskFactoryKey)] TaskFactory uiTaskFactory)
-    {
-        _progressPresenter = progressPresenter;
-        _uiTaskFactory = uiTaskFactory;
-    }
-
     private readonly ConcurrentDictionary<Task, object?> _schedule = new();
 
-    protected override IEnumerable<Task>? GetScheduledTasks()
+    protected override IEnumerable<Task> GetScheduledTasks()
     {
         return _schedule.Keys;
     }
@@ -27,7 +21,7 @@ internal class WorkerTaskScheduler : TaskScheduler
     {
         var cancellationTokenSource = new CancellationTokenSource();
         var progress = new Progress<ProgressStatus>();
-        TaskFactory uiTaskFactory = _uiTaskFactory;//todo: implement UI task factory
+        TaskFactory uiTaskFactory = taskFactory;//todo: implement UI task factory
 
         ProgressViewModel? dialogContent = null;
         IDisposable? currentExecutionRootTaskRegion = null;
@@ -50,8 +44,8 @@ internal class WorkerTaskScheduler : TaskScheduler
                         cancellationTokenSource,
                         progress,
                         uiTaskFactory);
-                    _progressPresenter.ShowProgress(dialogContent);
-                }).Wait();
+                    progressPresenter.ShowProgress(dialogContent);
+                }).Wait(CancellationToken.None);
             }
         }
         _schedule.TryAdd(task, null);
@@ -67,13 +61,13 @@ internal class WorkerTaskScheduler : TaskScheduler
                     return uiTaskFactory.StartNew(() =>
                     {
                         Dispatcher.UIThread.VerifyAccess();
-                        _progressPresenter.HideProgress(dialogContent!);
-                    });
+                        progressPresenter.HideProgress(dialogContent!);
+                    },TaskCreationOptions.None);
                 }
             }, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, Default).Unwrap();//unwrap was proposed by Junie to finish this before than async method continuation at the caller level
         }
 
-        ThreadPool.QueueUserWorkItem(async _ =>
+        ThreadPool.QueueUserWorkItem(async _2 =>
         {
             try
             {

@@ -62,7 +62,8 @@ namespace Bashka.Plugins.Foundation.ShellInteraction
         protected virtual void Dispose(bool disposing)
         {
             if(disposing)
-                _shellProcess.Dispose();
+                lock (_lock)
+                    _shellProcess.Dispose();
         }
     }
 }

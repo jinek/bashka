@@ -51,7 +51,7 @@ public static class RegistrationHelper
     {
         return containerBuilder.FullRegister<TCommand, ICommand>()
             .AsSelf()
-            .As<IFunctionBarCommand<TCatalog>>().WithMetadata((string)nameof(FunctionPage), (object?)functionPage).WithMetadata((string)nameof(FunctionKey), (object?)functionKey)
+            .As<IFunctionBarCommand<TCatalog>>().WithMetadata((string)nameof(FunctionPage), functionPage).WithMetadata((string)nameof(FunctionKey), functionKey)
             .WithMetadata(IFunctionBarCommand<ICatalog>.DefaultTitleMetadataKey, defaultTitle)
             .WithMetadata(IFunctionBarCommand<ICatalog>.IsDeleteMetadataKey, isDelete);
     }

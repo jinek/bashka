@@ -25,14 +25,14 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers
 
         private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if (sender is not VerticalScrollDataGrid grid || _isScrolling || grid._scrollBar is null)
+            if (sender is not VerticalScrollDataGrid grid || _isScrolling || grid.ScrollBar is null)
             {
                 return;
             }
             //if one row is not one pixel, then ratio can be calculated
-            double viewPortSize = grid._scrollBar.ViewportSize;
-            double maximum = grid._scrollBar.Maximum;
-            double scrollPosition = grid._scrollBar.Value;
+            double viewPortSize = grid.ScrollBar.ViewportSize;
+            double maximum = grid.ScrollBar.Maximum;
+            double scrollPosition = grid.ScrollBar.Value;
             double selectedIndex = grid.SelectedIndex;
         
             var items = (IEnumerable<object>)grid.ItemsSource;

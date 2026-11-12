@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.IO.Enumeration;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;

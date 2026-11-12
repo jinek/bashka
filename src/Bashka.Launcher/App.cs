@@ -36,7 +36,6 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        var baseUri = new Uri($"avares://{typeof(App).Namespace}");
         //Styles.Add(new TurboVisionTheme(baseUri));
         //Styles.Add(new TurboVisionDarkTheme(baseUri));
         //Styles.Add(new TurboVisionBlackTheme(baseUri));

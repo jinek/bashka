@@ -1,7 +1,6 @@
 using Avalonia.Collections;
 using Avalonia.Threading;
 using Bashka.Helpers;
-using Bashka.Plugins.Core.Dialog;
 using Bashka.Plugins.Core.Dialog.Abstract;
 
 namespace Bashka.Plugins.Core.Worker.ProgressUI

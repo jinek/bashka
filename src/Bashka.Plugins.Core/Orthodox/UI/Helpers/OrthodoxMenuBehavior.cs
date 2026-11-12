@@ -1,6 +1,5 @@
 using System.Reactive;
 using Avalonia.Controls;
-using Avalonia.Controls.Templates;
 using Avalonia.Input;
 using Avalonia.Xaml.Interactivity;
 using PropertyChanged;

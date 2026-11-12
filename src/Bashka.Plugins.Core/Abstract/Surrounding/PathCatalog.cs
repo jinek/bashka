@@ -39,7 +39,7 @@ public abstract class PathCatalog : BaseObject, ICatalog
     {
         _children = null;
         
-        _currentPathLoadingTask = Worker.StartNewWorkerTask(async (cancellationToken, progress, uiTaskFactory) =>
+        _currentPathLoadingTask = Worker.StartNewWorkerTask(async (_, _, uiTaskFactory) =>
         {
             _children = (await GetChildrenInternal()).ToArray() /*we have to enumerate in this thread!*/;
             // Thread.Sleep(2000);

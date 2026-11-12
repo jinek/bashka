@@ -75,13 +75,13 @@ public abstract class CopyOrMoveCommandBase : CatalogCommand<ShellCatalog, FileE
         }
         else
         {
-            bool confirmed = await DialogProvider.ShowDialogAsync<bool>(new OkCancelQuestionDialogContent("Confirm",
+            bool confirmed = await DialogProvider.ShowDialogAsync(new OkCancelQuestionDialogContent("Confirm",
                 $"{(SourceIsGone ? "Move" : "Copy")} {entries.Count} items to {destinationCatalog.CurrentPath}?"));
             if (!confirmed)
                 return;
         }
 
-        await WorkerTaskFactory.StartNewWorkerTask(async (cts, progress, _) =>
+        await WorkerTaskFactory.StartNewWorkerTask(async (_, _, _) =>
         {
             foreach (FileEntry entry in entries)
             {
