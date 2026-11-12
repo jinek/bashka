@@ -23,7 +23,7 @@
         <!--If ran not by pipeline - defining for local run-->
         <BUILD_VERSION Condition="'$(BUILD_VERSION)' == ''">0</BUILD_VERSION>
         <VersionPrefix>$(ProjectVersion).$(BUILD_VERSION)</VersionPrefix>
-        <AvaloniaVersion>12.1.4</AvaloniaVersion>                        
+        <AvaloniaVersion>12.1.4</AvaloniaVersion>
         <AvaloniaControlsDataGridVersion>12.1.2</AvaloniaControlsDataGridVersion>
         <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
     </PropertyGroup>
@@ -35,22 +35,21 @@
         <RepositoryUrl>https://github.com/jinek/bashka</RepositoryUrl>
         <PackageIcon>Icon.png</PackageIcon>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>        
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <IsPackable>False</IsPackable>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(IsPackable)' != 'false'">
         <None Include="$(SolutionDir)/../Icon.png"
               Pack="True"
-              PackagePath="\" />
+              PackagePath="\"/>
         <None Include="readme.md"
               Pack="true"
-              PackagePath="\" />
+              PackagePath="\"/>
     </ItemGroup>
 
     <PropertyGroup>
         <WeaverConfiguration>
-            
             <Weavers>
                 <PropertyChanged>
                     <NotifyForAllPublicProperties>true</NotifyForAllPublicProperties>
@@ -58,9 +57,9 @@
             </Weavers>
         </WeaverConfiguration>
     </PropertyGroup>
-    
+
     <ItemGroup>
-        <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
+        <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All"/>
     </ItemGroup>
-    
+
 </Project>
