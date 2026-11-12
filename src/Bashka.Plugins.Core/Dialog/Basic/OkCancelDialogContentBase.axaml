@@ -12,7 +12,10 @@
                     BorderBrush="{DynamicResource ThemeBorderBrush}"
                     BorderThickness="1"
                     Margin="-1,0" />
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,-1" Spacing="1">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="0,0,0,-1"
+                        Spacing="1">
                 <Button Command="{Binding Ok}"
                         IsDefault="True"
                         MinWidth="9"
@@ -29,11 +32,13 @@
     <DataTemplate DataType="{x:Type basic:QuestionDialog}"
                   x:Key="{x:Type basic:QuestionDialog}">
         <TextBlock Text="{Binding Question}"
-                   TextWrapping="Wrap" Margin="1,0,1,0" />
+                   TextWrapping="Wrap"
+                   Margin="1,0,1,0" />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type basic:ErrorDialog}"
                   x:Key="{x:Type basic:ErrorDialog}">
-        <TextBlock Text="{Binding Error}" TextWrapping="Wrap" />
+        <TextBlock Text="{Binding Error}"
+                   TextWrapping="Wrap" />
     </DataTemplate>
 </ResourceDictionary>

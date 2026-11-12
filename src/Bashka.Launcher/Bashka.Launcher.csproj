@@ -51,4 +51,13 @@
               PackagePath="contentFiles/any/any/" PackageCopyToOutput="true" PackageFlatten="true" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Program.container.cs">
+        <DependentUpon>Program.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Program.error.cs">
+        <DependentUpon>Program.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>

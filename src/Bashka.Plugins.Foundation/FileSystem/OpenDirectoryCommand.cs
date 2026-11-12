@@ -9,6 +9,11 @@ public class OpenDirectoryCommand : CatalogCommand<ICatalog, Entry>
 {
     private readonly IIndex<string, ICatalog> _catalogsFactory;
 
+    public OpenDirectoryCommand(IIndex<string, ICatalog> catalogsFactory) : base(null, true, false)
+    {
+        _catalogsFactory = catalogsFactory;
+    }
+
     public override bool CanExecute(CommandExecutionContext context)
     {
         return context.Entries.All(entry => entry.IsDirectory) && base.CanExecute(context);
@@ -27,23 +32,16 @@ public class OpenDirectoryCommand : CatalogCommand<ICatalog, Entry>
             catalog = _catalogsFactory[catalog.TypeKey];
             needsCatalogSwitch = true;
         }
-        
+
         await catalog.NavigateAsync(entry.Path);
 
         if (needsCatalogSwitch)
-        {
             //in the case of root have to change
             panel.Push(catalog);
-        }
 
         panel.IsFocused = true;
         panel.SelectedIndex = 0;
         //panel.RaisePropertyChanged(new PropertyChangedEventArgs("CurrentChildren"));
         /*panel.CurrentCatalog.RaisePropertyChanged(new PropertyChangedEventArgs(nameof(ICatalog.Children)));*/
-    }
-
-    public OpenDirectoryCommand(IIndex<string, ICatalog> catalogsFactory) : base(null, true, false)
-    {
-        _catalogsFactory = catalogsFactory;
     }
 }

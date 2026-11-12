@@ -1,10 +1,9 @@
-namespace Bashka.Plugins.Core.Scoping
+namespace Bashka.Plugins.Core.Scoping;
+
+public static class TypeKeyedObjectExtensions
 {
-    public static class TypeKeyedObjectExtensions
+    public static string GetTypeKey(this Type type)
     {
-        public static string GetTypeKey(this Type type)
-        {
-            return type.FullName!;
-        }
+        return type.FullName!;
     }
 }

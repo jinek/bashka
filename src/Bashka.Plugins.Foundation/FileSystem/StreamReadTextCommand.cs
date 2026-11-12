@@ -7,7 +7,7 @@ using Bashka.Plugins.Core.Worker.Schedulers;
 namespace Bashka.Plugins.Foundation.FileSystem;
 
 public class StreamReadTextCatalogCommand(IDialogProvider dialogProvider, WorkerTaskFactory workerTaskFactory)
-    : CatalogCommand<IReadStreamCatalog, Entry>(regexp: null, false, true), IFunctionBarCatalogCommand
+    : CatalogCommand<IReadStreamCatalog, Entry>(null, false, true), IFunctionBarCatalogCommand
 {
     public const long MaxFileSize = 1024 * 1024;
 
@@ -29,7 +29,7 @@ public class StreamReadTextCatalogCommand(IDialogProvider dialogProvider, Worker
             fileContent = streamReader.ReadToEnd();
             return Task.CompletedTask;
         });
-        await dialogProvider.ShowDialogAsync<object?>(
+        await dialogProvider.ShowDialogAsync(
             new TextViewerDialogContent(entry.Name, fileContent));
     }
 }

@@ -1,12 +1,11 @@
 using Bashka.Plugins.Core.Dialog.Abstract;
 
-namespace Bashka.Plugins.Core.Dialog
+namespace Bashka.Plugins.Core.Dialog;
+
+public static class DialogContentExtensions
 {
-    public static class DialogContentExtensions
+    public static Task CreateDialog(this IDialogProvider dialogProvider, DialogContent dialogContent)
     {
-        public static Task CreateDialog(this IDialogProvider dialogProvider, DialogContent dialogContent)
-        {
-            return dialogProvider.ShowDialogAsync(dialogContent);
-        }
+        return dialogProvider.ShowDialogAsync(dialogContent);
     }
 }

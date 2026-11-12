@@ -9,20 +9,20 @@ namespace Bashka.Plugins.Core.FunctionKeys;
 
 public class FunctionBar : BaseObject
 {
+    private Type? _catalogType;
+    private CommandExecutionContext? _context;
+
     /// <summary>
-    /// injecting Ioc stuff to inspect types of registered commands
+    ///     injecting Ioc stuff to inspect types of registered commands
     /// </summary>
     public FunctionBar()
     {
         InitializeCatalogFunctionBar();
     }
 
-    private Type? _catalogType;
-    private CommandExecutionContext? _context;
-
     public FunctionPage CurrentPageIndex { get; set; }
     public IReadOnlyList<FunctionBarPage> AllPages { get; private set; }
-    
+
     public FunctionBarPage CurrentPage => AllPages[(int)CurrentPageIndex];
 
     public Type? CatalogType
@@ -43,20 +43,14 @@ public class FunctionBar : BaseObject
         {
             _context = value;
             foreach (FunctionBarPage fToolBoxPage in AllPages)
-            {
-                foreach (FunctionBarItem? fToolBoxItem in fToolBoxPage.Items)
+            foreach (FunctionBarItem? fToolBoxItem in fToolBoxPage.Items)
+                if (fToolBoxItem != null)
                 {
-                    if (fToolBoxItem != null)
-                    {
-                        foreach (FunctionBarBinding commandWrapper in fToolBoxItem.CommandWrappers)
-                        {
-                            commandWrapper.Context = value;
-                        }
-                        
-                        fToolBoxItem.ChooseCommand();
-                    }
+                    foreach (FunctionBarBinding commandWrapper in fToolBoxItem.CommandWrappers)
+                        commandWrapper.Context = value;
+
+                    fToolBoxItem.ChooseCommand();
                 }
-            }
         }
     }
 
@@ -107,26 +101,29 @@ public class FunctionBar : BaseObject
 
             for (int iFSlot = 0; iFSlot < 12; iFSlot++)
             {
-                var allAssignedToSlot = Enumerable.Where(all, a => a!.fSlot == (FunctionKey)iFSlot && a.fSlotPage == (FunctionPage)iPage)
-                    .ToArray();
-                
-                
-                if (!Enumerable.Any(allAssignedToSlot)) continue;
+                var allAssignedToSlot =
+                    all.Where(a => a.fSlot == (FunctionKey)iFSlot && a.fSlotPage == (FunctionPage)iPage).ToArray();
+
+
+                if (!allAssignedToSlot.Any()) continue;
 
                 var item = new FunctionBarItem
                 {
-                    CommandWrappers = Enumerable.Select(allAssignedToSlot, arg => new FunctionBarBinding
-                    {
-                        IsDelete = arg.isDelete,
-                        Command = arg.command,
-                        Name = arg.fSlotName
-                    }).ToArray<FunctionBarBinding>(),
+                    CommandWrappers =
+                    [
+                        .. allAssignedToSlot.Select(arg => new FunctionBarBinding
+                        {
+                            IsDelete = arg.isDelete,
+                            Command = arg.command,
+                            Name = arg.fSlotName
+                        })
+                    ],
                     Number = iFSlot + 1
                 };
                 items[iFSlot] = item;
             }
         }
-        
+
         AllPages = allPages;
     }
 }

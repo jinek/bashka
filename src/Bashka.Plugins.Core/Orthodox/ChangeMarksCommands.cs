@@ -4,7 +4,7 @@ using Bashka.Plugins.Core.Abstract.Data;
 namespace Bashka.Plugins.Core.Orthodox;
 
 /// <summary>
-/// Changes marks of all entries of the current catalog (Far manager style Gray +/-/*)
+///     Changes marks of all entries of the current catalog (Far manager style Gray +/-/*)
 /// </summary>
 public abstract class ChangeMarksCommandBase : ICommand
 {
@@ -26,15 +26,24 @@ public abstract class ChangeMarksCommandBase : ICommand
 
 public class MarkAllCommand : ChangeMarksCommandBase
 {
-    protected override bool GetNewValue(bool currentValue) => true;
+    protected override bool GetNewValue(bool currentValue)
+    {
+        return true;
+    }
 }
 
 public class UnmarkAllCommand : ChangeMarksCommandBase
 {
-    protected override bool GetNewValue(bool currentValue) => false;
+    protected override bool GetNewValue(bool currentValue)
+    {
+        return false;
+    }
 }
 
 public class InvertMarksCommand : ChangeMarksCommandBase
 {
-    protected override bool GetNewValue(bool currentValue) => !currentValue;
+    protected override bool GetNewValue(bool currentValue)
+    {
+        return !currentValue;
+    }
 }

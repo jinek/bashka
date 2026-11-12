@@ -4,7 +4,7 @@ using Bashka.Plugins.Core.Abstract.Data;
 namespace Bashka.Plugins.Archives.Implementations;
 
 /// <summary>
-/// Gzip compressed tar, like .tar.gz or .tgz
+///     Gzip compressed tar, like .tar.gz or .tgz
 /// </summary>
 public class TarGzArchiveCatalog(Stream stream, Entry entry) : TarArchiveCatalog(stream, entry)
 {

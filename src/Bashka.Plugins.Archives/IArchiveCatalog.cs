@@ -4,5 +4,4 @@ namespace Bashka.Plugins.Archives;
 
 public interface IArchiveCatalog : IReadStreamCatalog
 {
-    
 }

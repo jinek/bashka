@@ -8,6 +8,19 @@ namespace Bashka.Plugins.Core.Scoping;
 
 public class BaseObject : TypeKeyedObject, INotifyPropertyChanged
 {
+    [AutoWire]
+    [field: MaybeNull]
+    public ILifetimeScope LifetimeScope
+    {
+        get;
+        [UsedImplicitly]
+        internal set
+        {
+            field = value;
+            OnScopeInitialized();
+        }
+    } = null!;
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
@@ -37,21 +50,7 @@ public class BaseObject : TypeKeyedObject, INotifyPropertyChanged
         };
     }
 
-    [AutoWire]
-    [field: MaybeNull]
-    public ILifetimeScope LifetimeScope
-    {
-        get;
-        [UsedImplicitly]
-        internal set
-        {
-            field = value;
-            OnScopeInitialized();
-        }
-    } = null!;
-
     protected virtual void OnScopeInitialized()
     {
-        
     }
 }

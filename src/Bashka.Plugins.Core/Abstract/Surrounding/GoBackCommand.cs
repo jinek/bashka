@@ -1,9 +1,8 @@
 using Bashka.Plugins.Core.Abstract.Data;
-using DynamicData;
 
 namespace Bashka.Plugins.Core.Abstract.Surrounding;
 
-public class GoBackCommand : CatalogCommand<ICatalog,GoBackEntry>
+public class GoBackCommand : CatalogCommand<ICatalog, GoBackEntry>
 {
     public GoBackCommand() : base(string.Empty, true, true)
     {
@@ -12,7 +11,7 @@ public class GoBackCommand : CatalogCommand<ICatalog,GoBackEntry>
     public override async Task ExecuteAsync(CatalogCommandContext<ICatalog, GoBackEntry> context)
     {
         IPanel panel = context.CommandExecutionContext.Panel!;
-        var catalog = context.CommandExecutionContext.Catalog!;
+        ICatalog catalog = context.CommandExecutionContext.Catalog!;
         panel.SelectedIndex = -1;
 
         if (catalog.CanNavigateBack)
@@ -22,7 +21,7 @@ public class GoBackCommand : CatalogCommand<ICatalog,GoBackEntry>
             await catalog.NavigateBack();
 
             Entry[] currentChildren = [.. panel.CurrentChildren!];
-            Entry lastEntry =currentChildren.Single(entry1 => entry1.Path == lastDirName);
+            Entry lastEntry = currentChildren.Single(entry1 => entry1.Path == lastDirName);
             int index = currentChildren.IndexOf(lastEntry);
             panel.SelectedIndex = index;
         }

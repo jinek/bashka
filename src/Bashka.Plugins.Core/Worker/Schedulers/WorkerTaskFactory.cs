@@ -17,7 +17,10 @@ public class WorkerTaskFactory(
     internal static ThreadLocal<CancellationToken?> InternalCurrentCancellationToken { get; } = new();
     internal static ThreadLocal<IProgress<ProgressStatus>?> InternalCurrentProgress { get; } = new();
     internal static ThreadLocal<TaskFactory?> InternalCurrentUITaskFactory { get; } = new();
-    public static CancellationToken CurrentCancellationToken => (CancellationToken)InternalCurrentCancellationToken.Value!;
+
+    public static CancellationToken CurrentCancellationToken =>
+        (CancellationToken)InternalCurrentCancellationToken.Value!;
+
     public static IProgress<ProgressStatus> CurrentProgress => InternalCurrentProgress.Value!;
     public static TaskFactory CurrentUITaskFactory => InternalCurrentUITaskFactory.Value!;
 }

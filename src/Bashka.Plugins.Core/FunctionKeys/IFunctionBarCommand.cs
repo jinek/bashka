@@ -1,27 +1,22 @@
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 
-namespace Bashka.Plugins.Core.FunctionKeys
+namespace Bashka.Plugins.Core.FunctionKeys;
+
+public interface IFunctionBarCommand<in TCatalog /*invariance used by reflection of ftoolbox*/> : ICommand
+    where TCatalog : ICatalog
 {
+    const string DefaultTitleMetadataKey = "DefaultTitle";
+    const string IsDeleteMetadataKey = "IsDelete";
+
+
     /// <summary>
-    /// <see cref="DefaultFSlotAttribute"/>
+    ///     By default detecting by catalog name
     /// </summary>
-    public interface IFunctionBarCommand<in TCatalog/*invariance used by reflection of ftoolbox*/> : ICommand where TCatalog : ICatalog
+    /// <param name="context"></param>
+    /// <returns></returns>
+    bool IsAllowed(CommandExecutionContext context)
     {
-        public const string DefaultTitleMetadataKey = "DefaultTitle";
-        public const string IsDeleteMetadataKey = "IsDelete";
-    
-    
-        /// <summary>
-        /// By default detecting by catalog name
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public bool IsAllowed(CommandExecutionContext context)
-        {
-            if (context.Catalog is not TCatalog) return false;
-        
-            return true;
-        }
+        return context.Catalog is TCatalog;
     }
 }

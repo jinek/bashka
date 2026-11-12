@@ -1,11 +1,10 @@
 using Bashka.Plugins.Core.Dialog.Abstract;
 
-namespace Bashka.Plugins.Foundation
+namespace Bashka.Plugins.Foundation;
+
+public class AboutDialogContent : DialogContent
 {
-    public class AboutDialogContent : DialogContent
+    public AboutDialogContent() : base("About Navigator", "centered", "min_size")
     {
-        public AboutDialogContent() : base("About Navigator", "centered", "min_size")
-        {
-        }
     }
 }

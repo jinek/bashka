@@ -1,3 +1,9 @@
-using Bashka.Launcher;
+﻿namespace Bashka.Launcher;
 
-DevelopmentHost.Run(args);
+internal static partial class Program
+{
+    public static void Main(string[] args)
+    {
+        DevelopmentHost.Run(args);
+    }
+}

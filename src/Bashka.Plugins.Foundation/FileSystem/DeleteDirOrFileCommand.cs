@@ -1,4 +1,3 @@
-using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Core.Dialog.Abstract;
@@ -28,8 +27,8 @@ public class DeleteDirOrFileCommand : CatalogCommand<ShellCatalog, FileEntry>, I
         var okCancelDialogContent = new OkCancelQuestionDialogContent("Confirm delete",
             $"Are you sure you want to delete {what}?");
 
-        bool result = await _dialogProvider.ShowDialogAsync<bool>(okCancelDialogContent);
-        if(!result)
+        bool result = await _dialogProvider.ShowDialogAsync(okCancelDialogContent);
+        if (!result)
             return;
 
         foreach (FileEntry entry in entries)

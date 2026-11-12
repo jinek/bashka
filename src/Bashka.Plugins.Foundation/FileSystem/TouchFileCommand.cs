@@ -14,11 +14,12 @@ namespace Bashka.Plugins.Foundation.FileSystem;
 
 public class TouchFileCommand : TypeKeyedObject, IFunctionBarCommand<ShellCatalog>
 {
+    private readonly IIndex<string, ICommand> _commandFactory;
     private readonly IDialogProvider _dialogProvider;
     private readonly WorkerTaskFactory _workerTaskFactory;
-    private readonly IIndex<string, ICommand> _commandFactory;
 
-    public TouchFileCommand(IDialogProvider dialogProvider, WorkerTaskFactory workerTaskFactory, IIndex<string, ICommand> commandFactory)
+    public TouchFileCommand(IDialogProvider dialogProvider, WorkerTaskFactory workerTaskFactory,
+        IIndex<string, ICommand> commandFactory)
     {
         _dialogProvider = dialogProvider;
         _workerTaskFactory = workerTaskFactory;
@@ -33,10 +34,10 @@ public class TouchFileCommand : TypeKeyedObject, IFunctionBarCommand<ShellCatalo
     public async Task ExecuteAsync(CommandExecutionContext context)
     {
         context.Panel!.SelectedIndex = -1;
-        
+
         string fileName = await _dialogProvider.ShowOkCancelDialogAsync(new StringInputDialog("Enter file name"));
 
-        await _workerTaskFactory.StartNewWorkerTask(async (cts, progress, _) =>
+        await _workerTaskFactory.StartNewWorkerTask(async (_, _, _) =>
         {
             string path = Path.Combine(context.Catalog!.CurrentPath!, fileName);
             ((ShellCatalog)context.Catalog)
@@ -46,15 +47,12 @@ public class TouchFileCommand : TypeKeyedObject, IFunctionBarCommand<ShellCatalo
 
         await context.Catalog!.NavigateAsync(string.Empty);
 
-        Entry? newEntry = context.Catalog.Children.SingleOrDefault(entry=>entry.Path == fileName);
-        if (newEntry == null)
-        {
-            throw new UserErrorException("File was removed");
-        }
-        
+        Entry? newEntry = context.Catalog.Children.SingleOrDefault(entry => entry.Path == fileName);
+        if (newEntry == null) throw new UserErrorException("File was removed");
+
         ICommand editCommand = _commandFactory[typeof(NanoCatalogCommand).GetTypeKey()];
         await editCommand.ExecuteAsync(context with { Entries = [newEntry] });
-        
+
         // now selecting new entry
         context.Panel!.IsFocused = true;
         context.Panel!.SelectedEntry = newEntry;

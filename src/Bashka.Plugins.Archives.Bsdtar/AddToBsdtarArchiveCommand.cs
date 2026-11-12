@@ -1,19 +1,19 @@
 using Bashka.Plugins.Archives.Bsdtar.Scripts;
-using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Core.Dialog.Abstract;
 using Bashka.Plugins.Core.Dialog.Basic;
 using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Core.Worker.Schedulers;
-using JetBrains.Annotations;
 using Bashka.Plugins.Foundation.FileSystem;
 using Bashka.Plugins.Foundation.ShellInteraction;
+using JetBrains.Annotations;
 
 namespace Bashka.Plugins.Archives.Bsdtar;
 
 /// <summary>
-/// Packs the selected entries into a new archive created next to them. Format is detected by bsdtar from the entered extension.
+///     Packs the selected entries into a new archive created next to them. Format is detected by bsdtar from the entered
+///     extension.
 /// </summary>
 public class AddToBsdtarArchiveCommand() : CatalogCommand<ShellCatalog, FileEntry>(null, true, true)
 {
@@ -37,12 +37,10 @@ public class AddToBsdtarArchiveCommand() : CatalogCommand<ShellCatalog, FileEntr
         var catalog = (ShellCatalog)innerContext.Catalog!;
         IReadOnlyList<FileEntry> entries = context.Entries;
 
-        string? archiveName = await DialogProvider.ShowOkCancelDialogAsync(
+        string archiveName = await DialogProvider.ShowOkCancelDialogAsync(
             new StringInputDialog("Enter archive name", entries[0].Name + DefaultArchiveExtension));
-        if (archiveName == null)
-            return;
 
-        await WorkerTaskFactory.StartNewWorkerTask(async (cts, progress, _) =>
+        await WorkerTaskFactory.StartNewWorkerTask(async (_, _, _) =>
         {
             catalog.ShellSession.ExecuteNonQuery(new BsdtarCreateShellMultiScript(catalog.CurrentPath!,
                 archiveName,

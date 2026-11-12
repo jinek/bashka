@@ -9,7 +9,10 @@ namespace Bashka.Plugins.Core.Orthodox;
 [UsedImplicitly]
 public class NavigateToMenuCommand : IFunctionBarCatalogCommand
 {
-    public bool CanExecute(CommandExecutionContext context) => true;
+    public bool CanExecute(CommandExecutionContext context)
+    {
+        return true;
+    }
 
     public async Task ExecuteAsync(CommandExecutionContext context)
     {

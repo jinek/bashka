@@ -12,7 +12,13 @@ internal static class BsdtarSupport
         // single file compression
         @"|\.(gz|bz2|xz|lzma|lz|lz4|lzo|zst|Z)$";
 
-    public static string Quote(string path) => $"\"{path}\"";
+    public static string Quote(string path)
+    {
+        return $"\"{path}\"";
+    }
 
-    public static string QuoteJoin(IEnumerable<string> paths) => string.Join(' ', paths.Select(Quote));
+    public static string QuoteJoin(IEnumerable<string> paths)
+    {
+        return string.Join(' ', paths.Select(Quote));
+    }
 }

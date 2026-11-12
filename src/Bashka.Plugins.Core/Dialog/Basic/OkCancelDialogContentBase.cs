@@ -14,6 +14,8 @@ public class OkCancelDialogContentBase : DialogContent<bool>, IDialogContent<boo
     public DialogBase Content { get; }
     public Type ContentType { get; }
 
+    Type IDialogContent<bool>.TemplateKey => typeof(OkCancelDialogContentBase);
+
     public void Ok()
     {
         RaiseClose(true);
@@ -23,6 +25,4 @@ public class OkCancelDialogContentBase : DialogContent<bool>, IDialogContent<boo
     {
         RaiseClose(false);
     }
-
-    Type IDialogContent<bool>.TemplateKey => typeof(OkCancelDialogContentBase);
 }

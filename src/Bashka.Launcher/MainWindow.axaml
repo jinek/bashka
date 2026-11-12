@@ -11,7 +11,7 @@
         Title="Bashka"
         d:DataContext="{d:DesignInstance launcher:MainWindow}">
 
-        <Window.ContentTemplate>
-                <StaticResource ResourceKey="{x:Type core:IUIRoot}" />
-        </Window.ContentTemplate>
+    <Window.ContentTemplate>
+        <StaticResource ResourceKey="{x:Type core:IUIRoot}" />
+    </Window.ContentTemplate>
 </Window>

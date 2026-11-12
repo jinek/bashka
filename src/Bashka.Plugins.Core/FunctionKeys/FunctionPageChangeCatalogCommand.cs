@@ -1,25 +1,24 @@
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Scoping;
 
-namespace Bashka.Plugins.Core.FunctionKeys
+namespace Bashka.Plugins.Core.FunctionKeys;
+
+public class FunctionPageChangeCatalogCommand : BaseObject, IFunctionBarCatalogCommand
 {
-    public class FunctionPageChangeCatalogCommand : BaseObject, IFunctionBarCatalogCommand
+    public bool CanExecute(CommandExecutionContext context)
     {
-        public bool CanExecute(CommandExecutionContext context)
+        return true;
+    }
+
+    public async Task ExecuteAsync(CommandExecutionContext context)
+    {
+        FunctionPage toolBoxCurrentPageIndex = context.OrthodoxCommander!.FunctionBar.CurrentPageIndex;
+        if (toolBoxCurrentPageIndex == FunctionPage.Shift)
         {
-            return true;
+            context.OrthodoxCommander!.FunctionBar.CurrentPageIndex = 0;
+            return;
         }
 
-        public async Task ExecuteAsync(CommandExecutionContext context)
-        {
-            FunctionPage toolBoxCurrentPageIndex = context.OrthodoxCommander!.FunctionBar.CurrentPageIndex;
-            if (toolBoxCurrentPageIndex == FunctionPage.Shift)
-            {
-                context.OrthodoxCommander!.FunctionBar.CurrentPageIndex = 0;
-                return;
-            }
-
-            context.OrthodoxCommander!.FunctionBar.CurrentPageIndex++;
-        }
+        context.OrthodoxCommander!.FunctionBar.CurrentPageIndex++;
     }
 }

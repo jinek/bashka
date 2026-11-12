@@ -4,7 +4,6 @@ namespace Bashka.Plugins.Core.Worker.ProgressUI;
 
 public class ProgressViewModel : BaseObject
 {
-    public string? Title { get; }
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly TaskFactory _uiTaskFactory;
 
@@ -24,6 +23,8 @@ public class ProgressViewModel : BaseObject
             });
         };
     }
+
+    public string? Title { get; }
 
     public byte Progress { get; private set; }
     public string Status { get; private set; } = string.Empty;

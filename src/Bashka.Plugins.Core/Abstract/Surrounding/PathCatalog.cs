@@ -9,48 +9,8 @@ namespace Bashka.Plugins.Core.Abstract.Surrounding;
 
 public abstract class PathCatalog : BaseObject, ICatalog
 {
-    private Task _currentPathLoadingTask = Task.CompletedTask;
-
-    private async Task ChangePathAndPreloadAsync(string newPath)
-    {
-        await EnsureCurrentPathLoaded();
-        _currentPath  = newPath;
-        RaiseCurrentPathChanged();
-        await EnsureCurrentPathLoaded();
-    }
-
-    private async Task EnsureCurrentPathLoaded()
-    {
-        await _currentPathLoadingTask;
-    }
-
-    public string? CurrentPath => _currentPath;
-
-    [DependsOn(nameof(CurrentPath))]
-    public abstract string Title { get; }
-
-    private void RaiseCurrentPathChanged()
-    {
-        OnPropertyChanged(nameof(CurrentPath));
-        StartLoadingChildren();
-    }
-
-    private void StartLoadingChildren()
-    {
-        _children = null;
-        
-        _currentPathLoadingTask = Worker.StartNewWorkerTask(async (cancellationToken, progress, uiTaskFactory) =>
-        {
-            _children = (await GetChildrenInternal()).ToArray() /*we have to enumerate in this thread!*/;
-            // Thread.Sleep(2000);
-            
-            // ReSharper disable once MethodSupportsCancellation
-            await uiTaskFactory.StartNew(() => { OnPropertyChanged(nameof(Children)); });
-        }, $"Loading children at {GetType()}");
-    }
-
     private IEnumerable<Entry>? _children;
-    private string? _currentPath;
+    private Task _currentPathLoadingTask = Task.CompletedTask;
 
     [AutoWire]
     [field: MaybeNull]
@@ -66,21 +26,70 @@ public abstract class PathCatalog : BaseObject, ICatalog
         }
     }
 
-    public event Action? OnInitialized;
+    public string? CurrentPath { get; private set; }
 
-    public IEnumerable<Entry> Children => _children ?? Array.Empty<Entry>();//todo: create empty static array
+    [DependsOn(nameof(CurrentPath))] public abstract string Title { get; }
 
-    protected abstract Task<IEnumerable<Entry>> GetChildrenInternal();
+    public IEnumerable<Entry> Children => _children ?? Array.Empty<Entry>(); //todo: create empty static array
 
     public virtual async Task NavigateAsync(string path)
     {
-        string newPath = string.IsNullOrEmpty(CurrentPath) ? path : PathJoin(CurrentPath, path); //todo: may be just pathJoin?
+        string newPath =
+            string.IsNullOrEmpty(CurrentPath) ? path : PathJoin(CurrentPath, path); //todo: may be just pathJoin?
         await ChangePathAndPreloadAsync(newPath);
     }
-    
+
+    public virtual bool CanNavigateBack => CurrentPath != null && PathSegments(CurrentPath).Length > 1;
+
+    public virtual async Task NavigateBack()
+    {
+        string[] pathSegments = PathSegments(CurrentPath!);
+        if (pathSegments.Length == 0)
+            throw new NavigationException();
+        string directoryName = PathJoin(pathSegments[..^1]);
+        await ChangePathAndPreloadAsync(directoryName);
+    }
+
+    private async Task ChangePathAndPreloadAsync(string newPath)
+    {
+        await EnsureCurrentPathLoaded();
+        CurrentPath = newPath;
+        RaiseCurrentPathChanged();
+        await EnsureCurrentPathLoaded();
+    }
+
+    private async Task EnsureCurrentPathLoaded()
+    {
+        await _currentPathLoadingTask;
+    }
+
+    private void RaiseCurrentPathChanged()
+    {
+        OnPropertyChanged(nameof(CurrentPath));
+        StartLoadingChildren();
+    }
+
+    private void StartLoadingChildren()
+    {
+        _children = null;
+
+        _currentPathLoadingTask = Worker.StartNewWorkerTask(async (_, _, uiTaskFactory) =>
+            {
+                _children = (await GetChildrenInternal()).ToArray() /*we have to enumerate in this thread!*/;
+                // Thread.Sleep(2000);
+
+                // ReSharper disable once MethodSupportsCancellation
+                await uiTaskFactory.StartNew(() => { OnPropertyChanged(nameof(Children)); });
+            }, $"Loading children at {GetType()}");
+    }
+
+    public event Action? OnInitialized;
+
+    protected abstract Task<IEnumerable<Entry>> GetChildrenInternal();
+
     public static string PathJoin(params string[] pathSegments)
     {
-        return Path.Combine(pathSegments).Replace(@"\",@"/");
+        return Path.Combine(pathSegments).Replace(@"\", @"/");
     }
 
     public static string[] PathSegments(string path2, int number = int.MaxValue)
@@ -99,16 +108,5 @@ public abstract class PathCatalog : BaseObject, ICatalog
         }
 
         return result.AsEnumerable().Reverse().ToArray();
-    }
-
-    public virtual bool CanNavigateBack => CurrentPath != null && PathSegments(CurrentPath).Length > 1;
-
-    public virtual async Task NavigateBack()
-    {
-        string[] pathSegments = PathSegments(CurrentPath!);
-        if (pathSegments.Length == 0)
-            throw new NavigationException();
-        string directoryName = PathJoin(pathSegments[..^1]);
-        await ChangePathAndPreloadAsync(directoryName);
     }
 }

@@ -1,6 +1,4 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime"
-                    xmlns:data="clr-namespace:Bashka.Plugins.Core.Abstract.Data">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 </ResourceDictionary>

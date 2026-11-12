@@ -13,9 +13,9 @@ public static class TaskFactoryHelper
 
         return taskFactory.StartNew(() =>
         {
-            WorkerTaskFactory.CurrentProgress.ReportProgress("Working...", 0);
+            WorkerTaskFactory.CurrentProgress.ReportProgress("Working...");
             action(WorkerTaskFactory.CurrentCancellationToken, WorkerTaskFactory.CurrentProgress,
-                WorkerTaskFactory.CurrentUITaskFactory).Wait();//todo: should call async here better?
+                WorkerTaskFactory.CurrentUITaskFactory).Wait(); //todo: should call async here better?
         }).ContinueWith(_ => titleRegion.Dispose());
     }
 

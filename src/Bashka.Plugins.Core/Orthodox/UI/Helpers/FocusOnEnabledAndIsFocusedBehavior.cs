@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.Xaml.Interactivity;
 using Bashka.Plugins.Core.Abstract;
@@ -26,22 +27,17 @@ public class FocusOnEnabledAndIsFocusedBehavior : Behavior<DataGrid>
 
     private void OnAssociatedObjectOnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs args)
     {
-        if (args.Property == Control.IsEffectivelyEnabledProperty)
-        {
+        if (args.Property == InputElement.IsEffectivelyEnabledProperty)
             if ((bool)args.NewValue! && IsFocused)
-            {
-                ThreadPool.QueueUserWorkItem(state =>
+                ThreadPool.QueueUserWorkItem(_ =>
                 {
                     Dispatcher.UIThread.Post(() =>
                     {
-                        if(AssociatedObject!.SelectedIndex<=0)
+                        if (AssociatedObject!.SelectedIndex <= 0)
                             AssociatedObject.SelectedIndex = 0;
                         AssociatedObject?.Focus();
                     });
                 });
-                
-            }
-        }
     }
 
     protected override void OnDetachedFromVisualTree()

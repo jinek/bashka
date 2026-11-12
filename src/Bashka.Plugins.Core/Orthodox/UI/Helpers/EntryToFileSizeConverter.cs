@@ -8,11 +8,16 @@ namespace Bashka.Plugins.Core.Orthodox.UI.Helpers;
 
 public class EntryToFileSizeConverter : IValueConverter
 {
+    // code from https://www.c-sharpcorner.com/article/csharp-convert-bytes-to-kb-mb-gb/
+    // Load all suffixes in an array  
+    private static readonly string[] Suffixes =
+        ["Bytes", "KB", "MB", "GB", "TB", "PB"];
+
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is UnsetValueType)
             return value;
-        
+
         var entry = (Entry)value!;
         if (entry.IsGone)
             return "N/A";
@@ -20,12 +25,12 @@ public class EntryToFileSizeConverter : IValueConverter
         return entry.IsDirectory ? "Folder" : FormatSize(entry.Size);
     }
 
-    // code from https://www.c-sharpcorner.com/article/csharp-convert-bytes-to-kb-mb-gb/
-    // Load all suffixes in an array  
-    static readonly string[] suffixes =
-        { "Bytes", "KB", "MB", "GB", "TB", "PB" };
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        throw new NotSupportedException();
+    }
 
-    public static string FormatSize(Int64 bytes)
+    private static string FormatSize(long bytes)
     {
         int counter = 0;
         decimal number = bytes;
@@ -35,11 +40,6 @@ public class EntryToFileSizeConverter : IValueConverter
             counter++;
         }
 
-        return string.Format("{0:n1}{1}", number, suffixes[counter]);
-    }
-
-    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        throw new NotSupportedException();
+        return $"{number:n1}{Suffixes[counter]}";
     }
 }

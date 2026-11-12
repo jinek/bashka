@@ -6,7 +6,8 @@ namespace Bashka.Plugins.Core.Orthodox.UI;
 
 [DoNotNotify]
 public class FunctionBarLayout : NonVirtualizingLayout
-{//todo: this was rewritten by Cluade. I'm sure there is 5 kg of copypaste and 3 of shitcode here
+{
+    //todo: this was rewritten by Cluade. I'm sure there is 5 kg of copypaste and 3 of shitcode here
     public static readonly StyledProperty<int> GapProperty =
         AvaloniaProperty.Register<FunctionBarLayout, int>(nameof(Gap));
 
@@ -18,12 +19,9 @@ public class FunctionBarLayout : NonVirtualizingLayout
 
     protected override Size MeasureOverride(NonVirtualizingLayoutContext context, Size availableSize)
     {
-        var children = context.Children;
+        IReadOnlyList<Layoutable> children = context.Children;
         int count = children.Count;
-        if (count == 0)
-        {
-            return new Size(0, 0);
-        }
+        if (count == 0) return new Size(0, 0);
 
         double maxChildHeight = 0;
         double totalDesiredWidth = 0;
@@ -31,7 +29,7 @@ public class FunctionBarLayout : NonVirtualizingLayout
 
         for (int i = 0; i < count; i++)
         {
-            var child = children[i];
+            Layoutable child = children[i];
             child.Measure(childAvailableSize);
             maxChildHeight = Math.Max(maxChildHeight, child.DesiredSize.Height);
             totalDesiredWidth += child.DesiredSize.Width;
@@ -50,12 +48,9 @@ public class FunctionBarLayout : NonVirtualizingLayout
 
     protected override Size ArrangeOverride(NonVirtualizingLayoutContext context, Size finalSize)
     {
-        var children = context.Children;
+        IReadOnlyList<Layoutable> children = context.Children;
         int count = children.Count;
-        if (count == 0)
-        {
-            return new Size(0, 0);
-        }
+        if (count == 0) return new Size(0, 0);
 
         double width = finalSize.Width;
         double height = finalSize.Height;
@@ -63,21 +58,15 @@ public class FunctionBarLayout : NonVirtualizingLayout
         double availableWidthForColumns = width - Gap * (count - 1);
         if (availableWidthForColumns <= 0)
         {
-            for (int i = 0; i < count; i++)
-            {
-                children[i].Arrange(new Rect(0, 0, 0, height));
-            }
+            for (int i = 0; i < count; i++) children[i].Arrange(new Rect(0, 0, 0, height));
             return finalSize;
         }
 
         double baseWidth = Math.Floor(availableWidthForColumns / count);
         int extra = (int)Math.Floor(availableWidthForColumns - baseWidth * count);
 
-        var allocatedWidths = new double[count];
-        for (int i = 0; i < count; i++)
-        {
-            allocatedWidths[i] = baseWidth;
-        }
+        double[] allocatedWidths = new double[count];
+        for (int i = 0; i < count; i++) allocatedWidths[i] = baseWidth;
 
         if (extra > 0)
         {
@@ -87,10 +76,7 @@ public class FunctionBarLayout : NonVirtualizingLayout
                 .ThenBy(x => x.Index)
                 .Take(extra);
 
-            foreach (var item in indexedChildren)
-            {
-                allocatedWidths[item.Index] += 1;
-            }
+            foreach (var item in indexedChildren) allocatedWidths[item.Index] += 1;
         }
 
         double currentX = 0;

@@ -5,7 +5,8 @@ namespace Bashka.Plugins.Core.Dialog.Basic;
 
 public static class OkCancelDialogContentExtensions
 {
-    public static async Task<T> ShowOkCancelDialogAsync<T>(this IDialogProvider dialogProvider, DialogWithResultBase<T> content)
+    public static async Task<T> ShowOkCancelDialogAsync<T>(this IDialogProvider dialogProvider,
+        DialogWithResultBase<T> content)
     {
         var okCancelDialogContentBase = new OkCancelDialogContentBase("Title", content);
         bool isOk = await dialogProvider.ShowDialogAsync(okCancelDialogContentBase);

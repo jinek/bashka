@@ -8,26 +8,35 @@
           d:DataContext="{x:Type abstract:IPanel}"
           Header="Sorting">
     <MenuItem.ItemTemplate>
-        <DataTemplate x:DataType="data:SortMode" DataType="data:SortMode">
+        <DataTemplate x:DataType="data:SortMode"
+                      DataType="data:SortMode">
             <TextBlock Text="{Binding Printable}"
-                       AttachedToVisualTree="MenuItem_OnAttachedToVisualTree" 
-                       DetachedFromVisualTree="MenuItem_OnDetachedFromVisualTree"/>
+                       AttachedToVisualTree="MenuItem_OnAttachedToVisualTree"
+                       DetachedFromVisualTree="MenuItem_OnDetachedFromVisualTree" />
         </DataTemplate>
     </MenuItem.ItemTemplate>
     <MenuItem.ItemsSource>
         <collections:ArrayList>
-            <data:SortMode Key="Unsorted"/>
-            <data:SortMode Key="Name" Descending="False"/>
-            <data:SortMode Key="Name" Descending="True"/>
-        
-            <data:SortMode Key="Extension" Descending="False"/>
-            <data:SortMode Key="Extension" Descending="True"/>
-        
-            <data:SortMode Key="Size" Descending="False"/>
-            <data:SortMode Key="Size" Descending="True"/>
-        
-            <data:SortMode Key="TimeStamp" Descending="False"/>
-            <data:SortMode Key="TimeStamp" Descending="True"/>
+            <data:SortMode Key="Unsorted" />
+            <data:SortMode Key="Name"
+                           Descending="False" />
+            <data:SortMode Key="Name"
+                           Descending="True" />
+
+            <data:SortMode Key="Extension"
+                           Descending="False" />
+            <data:SortMode Key="Extension"
+                           Descending="True" />
+
+            <data:SortMode Key="Size"
+                           Descending="False" />
+            <data:SortMode Key="Size"
+                           Descending="True" />
+
+            <data:SortMode Key="TimeStamp"
+                           Descending="False" />
+            <data:SortMode Key="TimeStamp"
+                           Descending="True" />
         </collections:ArrayList>
     </MenuItem.ItemsSource>
 </MenuItem>

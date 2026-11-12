@@ -2,7 +2,6 @@ using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.FunctionKeys;
 using Bashka.Plugins.Core.Scoping;
-using JetBrains.Annotations;
 
 namespace Bashka.Plugins.Core.Orthodox;
 

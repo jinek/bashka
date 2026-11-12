@@ -1,4 +1,3 @@
-using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Core.Dialog.Abstract;
@@ -30,10 +29,10 @@ public class MkdirCommand : TypeKeyedObject, IFunctionBarCommand<ShellCatalog>
     public async Task ExecuteAsync(CommandExecutionContext context)
     {
         context.Panel!.SelectedIndex = -1;
-        
+
         string fileName = await _dialogProvider.ShowOkCancelDialogAsync(new StringInputDialog("Enter directory name"));
 
-        await _workerTaskFactory.StartNewWorkerTask(async (cts, progress, _) =>
+        await _workerTaskFactory.StartNewWorkerTask(async (_, _, _) =>
         {
             string path = Path.Combine(context.Catalog!.CurrentPath!, fileName);
             ((ShellCatalog)context.Catalog)
@@ -43,12 +42,9 @@ public class MkdirCommand : TypeKeyedObject, IFunctionBarCommand<ShellCatalog>
 
         await context.Catalog!.NavigateAsync(string.Empty);
 
-        Entry? newEntry = context.Catalog.Children.SingleOrDefault(entry=>entry.Path == fileName);
-        if (newEntry == null)
-        {
-            throw new UserErrorException("Directory was removed");
-        }
-        
+        Entry? newEntry = context.Catalog.Children.SingleOrDefault(entry => entry.Path == fileName);
+        if (newEntry == null) throw new UserErrorException("Directory was removed");
+
         // now selecting new entry
         context.Panel!.IsFocused = true;
         context.Panel!.SelectedEntry = newEntry;

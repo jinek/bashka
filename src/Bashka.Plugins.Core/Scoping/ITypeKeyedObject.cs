@@ -1,7 +1,6 @@
-namespace Bashka.Plugins.Core.Scoping
+namespace Bashka.Plugins.Core.Scoping;
+
+public interface ITypeKeyedObject
 {
-    public interface ITypeKeyedObject
-    {
-        string TypeKey => GetType().GetTypeKey();
-    }
+    string TypeKey => GetType().GetTypeKey();
 }

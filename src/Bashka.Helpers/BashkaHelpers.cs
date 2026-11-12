@@ -27,6 +27,6 @@ public static class BashkaHelpers
                 //surfacing the exception on the dispatcher right away instead of waiting for finalizer of the unobserved task
                 Dispatcher.UIThread.Post(() =>
                     throw new InvalidOperationException("Exception happened in unawaited Task", task1.Exception));
-            }, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted,  TaskScheduler.Current);
+            }, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Current);
     }
 }

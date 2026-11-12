@@ -20,7 +20,7 @@
                                         DockPanel.Dock="Right" />
                                 <TextBlock Text="{Binding Status}"
                                            TextWrapping="Wrap"
-                                           DockPanel.Dock="Bottom"/>
+                                           DockPanel.Dock="Bottom" />
                                 <ProgressBar IsIndeterminate="{Binding IsIndeterminate}"
                                              ShowProgressText="{Binding IsIndeterminate, Converter={StaticResource InvertBoolean}}"
                                              Value="{Binding Progress}"
@@ -30,8 +30,7 @@
                             <Border Height="1"
                                     BorderBrush="{DynamicResource ThemeBorderBrush}"
                                     BorderThickness="1"
-                                    Margin="-2,0,-2, 0">
-                            </Border>
+                                    Margin="-2,0,-2, 0" />
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

@@ -9,10 +9,10 @@
                           Focusable="True"
                           Margin="0,0,-1,0">
                 <Interaction.Behaviors>
-                    <FocusOnAttachedToVisualTreeBehavior/>
+                    <FocusOnAttachedToVisualTreeBehavior />
                 </Interaction.Behaviors>
                 <TextBlock TextWrapping="Wrap"
-                           Text="{Binding Text}"/>
+                           Text="{Binding Text}" />
             </ScrollViewer>
         </Grid>
     </DataTemplate>

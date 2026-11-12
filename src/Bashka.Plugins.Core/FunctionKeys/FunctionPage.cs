@@ -1,10 +1,9 @@
-namespace Bashka.Plugins.Core.FunctionKeys
+namespace Bashka.Plugins.Core.FunctionKeys;
+
+public enum FunctionPage
 {
-    public enum FunctionPage
-    {
-        Default=0,
-        Ctrl,
-        Alt,
-        Shift
-    }
+    Default = 0,
+    Ctrl,
+    Alt,
+    Shift
 }

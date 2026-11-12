@@ -10,13 +10,16 @@ public class ShowLeftRootsCatalogCommand : IFunctionBarCatalogCommand
     protected bool LeftToActivate = true;
     protected bool RightToActivate = false;
 
-    public bool CanExecute(CommandExecutionContext context) => true;
+    public bool CanExecute(CommandExecutionContext context)
+    {
+        return true;
+    }
 
     public Task ExecuteAsync(CommandExecutionContext context)
     {
         OrthodoxCommander navigator = context.OrthodoxCommander!;
-        navigator.LeftPanel.IsRootsVisible = LeftToActivate;
-        navigator.RightPanel.IsRootsVisible = RightToActivate;
+        navigator.LeftPanel!.IsRootsVisible = LeftToActivate;
+        navigator.RightPanel!.IsRootsVisible = RightToActivate;
         return Task.CompletedTask;
     }
 }

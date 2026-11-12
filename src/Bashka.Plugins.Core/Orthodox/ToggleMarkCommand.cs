@@ -5,7 +5,7 @@ using Bashka.Plugins.Core.Abstract.Surrounding;
 namespace Bashka.Plugins.Core.Orthodox;
 
 /// <summary>
-/// Toggles the mark of the focused entry and moves the cursor (Far manager style, e.g. Insert or Shift+Down/Up)
+///     Toggles the mark of the focused entry and moves the cursor (Far manager style, e.g. Insert or Shift+Down/Up)
 /// </summary>
 public class ToggleMarkCommand(int moveDelta) : ICommand
 {

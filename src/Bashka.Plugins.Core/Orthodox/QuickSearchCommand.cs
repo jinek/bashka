@@ -7,8 +7,10 @@ namespace Bashka.Plugins.Core.Orthodox;
 [UsedImplicitly]
 public class QuickSearchCommand : ICommand
 {
-    public bool CanExecute(CommandExecutionContext context) =>
-        context.Panel is { IsQuickSearchActive: false, CurrentCatalog: not null };
+    public bool CanExecute(CommandExecutionContext context)
+    {
+        return context.Panel is { IsQuickSearchActive: false, CurrentCatalog: not null };
+    }
 
     public Task ExecuteAsync(CommandExecutionContext context)
     {

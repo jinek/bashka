@@ -27,9 +27,6 @@ public static class NanoLauncher
         Console.CursorVisible = false;
 
         // todo: low: not sure need additional thread
-        ThreadPool.QueueUserWorkItem(_ =>
-        {
-            cts.Cancel(true);
-        });
+        ThreadPool.QueueUserWorkItem(_ => { cts.Cancel(true); });
     }
 }

@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Avalonia.Threading;
 using Consolonia.NUnit;
@@ -9,30 +8,14 @@ internal static class UITestHelper
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(20);
 
-    extension(UnitTestConsole test)
-    {
-        public async Task WaitText(string regex)
-        {
-            await WaitForMatch(test, regex, true);
-        }
-
-        public async Task WaitNoText(string regex)
-        {
-            await WaitForMatch(test, regex, false);
-        }
-    }
-
     private static async Task WaitForMatch(UnitTestConsole test, string regex, bool shouldMatch)
     {
-        var deadline = DateTime.UtcNow + Timeout;
+        DateTime deadline = DateTime.UtcNow + Timeout;
         var compiledRegex = new Regex(regex);
-        string lastBuffer = string.Empty;
-
-        
 
         while (true)
         {
-            lastBuffer = await Dispatcher.UIThread.InvokeAsync(() => test.PixelBuffer.PrintBuffer());
+            string lastBuffer = await Dispatcher.UIThread.InvokeAsync(() => test.PixelBuffer.PrintBuffer());
             bool isMatch = compiledRegex.IsMatch(lastBuffer);
             if (isMatch == shouldMatch)
                 return;
@@ -47,6 +30,19 @@ internal static class UITestHelper
             }
 
             await Task.Delay(200);
+        }
+    }
+
+    extension(UnitTestConsole test)
+    {
+        public async Task WaitText(string regex)
+        {
+            await WaitForMatch(test, regex, true);
+        }
+
+        public async Task WaitNoText(string regex)
+        {
+            await WaitForMatch(test, regex, false);
         }
     }
 }

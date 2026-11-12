@@ -8,23 +8,29 @@ using Bashka.Plugins.Foundation.ShellInteraction.Scripting.Scripts;
 namespace Bashka.Plugins.Archives.Bsdtar;
 
 /// <summary>
-/// Formats are whatever "bsdtar" (libarchive) supports: 7z, rar, tar.bz2, tar.xz etc.
+///     Formats are whatever "bsdtar" (libarchive) supports: 7z, rar, tar.bz2, tar.xz etc.
 /// </summary>
 public class BsdtarArchiveCatalog : ShellCatalog, IReadStreamCatalog
 {
     private const char Separator = '/';
     private const int MaxArchiveNameLength = 20;
-    private readonly Lazy<IReadOnlyList<FileEntry>> _allEntries;
-    internal FileEntry ArchiveEntry { get; }
 
 
     public BsdtarArchiveCatalog(FileEntry archiveEntry)
     {
         ArchiveEntry = archiveEntry;
-        _allEntries = new Lazy<IReadOnlyList<FileEntry>>(() => [
-            .. ShellSession.PrepareQuery(new BsdtarListShellMultiScript(ArchiveEntry.FullPath)).Select(CreateEntry)
-        ]);
         NotifyDependentProperties(nameof(CurrentPath), nameof(Title));
+    }
+
+    internal FileEntry ArchiveEntry { get; }
+
+    private string ShortArchiveName
+    {
+        get
+        {
+            string name = ArchiveEntry.Name;
+            return name.Length <= MaxArchiveNameLength ? name : $"...{name[^(MaxArchiveNameLength - 3)..]}";
+        }
     }
 
     public Stream ReadStream(string fullPath)
@@ -41,18 +47,14 @@ public class BsdtarArchiveCatalog : ShellCatalog, IReadStreamCatalog
         return content;
     }
 
-    private string ShortArchiveName
-    {
-        get
-        {
-            string name = ArchiveEntry.Name;
-            return name.Length <= MaxArchiveNameLength ? name : $"...{name[^(MaxArchiveNameLength - 3)..]}";
-        }
-    }
-
     public override string Title => string.IsNullOrEmpty(CurrentPath)
         ? ArchiveEntry.Name
         : $"{ShortArchiveName}{Separator}{CurrentPath}";
+
+    /// <summary>
+    ///     The root of the archive is an empty path, so the amount of path segments can not be used here
+    /// </summary>
+    public override bool CanNavigateBack => !string.IsNullOrEmpty(CurrentPath);
 
     private FileEntry CreateEntry(RawBsdtarEntry rawEntry)
     {
@@ -73,8 +75,8 @@ public class BsdtarArchiveCatalog : ShellCatalog, IReadStreamCatalog
     }
 
     /// <summary>
-    /// Paths of the listing are converted to the paths of entries: slash separated, without a leading
-    /// "./" of tar based formats and without a trailing slash of directories. Symlinks are listed as "link -&gt; target".
+    ///     Paths of the listing are converted to the paths of entries: slash separated, without a leading
+    ///     "./" of tar based formats and without a trailing slash of directories. Symlinks are listed as "link -&gt; target".
     /// </summary>
     private static string EntryPath(string listedName)
     {
@@ -112,10 +114,11 @@ public class BsdtarArchiveCatalog : ShellCatalog, IReadStreamCatalog
         var directories = new Dictionary<string, FileEntry>();
         var files = new List<FileEntry>();
 
-        IReadOnlyList<FileEntry> allEntries = [
+        IReadOnlyList<FileEntry> allEntries =
+        [
             .. ShellSession.PrepareQuery(new BsdtarListShellMultiScript(ArchiveEntry.FullPath)).Select(CreateEntry)
         ];
-        
+
         foreach (FileEntry archiveEntry in allEntries)
         {
             if (!archiveEntry.FullPath.StartsWith(prefix, StringComparison.Ordinal))
@@ -148,9 +151,4 @@ public class BsdtarArchiveCatalog : ShellCatalog, IReadStreamCatalog
             .. files
         ]);
     }
-
-    /// <summary>
-    /// The root of the archive is an empty path, so the amount of path segments can not be used here
-    /// </summary>
-    public override bool CanNavigateBack => !string.IsNullOrEmpty(CurrentPath);
 }

@@ -1,7 +1,6 @@
-namespace Bashka.Plugins.Core.Abstract
+namespace Bashka.Plugins.Core.Abstract;
+
+public interface IEquivalent
 {
-    public interface IEquivalent
-    {
-        bool IsEquivalentTo(object another);
-    }
+    bool IsEquivalentTo(object another);
 }

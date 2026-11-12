@@ -6,7 +6,7 @@ using Bashka.Plugins.Foundation.FileSystem;
 namespace Bashka.Plugins.Archives.Implementations;
 
 /// <summary>
-/// Zip based formats, like .zip, .jar or .nupkg
+///     Zip based formats, like .zip, .jar or .nupkg
 /// </summary>
 public class ZipArchiveCatalog : ArchiveCatalogBase
 {
@@ -15,7 +15,6 @@ public class ZipArchiveCatalog : ArchiveCatalogBase
     public ZipArchiveCatalog(Stream stream, Entry entry)
         : base(stream, entry)
     {
-        
     }
 
     protected override IReadOnlyList<FileEntry> ReadAllEntries()
@@ -33,9 +32,9 @@ public class ZipArchiveCatalog : ArchiveCatalogBase
     public override Stream ReadStream(string fullPath)
     {
         ZipArchiveEntry zipArchiveEntry = _zipArchive!.Entries
-                                             .FirstOrDefault(archiveEntry =>
-                                                 ArchivePath.Normalize(archiveEntry.FullName) == fullPath)
-                                         ?? throw new UserErrorException($"'{fullPath}' is not found in the archive");
+                                              .FirstOrDefault(archiveEntry =>
+                                                  ArchivePath.Normalize(archiveEntry.FullName) == fullPath)
+                                          ?? throw new UserErrorException($"'{fullPath}' is not found in the archive");
         return zipArchiveEntry.Open();
     }
 

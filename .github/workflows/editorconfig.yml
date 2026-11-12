@@ -46,7 +46,7 @@ jobs:
 
       - name: resharper-cleanup
         run: |                    
-          jb cleanupcode ${{ env.SOLUTION_NAME }} --exclude="**Consolonia.GuiCS/**.*"
+          jb cleanupcode ${{ env.SOLUTION_NAME }} --exclude="**Consolonia.GuiCS/**.*;**/Bashka.Plugin.Template/**"
         working-directory: ./src
 
       - name: Check for changes
@@ -64,7 +64,7 @@ jobs:
         uses: muno92/resharper_inspectcode@1.12.0
         with:
           solutionPath: ./src/${{ env.SOLUTION_NAME }}
-          exclude: "**Consolonia.GuiCS/**.*;**Consolonia.Gallery/**.*"
+          exclude: "**Consolonia.GuiCS/**.*;**Consolonia.Gallery/**.*;**/Bashka.Plugin.Template/**"
           version: '2026.1.3'
           minimumSeverity: 'warning'
 

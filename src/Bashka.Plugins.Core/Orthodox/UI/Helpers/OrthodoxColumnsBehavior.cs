@@ -46,8 +46,9 @@ public class OrthodoxColumnsBehavior : Behavior<VerticalScrollDataGrid>
                     CreateBinding("Extension:Down")
                 }
             });
-            
-            AddColumn("Name", nameof(Entry.Name), new Binding(nameof(Entry.Name)) { Mode = BindingMode.OneWay }, null, dockPanel);
+
+            AddColumn("Name", nameof(Entry.Name), new Binding(nameof(Entry.Name)) { Mode = BindingMode.OneWay }, null,
+                dockPanel);
         }
 
         AddColumn("Size", nameof(Entry.Size), new Binding
@@ -90,7 +91,6 @@ public class OrthodoxColumnsBehavior : Behavior<VerticalScrollDataGrid>
             Text = columnTitle
         };
         if (additional != null)
-        {
             mainContent = new DockPanel
             {
                 LastChildFill = true,
@@ -100,7 +100,6 @@ public class OrthodoxColumnsBehavior : Behavior<VerticalScrollDataGrid>
                     mainContent
                 }
             };
-        }
 
         dataGridTextColumn.Header = new DockPanel
         {
@@ -122,7 +121,7 @@ public class OrthodoxColumnsBehavior : Behavior<VerticalScrollDataGrid>
         {
             Text = "▲",
             Fill = false,
-            Margin = new Thickness(1,0,0,0)
+            Margin = new Thickness(1, 0, 0, 0)
         };
         upIcon.Bind(Visual.IsVisibleProperty,
             CreateBinding($"{fieldName}:Up"));
@@ -131,7 +130,7 @@ public class OrthodoxColumnsBehavior : Behavior<VerticalScrollDataGrid>
         {
             Text = "▼",
             Fill = false,
-            Margin = new Thickness(1,0,0,0)
+            Margin = new Thickness(1, 0, 0, 0)
         };
         downIcon.Bind(Visual.IsVisibleProperty,
             CreateBinding($"{fieldName}:Down"));

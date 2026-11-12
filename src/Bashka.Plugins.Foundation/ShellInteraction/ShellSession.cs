@@ -10,25 +10,33 @@ namespace Bashka.Plugins.Foundation.ShellInteraction;
 public sealed class ShellSession : BaseObject, IDisposable
 {
     // todo: all this logic must be rewritten
-    private readonly IEnumerable<IScriptExecutor> _allExecutors;//todo: all this stuff really can work only when one executor registered
-    public IShellConnection ShellConnection { get; }
+    private readonly IEnumerable<IScriptExecutor>
+        _allExecutors; //todo: all this stuff really can work only when one executor registered
 
-    public ShellSession(/*IComponentContext componentContext, todo: delete this parameter*/IEnumerable<IScriptExecutor> allExecutors, IShellConnection shellConnection)
+    public ShellSession( /*IComponentContext componentContext, todo: delete this parameter*/
+        IEnumerable<IScriptExecutor> allExecutors, IShellConnection shellConnection)
     {
         _allExecutors = allExecutors;
         ShellConnection = shellConnection;
     }
 
+    public IShellConnection ShellConnection { get; }
+
     /// <summary>
-    /// Null if not determined yet. You can enforce it by calling <see cref="DetermineShell"/>
+    ///     Null if not determined yet. You can enforce it by calling <see cref="DetermineShell" />
     /// </summary>
     public IReadOnlyList<IScriptExecutor>? AvailableBackends { get; private set; }
+
+    public void Dispose()
+    {
+        //todo: throw new NotImplementedException();
+    }
 
     public T ExecuteScalar<T>(AttributedShellMultiScript<T> shellMultiScript)
     {
         return PrepareQuery(shellMultiScript).Single();
     }
-    
+
     public void ExecuteNonQuery(ShellMultiScript shellMultiScript)
     {
         object[] _ = PrepareQuery(shellMultiScript).ToArray();
@@ -38,7 +46,7 @@ public sealed class ShellSession : BaseObject, IDisposable
     {
         return PrepareQuery((ShellMultiScript)shellMultiScript).Cast<T>();
     }
-    
+
 //todo:  session initialization needs sync:    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<object> PrepareQuery(ShellMultiScript shellMultiScript)
     {
@@ -47,7 +55,7 @@ public sealed class ShellSession : BaseObject, IDisposable
             DetermineShell();
             InitializeShellSession();
         }
-        
+
         //todo: try this to see black magic: Thread.Sleep(new Random(Environment.TickCount).Next(10000));//todo: remove
 
         ShellScriptAttribute shellScript =
@@ -58,7 +66,8 @@ public sealed class ShellSession : BaseObject, IDisposable
 
         if (shellScript.ParseExpression != null)
         {
-            var regex = new Regex(shellScript.ParseExpression,RegexOptions.Singleline/*RegexOptions.Multiline todo: allow buffering in one string also*/);
+            var regex = new Regex(shellScript.ParseExpression,
+                RegexOptions.Singleline /*RegexOptions.Multiline todo: allow buffering in one string also*/);
             ConstructorInfo constructorInfo = shellMultiScript.ResultType.GetConstructors().Single();
             ParameterInfo[] parameterInfos = constructorInfo.GetParameters();
 
@@ -75,16 +84,13 @@ public sealed class ShellSession : BaseObject, IDisposable
                         : match.Groups[parameterInfo.Name!].Value;
                 }).ToArray();
 
-                yield return constructorInfo.Invoke(parameters);                
+                yield return constructorInfo.Invoke(parameters);
             }
         }
         else
         {
             // Case when no parsing needed+
-            foreach (string resultString in resultStrings)
-            {
-                yield return resultString;
-            }
+            foreach (string resultString in resultStrings) yield return resultString;
         }
     }
 
@@ -96,10 +102,5 @@ public sealed class ShellSession : BaseObject, IDisposable
     public void DetermineShell()
     {
         AvailableBackends = _allExecutors.Where(executor => executor.CanExecute).ToArray();
-    }
-
-    public void Dispose()
-    {
-        //todo: throw new NotImplementedException();
     }
 }

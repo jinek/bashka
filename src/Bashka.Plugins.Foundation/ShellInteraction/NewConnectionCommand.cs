@@ -9,7 +9,10 @@ namespace Bashka.Plugins.Foundation.ShellInteraction;
 public class NewConnectionCommand(IDialogProvider dialogProvider)
     : TypeKeyedObject, IFunctionBarCommand<ConnectionsCatalog>
 {
-    public bool CanExecute(CommandExecutionContext context) => true;
+    public bool CanExecute(CommandExecutionContext context)
+    {
+        return true;
+    }
 
     public async Task ExecuteAsync(CommandExecutionContext context)
     {
