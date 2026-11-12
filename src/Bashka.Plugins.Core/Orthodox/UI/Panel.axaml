@@ -167,9 +167,6 @@
                     Background="{DynamicResource ThemeBackgroundBrush}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom">
-                <Border.Styles>
-                    <Style Selector="TextBlock.Bashka.ShellConnectionInfo" />
-                </Border.Styles>
                 <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
                 <TextBlock Margin="1,0"
                            Classes="Bashka ShellConnectionInfo"

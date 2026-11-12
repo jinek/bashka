@@ -4,15 +4,8 @@ using Bashka.Plugins.Core.FunctionKeys;
 
 namespace Bashka.Plugins.Foundation;
 
-public class AboutCatalogCommand : IFunctionBarCatalogCommand
+public class AboutCatalogCommand(IDialogProvider dialogProvider) : IFunctionBarCatalogCommand
 {
-    private readonly IDialogProvider _dialogProvider;
-
-    public AboutCatalogCommand(IDialogProvider dialogProvider)
-    {
-        _dialogProvider = dialogProvider;
-    }
-
     public bool CanExecute(CommandExecutionContext context)
     {
         return true;
@@ -20,6 +13,6 @@ public class AboutCatalogCommand : IFunctionBarCatalogCommand
 
     public Task ExecuteAsync(CommandExecutionContext context)
     {
-        return _dialogProvider.ShowDialogAsync(new AboutDialogContent());
+        return dialogProvider.ShowDialogAsync(new AboutDialogContent());
     }
 }

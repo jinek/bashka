@@ -3,12 +3,39 @@
                     xmlns:foundation="clr-namespace:Bashka.Plugins.Foundation">
     <DataTemplate DataType="{x:Type foundation:AboutDialogContent}"
                   x:Key="{x:Type foundation:AboutDialogContent}">
-        <TextBlock Text="Navigator is powerfull cross-platform file manager"
-                   Focusable="True"
-                   TextWrapping="Wrap">
-            <Interaction.Behaviors>
-                <FocusOnAttachedToVisualTreeBehavior />
-            </Interaction.Behaviors>
-        </TextBlock>
+        <Grid>
+            <StackPanel Spacing="1"
+                        MaxWidth="60"
+                        Margin="1,0">
+                <Border BorderBrush="{DynamicResource ThemeBorderBrush}"
+                        BorderThickness="1"
+                        Padding="2,1">
+                    <ContentControl Classes="Bashka AboutLogo"
+                                    Content="BASHKA"
+                                    MinHeight="3"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center" />
+                </Border>
+                <TextBlock Text="Bashka"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding Version, StringFormat='Version {0}'}"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="A cross-platform orthodox file manager."
+                           TextWrapping="Wrap" />
+                <TextBlock Text="Two panels, keyboard-driven commands, and replaceable plugins."
+                           TextWrapping="Wrap" />
+                <TextBlock Text="Built with Consolonia and Avalonia."
+                           TextWrapping="Wrap" />
+                <Button Content="Close"
+                        Command="{Binding Close}"
+                        HorizontalAlignment="Center"
+                        IsDefault="True"
+                        IsCancel="True">
+                    <Interaction.Behaviors>
+                        <FocusOnAttachedToVisualTreeBehavior />
+                    </Interaction.Behaviors>
+                </Button>
+            </StackPanel>
+        </Grid>
     </DataTemplate>
 </ResourceDictionary>
