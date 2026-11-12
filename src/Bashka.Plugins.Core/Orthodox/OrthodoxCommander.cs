@@ -29,15 +29,15 @@ public class OrthodoxCommander : BaseObject, IUIRoot
             }
             .Select((str, index) => new ToolboxItem { Name = str, Number = index + 1 }).ToArray();*/
 
-        this.WhenChanged(navigator => navigator.LeftPanel.IsFocused, 
-                navigator => navigator.RightPanel.IsFocused,
-                (navigator, _, _) => navigator.LeftPanel.IsFocused ^navigator.RightPanel.IsFocused)
+        this.WhenChanged(navigator => navigator.LeftPanel!.IsFocused, 
+                navigator => navigator.RightPanel!.IsFocused,
+                (navigator, _, _) => navigator.LeftPanel!.IsFocused ^navigator.RightPanel!.IsFocused)
             .Subscribe(_ =>
             {
                 OnPropertyChanged(nameof(CurrentPanel));
             });
 
-        this.WhenPropertyChanged(navigator => navigator.CurrentPanel.CurrentCatalog)
+        this.WhenPropertyChanged(navigator => navigator.CurrentPanel!.CurrentCatalog)
             .Subscribe(value =>
             {
                 FunctionBar.CatalogType = value.Value?.GetType();
@@ -47,18 +47,18 @@ public class OrthodoxCommander : BaseObject, IUIRoot
 
         // keeping dependency properties separate because it stops updating under various conditions
         
-        this.WhenChanged(navigator => navigator.LeftPanel.SelectedIndex,
-                navigator => navigator.RightPanel.SelectedIndex,
-                navigator => navigator.LeftPanel.IsFocused,
-                navigator => navigator.RightPanel.IsFocused,
+        this.WhenChanged(navigator => navigator.LeftPanel!.SelectedIndex,
+                navigator => navigator.RightPanel!.SelectedIndex,
+                navigator => navigator.LeftPanel!.IsFocused,
+                navigator => navigator.RightPanel!.IsFocused,
                 (_, _, _, _, _) => new object())
             .Subscribe(_ => RefreshFunctionBarContext());
 
-        this.WhenChanged(navigator => navigator.LeftPanel.SelectedEntry!.IsGone,
+        this.WhenChanged(navigator => navigator.LeftPanel!.SelectedEntry!.IsGone,
                 (navigator, _) => navigator)
             .Subscribe(_ => RefreshFunctionBarContext());
 
-        this.WhenChanged(navigator => navigator.RightPanel.SelectedEntry!.IsGone,
+        this.WhenChanged(navigator => navigator.RightPanel!.SelectedEntry!.IsGone,
                 (navigator, _) => navigator)
             .Subscribe(_ => RefreshFunctionBarContext());
 
@@ -77,7 +77,7 @@ public class OrthodoxCommander : BaseObject, IUIRoot
     {
         //left
         RecreatePanel(null, _connectionFactory());
-        LeftPanel.IsFocused = true;
+        LeftPanel!.IsFocused = true;
         //right
         RecreatePanel(null, _connectionFactory());
     }
@@ -85,13 +85,13 @@ public class OrthodoxCommander : BaseObject, IUIRoot
     /// <summary>
     /// Can be null during initialization only
     /// </summary>
-    public IPanel LeftPanel { get; private set; } = null!;
+    public IPanel? LeftPanel { get; private set; }
 
     
     /// <summary>
     /// <see cref="LeftPanel"/>
     /// </summary>
-    public IPanel RightPanel { get; private set; } = null!;
+    public IPanel? RightPanel { get; private set; }
 
     public IPanel RecreatePanel(IPanel? panelToRecreate, IShellConnection shellConnection)
     {
@@ -121,8 +121,8 @@ public class OrthodoxCommander : BaseObject, IUIRoot
         return newPanel;
     }
 
-    public IPanel CurrentPanel => RightPanel.IsFocused ? RightPanel : LeftPanel;
-    public IPanel AnotherPanel => RightPanel.IsFocused ? LeftPanel : RightPanel;
+    public IPanel? CurrentPanel => (RightPanel?.IsFocused??false) ? RightPanel : LeftPanel;
+    public IPanel? AnotherPanel => (RightPanel?.IsFocused ?? false) ? LeftPanel : RightPanel;
 
     public ReactiveCommand<KeyDownModel, Unit> KeyDownCommand { get; }
 

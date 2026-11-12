@@ -13,7 +13,7 @@ namespace Bashka.Plugins.Core.Abstract.Data
     {
         public CommandExecutionContext(OrthodoxCommander orthodoxCommander) : this([], null, null, orthodoxCommander, null)
         {
-            IPanel panel = orthodoxCommander.CurrentPanel;
+            IPanel panel = orthodoxCommander.CurrentPanel!;
             Panel = panel;
             Catalog = panel.CurrentCatalog;
             AnotherPanel = orthodoxCommander.AnotherPanel;

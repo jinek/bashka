@@ -15,8 +15,8 @@ public class ShowLeftRootsCatalogCommand : IFunctionBarCatalogCommand
     public Task ExecuteAsync(CommandExecutionContext context)
     {
         OrthodoxCommander navigator = context.OrthodoxCommander!;
-        navigator.LeftPanel.IsRootsVisible = LeftToActivate;
-        navigator.RightPanel.IsRootsVisible = RightToActivate;
+        navigator.LeftPanel!.IsRootsVisible = LeftToActivate;
+        navigator.RightPanel!.IsRootsVisible = RightToActivate;
         return Task.CompletedTask;
     }
 }
