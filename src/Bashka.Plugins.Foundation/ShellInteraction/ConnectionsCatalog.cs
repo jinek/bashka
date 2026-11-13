@@ -77,7 +77,11 @@ public class ConnectionsCatalog : BaseObject, IPtyExecutor
             !fileEntry.Name.EndsWith(".ini", StringComparison.OrdinalIgnoreCase))
             return null;
 
+        SshConnectionSettings settings = SshConnectionSettings.Load(fileEntry.FullPath);
         return new SwitchConnectionEntry(Path.GetFileNameWithoutExtension(fileEntry.Name), this,
-            () => new SshShellConnection(SshConnectionSettings.Load(fileEntry.FullPath).ToConnectionInfo()));
+            () => new SshShellConnection(settings.ToConnectionInfo()))
+        {
+            Extension = string.IsNullOrWhiteSpace(settings.Host) ? string.Empty : $"{settings.Host}:{settings.Port}"
+        };
     }
 }
