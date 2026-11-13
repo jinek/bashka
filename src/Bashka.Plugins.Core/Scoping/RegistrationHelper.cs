@@ -17,6 +17,7 @@ public static class RegistrationHelper
             TInterface>(this ContainerBuilder builder) where TImplementer : TInterface where TInterface : notnull
     {
         return builder.RegisterType<TImplementer>()
+            .AsSelf()
             .As<TInterface>()
             .Keyed<TInterface>(typeof(TImplementer).GetTypeKey())
             .WithAttributeFiltering()
