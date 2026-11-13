@@ -1,4 +1,5 @@
 using Autofac;
+using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Orthodox;
@@ -14,8 +15,7 @@ public class ConnectionsCatalog : BaseObject, IPtyExecutor
 {
     private const string Connections = "Connections";
 
-    public static readonly string ConnectionsDirectory = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Bashka", Connections);
+    public static readonly string ConnectionsDirectory = Path.Combine(BashkaPaths.DataDirectory, Connections);
 
     private readonly FileSystemCatalog _inner;
 

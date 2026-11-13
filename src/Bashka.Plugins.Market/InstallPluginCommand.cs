@@ -3,6 +3,7 @@ using System.Runtime.Versioning;
 using System.Text.Json;
 using BaGetter.Protocol;
 using BaGetter.Protocol.Models;
+using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Core.Worker.Schedulers;
@@ -20,9 +21,7 @@ public class InstallPluginCommand(WorkerTaskFactory workerTaskFactory)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 progress.ReportProgress("Preparing installation...");
-                string appDataDir = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "Bashka", "Plugins", package.PackageId);
+                string appDataDir = Path.Combine(BashkaPaths.DataDirectory, "Plugins", package.PackageId);
                 
                 System.IO.Directory.CreateDirectory(appDataDir);
                 string framework = NuGetFramework.ParseFrameworkName(
