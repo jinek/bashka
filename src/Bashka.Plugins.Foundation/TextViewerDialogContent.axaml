@@ -11,8 +11,8 @@
                 <Interaction.Behaviors>
                     <FocusOnAttachedToVisualTreeBehavior />
                 </Interaction.Behaviors>
-                <TextBlock TextWrapping="Wrap"
-                           Text="{Binding Text}" />
+                <SelectableTextBlock TextWrapping="Wrap"
+                                     Text="{Binding Text}" />
             </ScrollViewer>
         </Grid>
     </DataTemplate>

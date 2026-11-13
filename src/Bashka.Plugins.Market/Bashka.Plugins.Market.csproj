@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <Description>Bashka plugin package catalog.</Description>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Bashka.Plugins.Foundation/Bashka.Plugins.Foundation.csproj" />
+        <PackageReference Include="BaGetter.Protocol" Version="1.6.5" />
+        <PackageReference Include="NuGet.Resolver" Version="7.9.0" />
+        <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.2" />
+    </ItemGroup>
+</Project>

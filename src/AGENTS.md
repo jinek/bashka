@@ -27,3 +27,5 @@ We should prefer more strict types where enough: IEnumeraable, ReadOnly collecti
 Don't do like ToList by default.
 
 We should not do excessive comments. Instead, just, write your explainations to output. Obvious things must not be commented. 
+
+For testing we prefer E2E tests to have bigger/integrated scenarios.

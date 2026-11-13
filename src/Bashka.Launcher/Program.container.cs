@@ -13,6 +13,7 @@ using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Foundation;
 using Bashka.Plugins.Foundation.FileSystem;
 using Bashka.Plugins.Foundation.ShellInteraction;
+using Bashka.Plugins.Market;
 
 namespace Bashka.Launcher;
 
@@ -128,6 +129,7 @@ internal static partial class Program
 //builder.FullRegister<VolkovCommander,IUIRoot>();
 
         builder.RegisterModule<AttributedMetadataModule>();
+        builder.RegisterModule<MarketModule>();
         if (DevelopmentHost.PluginModule is { } pluginModule)
             builder.RegisterModule(pluginModule);
 
