@@ -35,6 +35,7 @@
     </ItemGroup>
        
     <ItemGroup>
+      <ProjectReference Include="..\Bashka.Plugins\Bashka.Plugins.csproj" />
       <ProjectReference Include="..\Bashka.Helpers\Bashka.Helpers.csproj" />
       <ProjectReference Include="..\Bashka.Plugins.Archives\Bashka.Plugins.Archives.csproj" />
       <ProjectReference Include="..\Bashka.Plugins.Archives.Bsdtar\Bashka.Plugins.Archives.Bsdtar.csproj" />
