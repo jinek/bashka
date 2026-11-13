@@ -12,7 +12,11 @@ public class FileEntry : Entry
             isDirectory, catalog)
     {
         FullPath = pathAndName.FullPath;
+        string extension = System.IO.Path.GetExtension(Name);
+        if (!isDirectory && extension.Length > 0 && extension.Length < Name.Length)
+            Extension = extension[1..];
     }
 
     public string FullPath { get; }
+    public override string DisplayName => Extension.Length == 0 ? Name : System.IO.Path.GetFileNameWithoutExtension(Name);
 }

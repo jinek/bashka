@@ -11,6 +11,7 @@ public class BasicTests() : ConsoloniaAppTestBase<App>(new PixelBufferSize(140, 
 {
     private const string SandboxFolder = "E2ESandbox";
     private const string SampleFile = "sample.txt";
+    private const string SampleFileDisplay = "sample +txt";
     private const string NewFolderName = "NewFolder";
     private const string CopiedFileName = "sample_copy.txt";
 
@@ -22,13 +23,13 @@ public class BasicTests() : ConsoloniaAppTestBase<App>(new PixelBufferSize(140, 
         await WaitProcessing();
         // navigate into the sandbox folder shipped as a test asset
         await QuickSearchAndOpen(SandboxFolder);
-        await UITest.WaitText(SampleFile);
+        await UITest.WaitText(SampleFileDisplay);
 
         // sorting: cycle through a couple of sort modes, the listing must survive
         await UITest.KeyInput(Key.F3, RawInputModifiers.Control);
-        await UITest.WaitText(SampleFile);
+        await UITest.WaitText(SampleFileDisplay);
         await UITest.KeyInput(Key.F6, RawInputModifiers.Control);
-        await UITest.WaitText(SampleFile);
+        await UITest.WaitText(SampleFileDisplay);
 
         // creating a directory
         await UITest.KeyInput(Key.F7);
@@ -38,9 +39,9 @@ public class BasicTests() : ConsoloniaAppTestBase<App>(new PixelBufferSize(140, 
 
         // navigating: enter the new (empty) directory and go back
         await QuickSearchAndOpen(NewFolderName);
-        await UITest.WaitNoText(SampleFile);
+        await UITest.WaitNoText(SampleFileDisplay);
         await QuickSearchAndOpen("..");
-        await UITest.WaitText(SampleFile);
+        await UITest.WaitText(SampleFileDisplay);
 
         // copy: make the right panel point to the same sandbox folder as destination
         await UITest.KeyInput(Key.Tab);
@@ -53,7 +54,7 @@ public class BasicTests() : ConsoloniaAppTestBase<App>(new PixelBufferSize(140, 
         await UITest.KeyInput(Key.A, RawInputModifiers.Control);
         await UITest.StringInput(CopiedFileName);
         await UITest.KeyInput(Key.Enter);
-        await UITest.WaitText(CopiedFileName);
+        await UITest.WaitText(@"sample_copy +txt");
 
         // opening roots: the roots drop-down always contains the "All catalogs" entry
         await UITest.KeyInput(Key.F1, RawInputModifiers.Alt);

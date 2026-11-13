@@ -187,7 +187,7 @@ public class Panel : BaseObject, IPanel
 
         static string ExtensionOf(Entry entry)
         {
-            return Path.GetExtension(entry.Name);
+            return entry.Extension;
         }
     }
 
