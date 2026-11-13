@@ -60,6 +60,9 @@
       <Compile Update="Program.error.cs">
         <DependentUpon>Program.cs</DependentUpon>
       </Compile>
+      <Compile Update="App.error.cs">
+        <DependentUpon>App.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

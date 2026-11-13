@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using BaGetter.Protocol;
-using Bashka.Helpers;
 using Microsoft.FSharp.Collections;
 using Microsoft.FSharp.Control;
 using Microsoft.FSharp.Core;
@@ -36,7 +35,7 @@ internal sealed class PluginPackageInstaller(NuGetClient client, IReadOnlySet<st
             group.Name, group.Options.ResolverStrategyForDirectDependencies, group.Options.ResolverStrategyForTransitives,
             group.Options.Settings.FrameworkRestrictions, SetModule.OfSeq(group.Packages), UpdateMode.Install).GetModelOrFail();
 
-        string packagesDirectory = Path.Combine(BashkaPaths.DataDirectory, "Packages");
+        string packagesDirectory = MarketHelpers.PackagesDirectory;
         var paths = new VersionFolderPathResolver(packagesDirectory);
         var extraction = new PackageExtractionContext(PackageSaveMode.Defaultv3, XmlDocFileSaveMode.None,
             ClientPolicyContext.GetClientPolicy(Settings.LoadDefaultSettings(null), NullLogger.Instance), NullLogger.Instance);

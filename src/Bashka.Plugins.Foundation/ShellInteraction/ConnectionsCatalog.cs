@@ -15,7 +15,7 @@ public class ConnectionsCatalog : BaseObject, IPtyExecutor
 {
     private const string Connections = "Connections";
 
-    public static readonly string ConnectionsDirectory = Path.Combine(BashkaPaths.DataDirectory, Connections);
+    public static readonly string ConnectionsDirectory = Path.Combine(BashkaHelpers.DataDirectory, Connections);
 
     private readonly FileSystemCatalog _inner;
 

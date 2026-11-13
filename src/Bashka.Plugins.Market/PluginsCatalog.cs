@@ -1,6 +1,5 @@
 using BaGetter.Protocol;
 using BaGetter.Protocol.Models;
-using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Foundation.FileSystem;
@@ -10,7 +9,7 @@ using Paket;
 
 namespace Bashka.Plugins.Market;
 
-public sealed class PluginsCatalog() : PathCatalog, IReadStreamCatalog, IWriteStreamCatalog
+public sealed class PluginsCatalog : PathCatalog, IReadStreamCatalog, IWriteStreamCatalog
 {
     private readonly NuGetClient _nuGetClient = new("https://api.nuget.org/v3/index.json");
     public override string Title => "Plugins";
@@ -25,7 +24,7 @@ public sealed class PluginsCatalog() : PathCatalog, IReadStreamCatalog, IWriteSt
                 this)];
         }
         
-        string pluginsDirectory = Path.Combine(BashkaPaths.DataDirectory, "Plugins");
+        string pluginsDirectory = MarketHelpers.PluginsDirectory;
         var installed = new Dictionary<string, NuGetVersion>(StringComparer.OrdinalIgnoreCase);
         if (Directory.Exists(pluginsDirectory))
         {
@@ -46,7 +45,7 @@ public sealed class PluginsCatalog() : PathCatalog, IReadStreamCatalog, IWriteSt
             }
         }
 
-        var versionResolver = new VersionFolderPathResolver(Path.Combine(BashkaPaths.DataDirectory, "Packages"));
+        var versionResolver = new VersionFolderPathResolver(MarketHelpers.PackagesDirectory);
         IReadOnlyList<SearchResult> packages = await _nuGetClient.SearchAsync("tags:bashka-plugin");
         var updatesAvailable = new List<PluginEntry>();
         var latestInstalled = new List<PluginEntry>();

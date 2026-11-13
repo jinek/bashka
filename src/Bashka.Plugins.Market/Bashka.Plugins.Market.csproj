@@ -4,6 +4,10 @@
         <Description>Bashka plugin package catalog.</Description>
     </PropertyGroup>
     <ItemGroup>
+        <EmbeddedResource Include="$(MSBuildToolsPath)/PortableRuntimeIdentifierGraph.json"
+                          LogicalName="Bashka.Plugins.Market.RuntimeIdentifierGraph.json" />
+    </ItemGroup>
+    <ItemGroup>
         <ProjectReference Include="../Bashka.Plugins.Foundation/Bashka.Plugins.Foundation.csproj" />
         <PackageReference Include="BaGetter.Protocol" Version="1.6.5" />
         <PackageReference Include="Paket.Core" Version="12.0.0" />

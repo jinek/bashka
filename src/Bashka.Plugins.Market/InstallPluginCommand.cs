@@ -3,7 +3,6 @@ using System.Runtime.Versioning;
 using System.Text.Json;
 using BaGetter.Protocol;
 using BaGetter.Protocol.Models;
-using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Core.Worker.Schedulers;
@@ -21,12 +20,10 @@ public class InstallPluginCommand(WorkerTaskFactory workerTaskFactory)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 progress.ReportProgress("Preparing installation...");
-                string appDataDir = Path.Combine(BashkaPaths.DataDirectory, "Plugins", package.PackageId);
+                string appDataDir = Path.Combine(MarketHelpers.PluginsDirectory, package.PackageId);
                 
                 System.IO.Directory.CreateDirectory(appDataDir);
-                string framework = NuGetFramework.ParseFrameworkName(
-                    typeof(InstallPluginCommand).Assembly.GetCustomAttribute<TargetFrameworkAttribute>()!.FrameworkName,
-                    DefaultFrameworkNameProvider.Instance).GetShortFolderName();
+                string framework = MarketHelpers.GetFramework().GetShortFolderName();
                 
                 string dependenciesFile = Path.Combine(appDataDir, "paket.dependencies");
                 await System.IO.File.WriteAllTextAsync(dependenciesFile, $"""
@@ -46,7 +43,7 @@ public class InstallPluginCommand(WorkerTaskFactory workerTaskFactory)
                 HashSet<string> hostPackages = hostDependencies.RootElement
                     .GetProperty("libraries")
                     .EnumerateObject()
-                    .Select(library => library.Name[..library.Name.LastIndexOf('/')])
+                    .Select(library => Path.GetDirectoryName(library.Name)!)
                     .ToHashSet(StringComparer.OrdinalIgnoreCase);
                 
                 var installer = new PluginPackageInstaller(new NuGetClient("https://api.nuget.org/v3/index.json"),
