@@ -132,6 +132,7 @@ public class OrthodoxCommander : BaseObject, IUIRoot
 
     private async void KeyDown(KeyDownModel parameter)
     {
+        //todo: Need to consider what to do with async void, because besides crashes (which is mostly fine), also business exceptions come to unobserved tasks. F35896B1-7D8B-4E44-A6C4-367F8801EFE2
         ICommand[] commands = _keyBindingsService.MatchCommands(parameter.KeyCombination, nameof(OrthodoxCommander));
         foreach (ICommand command in commands)
         {

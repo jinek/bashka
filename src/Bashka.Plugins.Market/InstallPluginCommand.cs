@@ -53,5 +53,7 @@ public class InstallPluginCommand(WorkerTaskFactory workerTaskFactory)
                 
                 progress.ReportProgress("Installation complete", 100);
             }, $"Installing {package.PackageId}");
+        
+        context.SingleEntry.Status = PluginStatus.Installed;
     }
 }

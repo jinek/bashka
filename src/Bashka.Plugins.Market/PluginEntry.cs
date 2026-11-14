@@ -20,13 +20,13 @@ public sealed class PluginEntry : FileEntry
         Package = package;
         Status = status;
         InstalledVersion = installedVersion;
-        Extension = status == PluginStatus.Available ? string.Empty : status.ToString();
     }
 
     public SearchResult Package { get; }
-    public PluginStatus Status { get; }
+    public PluginStatus Status { get; internal set; }
     public NuGetVersion? InstalledVersion { get; }
     public override string DisplayName => Name;
+    public override string Extension => Status == PluginStatus.Available ? string.Empty : Status.ToString();
 
     public string FormatMetadata() => $"""
         {Package.PackageId}

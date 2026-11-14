@@ -90,7 +90,7 @@ public class OrthodoxColumnsBehavior : Behavior<VerticalScrollDataGrid>
         {
             Binding = new Binding(nameof(Entry.TimeStamp))
             {
-                StringFormat = "{0:d}",
+                Converter = new AccessTimeConverter(),
                 Mode = BindingMode.OneWay
             }
         }, 10);

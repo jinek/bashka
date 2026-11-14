@@ -19,7 +19,7 @@ public class Entry : BaseObject
     public string Path => PathAndName.Path;
     public string Name => PathAndName.Name;
     public virtual string DisplayName => Name;
-    public string Extension { get; init; } = string.Empty;
+    public virtual string Extension { get; init; } = string.Empty;
     public ICatalog ParentCatalog { get; }
 
     public long Size { get; init; }
