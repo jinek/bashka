@@ -11,6 +11,5 @@
         <ProjectReference Include="../Bashka.Plugins.Core/Bashka.Plugins.Core.csproj" />
         <ProjectReference Include="../Bashka.Plugins.Foundation/Bashka.Plugins.Foundation.csproj" />
         <ProjectReference Include="../Bashka.Plugins.Archives/Bashka.Plugins.Archives.csproj" />
-        <ProjectReference Include="../Bashka.Plugins.Archives.Bsdtar/Bashka.Plugins.Archives.Bsdtar.csproj" />
     </ItemGroup>
 </Project>

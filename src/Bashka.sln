@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bashka.Plugins.Market", "Ba
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bashka.Tool", "Bashka.Tool\Bashka.Tool.csproj", "{D5D24F81-64E6-4C5C-98CD-A2E5C9B30E48}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bundle", "Bundle", "{D08F2E64-D54D-4D98-AB96-3C5E147F0E85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,5 +87,8 @@ Global
 		{D5D24F81-64E6-4C5C-98CD-A2E5C9B30E48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5D24F81-64E6-4C5C-98CD-A2E5C9B30E48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5D24F81-64E6-4C5C-98CD-A2E5C9B30E48}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B7DC4BC0-F0AE-4E48-A904-81D687C57980} = {D08F2E64-D54D-4D98-AB96-3C5E147F0E85}
 	EndGlobalSection
 EndGlobal

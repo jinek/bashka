@@ -27,8 +27,8 @@ package version remains `1.0.0`.
 Debug packaging avoids the repository's existing Release warnings-as-errors
 while bootstrapping the SDK.
 
-`Bashka.Plugins` is a dependency-only meta package for Core, Foundation, Archives,
-and Archives.Bsdtar; their common dependency is Bashka.Helpers. These projects
+`Bashka.Plugins` is a dependency-only meta package for Core, Foundation, and Archives;
+their common dependency is Bashka.Helpers. These projects
 and the development launcher are packable so the generated project uses actual
 NuGet references, including during local development.
 
