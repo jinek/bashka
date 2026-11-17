@@ -5,13 +5,11 @@ using Bashka.Launcher;
 using Bashka.Plugins.Core.Worker.ProgressUI;
 using Bashka.Plugins.Core.Worker.Schedulers;
 using Bashka.Tests.Helpers;
-using Consolonia.Core.Drawing.PixelBufferImplementation;
-using Consolonia.NUnit;
 
 namespace Bashka.Tests.E2E;
 
 [TestFixture]
-public class WorkerProgressTests() : ConsoloniaAppTestBase<App>(new PixelBufferSize(140, 40))
+public class WorkerProgressTests : BashkaAppTestBase
 {
     [Test]
     public async Task ContinuationsAndNestedWorkShareTheirRootProgress()

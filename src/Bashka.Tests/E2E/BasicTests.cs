@@ -1,13 +1,10 @@
 using Avalonia.Input;
-using Bashka.Launcher;
 using Bashka.Tests.Helpers;
-using Consolonia.Core.Drawing.PixelBufferImplementation;
-using Consolonia.NUnit;
 
 namespace Bashka.Tests.E2E;
 
 [TestFixture]
-public class BasicTests() : ConsoloniaAppTestBase<App>(new PixelBufferSize(140, 40))
+public class BasicTests : BashkaAppTestBase
 {
     private const string SandboxFolder = "E2ESandbox";
     private const string SampleFile = "sample.txt";
