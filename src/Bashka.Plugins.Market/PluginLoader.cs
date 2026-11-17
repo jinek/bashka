@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Loader;
-using System.Runtime.Versioning;
 using System.Text.Json;
 using Autofac;
 using NuGet.Frameworks;
@@ -22,7 +21,7 @@ public static class PluginLoader
         var paths = new VersionFolderPathResolver(MarketHelpers.PackagesDirectory);
         var hostAssemblies = ((string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") ?? string.Empty)
             .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
-            .Select(path => Path.GetFileNameWithoutExtension(path)!)
+            .Select(path => Path.GetFileNameWithoutExtension(path))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
         
         // todo: this is vibe-code. It's so bad I stopped at this line, please, continue/ First of all it has same code as Plugin Catalog
@@ -33,8 +32,11 @@ public static class PluginLoader
             string lockFile = Path.Combine(directory, "paket.lock");
             if (!File.Exists(lockFile)) continue;
             string id = Path.GetFileName(directory);
-            PackageResolver.ResolvedPackage[] packages = LockFile.LoadFrom(lockFile)
-                .GetGroup(Constants.MainDependencyGroup).Resolution.Values.ToArray();
+            PackageResolver.ResolvedPackage[] packages =
+            [
+                .. LockFile.LoadFrom(lockFile)
+                    .GetGroup(Constants.MainDependencyGroup).Resolution.Values
+            ];
             PackageResolver.ResolvedPackage root = packages.SingleOrDefault(package =>
                                                        StringComparer.OrdinalIgnoreCase.Equals(package.Name.Name, id))
                                                    ?? throw new InvalidDataException($"Plugin {id} is missing from {lockFile}.");
@@ -64,15 +66,16 @@ public static class PluginLoader
                     if (!assemblies.TryAdd(assembly.Key, assembly.Value))
                         throw new InvalidDataException($"Plugin {id} has multiple runtime assemblies named {assembly.Key}.");
                 }
-                if (package == root)
+                if (package.Equals(root))
                     entryPath = packageAssemblies.Values.SingleOrDefault(file =>
                         Path.GetFileName(file).Equals($"{id}.dll", StringComparison.OrdinalIgnoreCase));
+                continue;
 
                 void AddManagedFiles(string libraryDirectory)
                 {
                     foreach (string file in GetFrameworkFiles(libraryDirectory, framework))
                     {
-                        AssemblyName name = AssemblyName.GetAssemblyName(file);
+                        var name = AssemblyName.GetAssemblyName(file);
                         packageAssemblies[AssemblyKey(name)] = file;
                     }
                 }

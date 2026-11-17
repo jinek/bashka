@@ -86,7 +86,7 @@ public sealed class PluginsCatalog : PathCatalog, IReadStreamCatalog, IWriteStre
             .. availableForInstallation
         ];
 
-        PluginEntry CreateEntry(SearchResult package, PluginMetadata metadata, bool localOnly = false)
+        PluginEntry CreateEntry(SearchResult package, PluginMetadata metadata, bool localOnlyParameter = false)
         {
             var entry = new PluginEntry
             {
@@ -95,7 +95,7 @@ public sealed class PluginsCatalog : PathCatalog, IReadStreamCatalog, IWriteStre
                 FullPath = PathJoin(PluginEntry.RootPath, package.PackageId), 
                 ParentCatalog = this,
                 Package = package, 
-                LocalOnly = localOnly
+                LocalOnly = localOnlyParameter
             };
             metadata.ApplyTo(entry);
             return entry;

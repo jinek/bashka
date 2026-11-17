@@ -12,11 +12,12 @@ public static class TaskFactoryHelper
         using IDisposable titleRegion = WorkerTaskFactory.Title.StartRegion(title);
 
         Task workerTask = null!;
+        var task = workerTask;
         workerTask = new Task(() =>
         {
             using IDisposable? rootRegion = WorkerTaskFactory.CurrentExecutionRootTask.HasCurrentValue
                 ? null
-                : WorkerTaskFactory.CurrentExecutionRootTask.StartRegion(workerTask);
+                : WorkerTaskFactory.CurrentExecutionRootTask.StartRegion(task);
             WorkerTaskFactory.CurrentProgress.ReportProgress("Working...");
             action(WorkerTaskFactory.CurrentCancellationToken, WorkerTaskFactory.CurrentProgress,
                 WorkerTaskFactory.CurrentUITaskFactory).Wait(); //todo: should call async here better?

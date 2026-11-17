@@ -11,7 +11,6 @@ using Consolonia.NUnit;
 using NuGet.Versioning;
 using NuGet.Packaging;
 using Bashka.Plugins.Core.Worker.Schedulers;
-using Bashka.Plugins.Foundation.FileSystem;
 
 namespace Bashka.Tests.E2E;
 

@@ -1,4 +1,3 @@
-using System.Runtime.ExceptionServices;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Core.Dialog.Abstract;
