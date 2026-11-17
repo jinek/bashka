@@ -1,11 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <OutputType>Exe</OutputType>
         <IsPackable>true</IsPackable>
+        <PackageId>$(AssemblyName)</PackageId>
+        <PackageTags>bashka-plugin</PackageTags>
+        <Description>Browse, create, and extract archives using bsdtar in local and remote shells.</Description>
+        <UseAppHost>false</UseAppHost>
+        <EnableDynamicLoading>true</EnableDynamicLoading>
     </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bashka.Helpers\Bashka.Helpers.csproj" />
-    <ProjectReference Include="..\Bashka.Plugins.Core\Bashka.Plugins.Core.csproj" />
-    <ProjectReference Include="..\Bashka.Plugins.Foundation\Bashka.Plugins.Foundation.csproj" />
+    <ProjectReference Include="..\Bashka.Plugins\Bashka.Plugins.csproj" />
+    <ProjectReference Include="..\Bashka.Launcher\Bashka.Launcher.csproj" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="OpenBsdtarArchiveCommand.cs">

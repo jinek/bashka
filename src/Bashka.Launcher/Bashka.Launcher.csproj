@@ -38,7 +38,6 @@
       <ProjectReference Include="..\Bashka.Plugins\Bashka.Plugins.csproj" />
       <ProjectReference Include="..\Bashka.Helpers\Bashka.Helpers.csproj" />
       <ProjectReference Include="..\Bashka.Plugins.Archives\Bashka.Plugins.Archives.csproj" />
-      <ProjectReference Include="..\Bashka.Plugins.Archives.Bsdtar\Bashka.Plugins.Archives.Bsdtar.csproj" />
       <ProjectReference Include="..\Bashka.Plugins.Core\Bashka.Plugins.Core.csproj" />
       <ProjectReference Include="..\Bashka.Plugins.Foundation\Bashka.Plugins.Foundation.csproj" />
       <ProjectReference Include="..\Bashka.Plugins.Market\Bashka.Plugins.Market.csproj" />

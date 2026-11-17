@@ -1,7 +1,6 @@
 using Autofac;
 using Autofac.Extras.AttributeMetadata;
 using Bashka.Plugins.Archives;
-using Bashka.Plugins.Archives.Bsdtar;
 using Bashka.Plugins.Archives.Implementations;
 using Bashka.Plugins.Core;
 using Bashka.Plugins.Core.Abstract;
@@ -31,13 +30,10 @@ internal static partial class Program
         builder.FullRegister<TarArchiveCatalog, IArchiveCatalog>();
         builder.FullRegister<TarGzArchiveCatalog, IArchiveCatalog>();
         builder.FullRegister<GZipArchiveCatalog, IArchiveCatalog>();
-        builder.FullRegister<BsdtarArchiveCatalog, IReadStreamCatalog>();
         builder.RegisterEnterCommand<OpenZipArchiveCommand>();
         builder.RegisterEnterCommand<OpenTarArchiveCommand>();
         builder.RegisterEnterCommand<OpenTarGzArchiveCommand>();
         builder.RegisterEnterCommand<OpenGZipArchiveCommand>();
-//registered after the native archive commands, so it overrides them
-        builder.RegisterEnterCommand<OpenBsdtarArchiveCommand>();
         builder.RegisterEnterCommand<SwitchConnectionCommand>();
 
 
@@ -115,13 +111,6 @@ internal static partial class Program
             .WithParameter(new TypedParameter(typeof(SortKey), SortKey.TimeStamp));
         builder.RegisterFCommand<SortCommand, ICatalog>(FunctionPage.Ctrl, FunctionKey.F6, "SrtSize")
             .WithParameter(new TypedParameter(typeof(SortKey), SortKey.Size));
-
-        builder.RegisterFCommand<AddToBsdtarArchiveCommand, ShellCatalog>(FunctionPage.Alt, FunctionKey.F5, "Pack");
-        builder.RegisterFCommand<AddToBsdtarArchiveCommand, ShellCatalog>(FunctionPage.Shift, FunctionKey.F1, "Pack");
-        builder.RegisterFCommand<ExtractBsdtarArchiveCommand, ShellCatalog>(FunctionPage.Shift, FunctionKey.F2,
-            "UnPack");
-        builder.RegisterFCommand<ExtractBsdtarEntriesCommand, BsdtarArchiveCatalog>(FunctionPage.Shift, FunctionKey.F2,
-            "UnPack");
 
         builder.FullRegister<CoreVisualExtension, VisualExtension>();
         builder.FullRegister<FoundationVisualExtension, VisualExtension>();
