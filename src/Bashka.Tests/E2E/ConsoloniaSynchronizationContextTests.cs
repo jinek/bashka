@@ -12,12 +12,10 @@ public class ConsoloniaSynchronizationContextTests
     public async Task ConsoloniaStillRetainsPreviousAppsSynchronizationContext()
     {
         var probe = new AppLifecycleProbe();
-        SynchronizationContext? firstContext = await probe.RunAppAsync();
-        Assert.That(firstContext, Is.InstanceOf<AvaloniaSynchronizationContext>());
-
         await probe.RunAppAsync();
+        bool previousContextCanResume = await probe.RunAppAsync();
 
-        Assert.That(probe.ContextBeforeWorkaround, Is.SameAs(firstContext),
+        Assert.That(previousContextCanResume, Is.False,
             "Consolonia.NUnit no longer retains the previous app's synchronization context. " +
             "Remove the context reset in BashkaAppTestBase and this workaround reminder test.");
     }
@@ -32,13 +30,19 @@ public class ConsoloniaSynchronizationContextTests
             return base.CreateAppBuilder();
         }
 
-        public async Task<SynchronizationContext?> RunAppAsync()
+        public async Task<bool> RunAppAsync()
         {
             await SetUpApp();
             try
             {
                 await UITest.WaitNoText("Processing");
-                return await Dispatcher.UIThread.InvokeAsync(() => SynchronizationContext.Current);
+                if (ContextBeforeWorkaround is not AvaloniaSynchronizationContext context)
+                    return true;
+
+                var resumed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                context.Post(_ => resumed.TrySetResult(), null);
+                await Task.WhenAny(resumed.Task, Task.Delay(TimeSpan.FromSeconds(1)));
+                return resumed.Task.IsCompleted;
             }
             finally
             {
