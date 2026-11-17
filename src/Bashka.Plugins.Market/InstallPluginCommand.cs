@@ -1,12 +1,10 @@
 using System.Reflection;
-using System.Runtime.Versioning;
 using System.Text.Json;
 using BaGetter.Protocol;
 using BaGetter.Protocol.Models;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Core.Worker.Schedulers;
-using NuGet.Frameworks;
 
 namespace Bashka.Plugins.Market;
 
@@ -16,7 +14,7 @@ public class InstallPluginCommand(WorkerTaskFactory workerTaskFactory)
     public override async Task ExecuteAsync(CatalogCommandContext<PluginsCatalog, PluginEntry> context)
     {
         SearchResult package = context.SingleEntry.Package;
-        await workerTaskFactory.StartNewWorkerTask(async (cancellationToken, progress, _) =>
+        await workerTaskFactory.StartNewWorkerTask(async (cancellationToken, progress, uiTaskFactory) =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 progress.ReportProgress("Preparing installation...");
@@ -51,9 +49,9 @@ public class InstallPluginCommand(WorkerTaskFactory workerTaskFactory)
                 
                 await installer.InstallAsync(dependenciesFile, cancellationToken, progress);
                 
+                await PluginMetadata.RefreshAsync(context.SingleEntry, uiTaskFactory);
                 progress.ReportProgress("Installation complete", 100);
             }, $"Installing {package.PackageId}");
-        
-        context.SingleEntry.Status = PluginStatus.Installed;
+
     }
 }

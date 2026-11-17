@@ -33,11 +33,7 @@ public sealed class DeletePluginPackageCommand(IDialogProvider dialogProvider, W
                     PluginEntry entry = entries[index];
                     progress.ReportProgress($"Uninstalling {entry.Name}...", (byte)(index * 100 / entries.Count));
                     System.IO.Directory.Delete(Path.Combine(MarketHelpers.PluginsDirectory, entry.Name), true);
-                    await uiTaskFactory.StartNew(_ =>
-                    {
-                        entry.Status = PluginStatus.Available;
-                        //entry.MarkDeleted;
-                    }, null, CancellationToken.None);
+                    await PluginMetadata.RefreshAsync(entry, uiTaskFactory);
                 }
                 progress.ReportProgress("Uninstallation complete", 100);
             }

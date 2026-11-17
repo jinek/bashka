@@ -61,17 +61,32 @@ public class BsdtarArchiveCatalog : ShellCatalog, IReadStreamCatalog
         string entryPath = EntryPath(rawEntry.Name);
         string name = Path.GetFileName(entryPath);
 
-        return new FileEntry((name, name, entryPath, long.Parse(rawEntry.Size),
-                ParseTimeStamp(rawEntry.Month, rawEntry.Day, rawEntry.TimeOrYear),
-                name.StartsWith('.') ? EntryCategory.Hidden : EntryCategory.Default),
-            rawEntry.Type == "d", this);
+        return new FileEntry
+        {
+            Path = name, 
+            Name = name, 
+            FullPath = entryPath, 
+            Size = long.Parse(rawEntry.Size),
+            TimeStamp = ParseTimeStamp(rawEntry.Month, rawEntry.Day, rawEntry.TimeOrYear),
+            Category = name.StartsWith('.') ? EntryCategory.Hidden : EntryCategory.Default,
+            IsDirectory = rawEntry.Type == "d", 
+            ParentCatalog = this
+        };
     }
 
     private FileEntry CreateDirectoryEntry(string entryPath, DateTime timeStamp)
     {
         string name = Path.GetFileName(entryPath);
-        return new FileEntry((name, name, entryPath, 0, timeStamp,
-            name.StartsWith('.') ? EntryCategory.Hidden : EntryCategory.Default), true, this);
+        return new FileEntry
+        {
+            Path = name, 
+            Name = name, 
+            FullPath = entryPath, 
+            TimeStamp = timeStamp,
+            Category = name.StartsWith('.') ? EntryCategory.Hidden : EntryCategory.Default,
+            IsDirectory = true, 
+            ParentCatalog = this
+        };
     }
 
     /// <summary>

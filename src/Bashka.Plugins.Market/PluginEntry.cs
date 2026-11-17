@@ -1,6 +1,4 @@
 using BaGetter.Protocol.Models;
-using Bashka.Plugins.Core.Abstract.Data;
-using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Foundation.FileSystem;
 using NuGet.Versioning;
 
@@ -10,23 +8,16 @@ public sealed class PluginEntry : FileEntry
 {
     internal const string RootPath = "plugins";
 
-    public PluginEntry(SearchResult package, PluginStatus status, PluginsCatalog catalog,
-        NuGetVersion? installedVersion = null, bool localOnly = false, FileInfo? installedPackage = null)
-        : base((package.PackageId, package.PackageId, PathCatalog.PathJoin(RootPath, package.PackageId),
-            installedPackage?.Length ?? -1, installedPackage?.LastWriteTime ?? DateTime.MinValue,
-            localOnly ? EntryCategory.Important
-                : status == PluginStatus.Installed ? EntryCategory.Default : EntryCategory.Executable), false, catalog)
-    {
-        Package = package;
-        Status = status;
-        InstalledVersion = installedVersion;
-    }
-
-    public SearchResult Package { get; }
+    public required SearchResult Package { get; init; }
     public PluginStatus Status { get; internal set; }
-    public NuGetVersion? InstalledVersion { get; }
-    public override string DisplayName => Name;
+    public NuGetVersion? InstalledVersion { get; internal set; }
+    internal bool LocalOnly { get; init; }
+
+    public override string DisplayName => FormatDisplayName(Name);
     public override string Extension => Status == PluginStatus.Available ? string.Empty : Status.ToString();
+    public override IReadOnlyList<string> Details => InstalledVersion == null
+        ? [$"Version: {Package.Version}"]
+        : [$"Version: {Package.Version}", $"Installed: {InstalledVersion.ToNormalizedString()}"];
 
     public string FormatMetadata() => $"""
         {Package.PackageId}

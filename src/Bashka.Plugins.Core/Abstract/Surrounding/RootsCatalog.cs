@@ -44,11 +44,19 @@ public class RootsCatalog : PathCatalog, IRootsCatalog
         {
             case catalogsPath:
                 return _catalogs.Select(catalog =>
-                    new Entry((string.Empty, catalog.TypeKey, 0, DateTime.Now, EntryCategory.Default), true, catalog));
+                    new Entry
+                    {
+                        Path = string.Empty, Name = catalog.TypeKey, TimeStamp = DateTime.Now,
+                        IsDirectory = true, ParentCatalog = catalog
+                    });
             case ICatalog.RootFavoritesPath:
                 Entry[] additionalEntries =
                 {
-                    new((catalogsPath, "All catalogs", -1, DateTime.Now, EntryCategory.Default), true, this)
+                    new()
+                    {
+                        Path = catalogsPath, Name = "All catalogs", Size = -1, TimeStamp = DateTime.Now,
+                        IsDirectory = true, ParentCatalog = this
+                    }
                 };
                 Entry[] children = _catalogs.SelectMany(catalog => catalog.Children).ToArray();
                 return children.Union(additionalEntries)

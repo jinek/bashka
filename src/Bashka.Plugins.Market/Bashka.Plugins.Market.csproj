@@ -4,6 +4,7 @@
         <Description>Bashka plugin package catalog.</Description>
     </PropertyGroup>
     <ItemGroup>
+        <InternalsVisibleTo Include="Bashka.Tests" />
         <EmbeddedResource Include="$(MSBuildToolsPath)/PortableRuntimeIdentifierGraph.json"
                           LogicalName="Bashka.Plugins.Market.RuntimeIdentifierGraph.json" />
     </ItemGroup>
