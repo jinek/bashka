@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <IsPackable>true</IsPackable>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>bashka</ToolCommandName>
+        <PackageId>Bashka</PackageId>
+        <Description>Bashka — Bash Commander. An extensible, cross-platform terminal file manager built with Consolonia and Avalonia.</Description>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Bashka.Launcher/Bashka.Launcher.csproj" />
+    </ItemGroup>
+</Project>
