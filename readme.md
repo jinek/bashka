@@ -1,4 +1,4 @@
-# Bashka — Bash COmmander
+# Bashka — Bash Commander
 
 **Alpha version.** Bashka is a cross-platform, dual-panel file manager (and more), inspired by [Far Manager](https://www.farmanager.com/). Built with [Consolonia](https://github.com/jinek/Consolonia) and [Avalonia](https://avaloniaui.net/), it brings an extensible, keyboard-driven interface to your terminal on Linux, macOS, and Windows.
 
