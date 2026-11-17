@@ -9,6 +9,7 @@ public abstract class BashkaAppTestBase() : ConsoloniaAppTestBase<App>(new Pixel
 {
     protected override AppBuilder CreateAppBuilder()
     {
+        // Consolonia.NUnit recreates the dispatcher but retains the previous app's synchronization context.
         SynchronizationContext.SetSynchronizationContext(null);
         return base.CreateAppBuilder();
     }
