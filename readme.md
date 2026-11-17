@@ -46,7 +46,7 @@ dotnet tool uninstall --global Bashka
 
 Open the roots menu with `Alt+F1` or `Alt+F2` and choose **Plugins** to browse the plugin store. It discovers NuGet packages tagged `bashka-plugin`.
 
-There is currently one published extension plugin on NuGet: a plugin that changes the logo. It is a small example of how plugins can customize Bashka.
+There is currently one published extension plugin on NuGet: [Bashka.Plugins.Logo](https://github.com/jinek/Bashka.Plugins.Logo) that changes the logo. It is a small example of how plugins can customize Bashka.
 
 To build your own plugin, start with the [plugin project template](src/Bashka.Plugin.Template/readme.md). Plugins register their services through Autofac and can provide commands, catalogs, shell connections, and visual extensions with Avalonia XAML styles.
 
