@@ -130,9 +130,9 @@ internal static partial class Program
 
         builder.RegisterModule<AttributedMetadataModule>();
         builder.RegisterModule<MarketModule>();
-        
+
         PluginLoader.LoadInstalledPlugins(builder);
-        
+
         if (DevelopmentHost.PluginModule is { } pluginModule)
             builder.RegisterModule(pluginModule);
 

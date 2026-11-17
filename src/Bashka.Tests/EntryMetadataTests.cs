@@ -1,3 +1,4 @@
+using BaGetter.Protocol.Models;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Foundation.FileSystem;
 using Bashka.Plugins.Market;
@@ -11,7 +12,8 @@ public class EntryMetadataTests
     [TestCase(".bashrc", false, ".bashrc", "")]
     [TestCase("folder.txt", true, "folder.txt", "")]
     [TestCase("archive.tar.gz", false, "archive.tar", "gz")]
-    public void FileDisplayAndGoneMarkersNotifyBindings(string name, bool isDirectory, string displayName, string extension)
+    public void FileDisplayAndGoneMarkersNotifyBindings(string name, bool isDirectory, string displayName,
+        string extension)
     {
         var entry = new FileEntry
         {
@@ -35,7 +37,8 @@ public class EntryMetadataTests
         Assert.That(notifications, Does.Not.Contain("Name"));
         Assert.That(notifications, Does.Not.Contain("Extension"));
         Assert.Throws<NotImplementedException>(() => entry.MarkDeleted());
-        Assert.That(notifications, Is.SupersetOf(new[] { "DisplayName", "Size", "Category", "SelfHack", "TimeStamp", "IsGone" }));
+        Assert.That(notifications,
+            Is.SupersetOf(new[] { "DisplayName", "Size", "Category", "SelfHack", "TimeStamp", "IsGone" }));
     }
 
     [TestCase(false)]
@@ -48,7 +51,7 @@ public class EntryMetadataTests
             ? new PluginEntry
             {
                 Path = name, Name = name, FullPath = "plugins/" + name, ParentCatalog = catalog,
-                Package = new BaGetter.Protocol.Models.SearchResult { PackageId = name, Version = "1.0.0" }
+                Package = new SearchResult { PackageId = name, Version = "1.0.0" }
             }
             : new Entry { Path = name, Name = name, ParentCatalog = catalog };
         string extension = entry.Extension;
@@ -68,5 +71,4 @@ public class EntryMetadataTests
         Assert.That(notifications, Does.Not.Contain("Extension"));
         Assert.Throws<NotImplementedException>(() => entry.MarkMoved());
     }
-
 }

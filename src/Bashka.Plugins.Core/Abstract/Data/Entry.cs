@@ -8,19 +8,18 @@ public class Entry : BaseObject
     private string? _goneMarker;
 
     public required string Path { get; init; }
-    [AlsoNotifyFor(nameof(Extension))]
-    public required string Name { get; init; }
+
+    [AlsoNotifyFor(nameof(Extension))] public required string Name { get; init; }
+
     public virtual string DisplayName => FormatDisplayName(Name);
     public virtual string Extension { get; init; } = string.Empty;
     public required ICatalog ParentCatalog { get; init; }
 
-    [AlsoNotifyFor(nameof(SelfHack))]
-    public long Size { get; set; }
+    [AlsoNotifyFor(nameof(SelfHack))] public long Size { get; set; }
 
     public DateTime TimeStamp { get; set; }
 
-    [AlsoNotifyFor(nameof(SelfHack))]
-    public EntryCategory Category { get; set; }
+    [AlsoNotifyFor(nameof(SelfHack))] public EntryCategory Category { get; set; }
 
     [AlsoNotifyFor(nameof(Extension), nameof(DisplayName))]
     public bool IsDirectory { get; init; }
@@ -44,7 +43,10 @@ public class Entry : BaseObject
 
     public Entry SelfHack => this;
 
-    protected string FormatDisplayName(string name) => _goneMarker == null ? name : $"[{_goneMarker}] {name}";
+    protected string FormatDisplayName(string name)
+    {
+        return _goneMarker == null ? name : $"[{_goneMarker}] {name}";
+    }
 
     public void MarkDeleted()
     {

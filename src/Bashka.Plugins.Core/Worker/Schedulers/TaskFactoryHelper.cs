@@ -12,7 +12,7 @@ public static class TaskFactoryHelper
         using IDisposable titleRegion = WorkerTaskFactory.Title.StartRegion(title);
 
         Task workerTask = null!;
-        var task = workerTask;
+        Task task = workerTask;
         workerTask = new Task(() =>
         {
             using IDisposable? rootRegion = WorkerTaskFactory.CurrentExecutionRootTask.HasCurrentValue

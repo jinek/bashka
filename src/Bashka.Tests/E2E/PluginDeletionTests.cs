@@ -4,18 +4,18 @@ using Avalonia.Threading;
 using BaGetter.Protocol.Models;
 using Bashka.Launcher;
 using Bashka.Plugins.Core.Abstract.Data;
+using Bashka.Plugins.Core.Worker.Schedulers;
 using Bashka.Plugins.Market;
 using Bashka.Tests.Helpers;
 using Consolonia.Core.Drawing.PixelBufferImplementation;
 using Consolonia.NUnit;
-using NuGet.Versioning;
 using NuGet.Packaging;
-using Bashka.Plugins.Core.Worker.Schedulers;
+using NuGet.Versioning;
 
 namespace Bashka.Tests.E2E;
 
 /// <summary>
-/// Vibecoded
+///     Vibecoded
 /// </summary>
 [TestFixture]
 public class PluginDeletionTests() : ConsoloniaAppTestBase<App>(new PixelBufferSize(140, 40))
@@ -33,7 +33,8 @@ public class PluginDeletionTests() : ConsoloniaAppTestBase<App>(new PixelBufferS
         ];
         foreach (PluginEntry entry in entries)
             new PluginMetadata(new NuGetVersion(1, 0, 0), 123, DateTime.Today).ApplyTo(entry);
-        string[] directories = entries.Select(entry => Path.Combine(MarketHelpers.PluginsDirectory, entry.Name)).ToArray();
+        string[] directories =
+            entries.Select(entry => Path.Combine(MarketHelpers.PluginsDirectory, entry.Name)).ToArray();
         string cachedPackage = Path.Combine(MarketHelpers.PackagesDirectory, prefix);
         string otherPlugin = Path.Combine(MarketHelpers.PluginsDirectory, prefix + ".Other");
         try
@@ -43,18 +44,19 @@ public class PluginDeletionTests() : ConsoloniaAppTestBase<App>(new PixelBufferS
                 Directory.CreateDirectory(directory);
                 await File.WriteAllTextAsync(Path.Combine(directory, "paket.lock"), "installation metadata");
             }
+
             Directory.CreateDirectory(cachedPackage);
             string cachedFile = Path.Combine(cachedPackage, "shared.dll");
             await File.WriteAllTextAsync(cachedFile, "shared package contents");
 
             var command = MainWindow.Scope.Resolve<DeletePluginPackageCommand>();
             var context = new CommandExecutionContext(entries, catalog, null, null, null);
-            var available = CreateEntry(catalog, prefix, "1.0.0");
+            PluginEntry available = CreateEntry(catalog, prefix, "1.0.0");
             Assert.That(command.CanExecute(context), Is.True);
             Assert.That(command.CanExecute(context with { Entries = [available] }), Is.False);
             Assert.That(command.CanExecute(context with { Entries = [entries[0], available] }), Is.False);
 
-            Task execution = Task.CompletedTask;
+            var execution = Task.CompletedTask;
             await Dispatcher.UIThread.InvokeAsync(() => { execution = command.ExecuteAsync(context); });
             await UITest.WaitText("Confirm uninstall");
             await UITest.WaitText("Restart Bashka");
@@ -62,7 +64,8 @@ public class PluginDeletionTests() : ConsoloniaAppTestBase<App>(new PixelBufferS
             await execution;
             Assert.That(directories.All(Directory.Exists), Is.True);
             Assert.That(entries.All(entry => !entry.IsGone), Is.True);
-            Assert.That(entries.All(entry => entry.InstalledVersion == new NuGetVersion(1, 0, 0) && entry.Size == 123), Is.True);
+            Assert.That(entries.All(entry => entry.InstalledVersion == new NuGetVersion(1, 0, 0) && entry.Size == 123),
+                Is.True);
 
             await Dispatcher.UIThread.InvokeAsync(() => { execution = command.ExecuteAsync(context); });
             await UITest.WaitText("Confirm uninstall");
@@ -71,7 +74,8 @@ public class PluginDeletionTests() : ConsoloniaAppTestBase<App>(new PixelBufferS
             Assert.That(directories.Any(Directory.Exists), Is.False);
             Assert.That(entries[0].IsGone, Is.False);
             Assert.That(entries[1].IsGone, Is.True);
-            Assert.That(entries.All(entry => entry.Status == PluginStatus.Available && entry.InstalledVersion == null), Is.True);
+            Assert.That(entries.All(entry => entry.Status == PluginStatus.Available && entry.InstalledVersion == null),
+                Is.True);
             Assert.That(entries.All(entry => entry.Size == -1), Is.True);
             Assert.That(entries[0].TimeStamp, Is.EqualTo(DateTime.MinValue));
             Assert.That(entries[0].Category, Is.EqualTo(EntryCategory.Executable));
@@ -83,7 +87,8 @@ public class PluginDeletionTests() : ConsoloniaAppTestBase<App>(new PixelBufferS
         finally
         {
             foreach (string directory in directories.Append(otherPlugin).Append(cachedPackage))
-                if (Directory.Exists(directory)) Directory.Delete(directory, true);
+                if (Directory.Exists(directory))
+                    Directory.Delete(directory, true);
         }
     }
 
@@ -127,7 +132,11 @@ public class PluginDeletionTests() : ConsoloniaAppTestBase<App>(new PixelBufferS
             Assert.That(entry.InstalledVersion, Is.EqualTo(new NuGetVersion(2, 0, 0)));
             Assert.That(entry.Size, Is.EqualTo(24));
             Assert.That(entry.Category, Is.EqualTo(EntryCategory.Default));
-            Assert.That(notifications, Is.SupersetOf(new[] { "Status", "Extension", "InstalledVersion", "Details", "Size", "TimeStamp", "Category", "SelfHack" }));
+            Assert.That(notifications,
+                Is.SupersetOf(new[]
+                {
+                    "Status", "Extension", "InstalledVersion", "Details", "Size", "TimeStamp", "Category", "SelfHack"
+                }));
             Assert.That(entry.Details, Is.EqualTo(new[] { "Version: 2.0.0", "Installed: 2.0.0" }));
             Assert.That(entry.FormatMetadata(), Does.Contain("Installed version: 2.0.0"));
 
@@ -147,17 +156,18 @@ public class PluginDeletionTests() : ConsoloniaAppTestBase<App>(new PixelBufferS
         finally
         {
             foreach (string path in new[] { directory, cache })
-                if (Directory.Exists(path)) Directory.Delete(path, true);
+                if (Directory.Exists(path))
+                    Directory.Delete(path, true);
         }
 
         async Task InstallVersion(string version, string contents)
         {
             Directory.CreateDirectory(directory);
             await File.WriteAllTextAsync(Path.Combine(directory, "paket.lock"), $"""
-                NUGET
-                  remote: https://api.nuget.org/v3/index.json
-                    {id} ({version})
-                """);
+                 NUGET
+                   remote: https://api.nuget.org/v3/index.json
+                     {id} ({version})
+                 """);
             var resolver = new VersionFolderPathResolver(MarketHelpers.PackagesDirectory);
             string archive = resolver.GetPackageFilePath(id, NuGetVersion.Parse(version));
             Directory.CreateDirectory(Path.GetDirectoryName(archive)!);
@@ -187,7 +197,7 @@ public class PluginDeletionTests() : ConsoloniaAppTestBase<App>(new PixelBufferS
             Directory.CreateDirectory(directory);
             var command = MainWindow.Scope.Resolve<DeletePluginPackageCommand>();
             var context = new CommandExecutionContext(entries, catalog, null, null, null);
-            Task execution = Task.CompletedTask;
+            var execution = Task.CompletedTask;
             await Dispatcher.UIThread.InvokeAsync(() => { execution = command.ExecuteAsync(context); });
             await UITest.WaitText("Confirm uninstall");
             await UITest.KeyInput(Key.Enter);
@@ -206,10 +216,12 @@ public class PluginDeletionTests() : ConsoloniaAppTestBase<App>(new PixelBufferS
         }
     }
 
-    private static PluginEntry CreateEntry(PluginsCatalog catalog, string id, string version, bool localOnly = false) => new()
+    private static PluginEntry CreateEntry(PluginsCatalog catalog, string id, string version, bool localOnly = false)
     {
-        Path = id, Name = id, FullPath = "plugins/" + id, ParentCatalog = catalog,
-        Package = new SearchResult { PackageId = id, Version = version }, LocalOnly = localOnly
-    };
-
+        return new PluginEntry
+        {
+            Path = id, Name = id, FullPath = "plugins/" + id, ParentCatalog = catalog,
+            Package = new SearchResult { PackageId = id, Version = version }, LocalOnly = localOnly
+        };
+    }
 }

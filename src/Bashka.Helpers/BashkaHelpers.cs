@@ -7,6 +7,9 @@ namespace Bashka.Helpers;
 
 public static class BashkaHelpers
 {
+    public static readonly string DataDirectory = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Bashka");
+
     public static T GetElement<T>(this ILogical visual, [CallerMemberName] string? elementName = null)
         where T : class, ILogical
     {
@@ -29,7 +32,4 @@ public static class BashkaHelpers
                     throw new InvalidOperationException("Exception happened in unawaited Task", task1.Exception));
             }, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Current);
     }
-
-    public static readonly string DataDirectory = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Bashka");
 }

@@ -63,13 +63,13 @@ public abstract class ArchiveCatalogBase : PathCatalog, IArchiveCatalog, IDispos
 
         return new FileEntry
         {
-            Path = name, 
-            Name = name, 
-            FullPath = normalizedPath, 
-            Size = size, 
+            Path = name,
+            Name = name,
+            FullPath = normalizedPath,
+            Size = size,
             TimeStamp = timeStamp,
             Category = name.StartsWith('.') ? EntryCategory.Hidden : EntryCategory.Default,
-            IsDirectory = isDirectory, 
+            IsDirectory = isDirectory,
             ParentCatalog = this
         };
     }

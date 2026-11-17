@@ -29,8 +29,8 @@ public class WorkerProgressTests() : ConsoloniaAppTestBase<App>(new PixelBufferS
                 foreach (ProgressViewModel row in args.NewItems)
                     shownTitles.Add(row.Title);
         };
-        Task first = Task.CompletedTask;
-        Task second = Task.CompletedTask;
+        var first = Task.CompletedTask;
+        var second = Task.CompletedTask;
         try
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
@@ -40,10 +40,8 @@ public class WorkerProgressTests() : ConsoloniaAppTestBase<App>(new PixelBufferS
                 {
                     await resume.Task;
                     await ui.StartNew(() => { });
-                    await worker.StartNewWorkerTask(async (_, _, nestedUi) =>
-                    {
-                        await nestedUi.StartNew(() => { });
-                    }, "Nested work");
+                    await worker.StartNewWorkerTask(async (_, _, nestedUi) => { await nestedUi.StartNew(() => { }); },
+                        "Nested work");
                     continued.SetResult();
                     await finish.Task;
                 }, "First worker");

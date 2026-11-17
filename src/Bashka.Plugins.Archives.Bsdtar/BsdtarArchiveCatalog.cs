@@ -63,13 +63,13 @@ public class BsdtarArchiveCatalog : ShellCatalog, IReadStreamCatalog
 
         return new FileEntry
         {
-            Path = name, 
-            Name = name, 
-            FullPath = entryPath, 
+            Path = name,
+            Name = name,
+            FullPath = entryPath,
             Size = long.Parse(rawEntry.Size),
             TimeStamp = ParseTimeStamp(rawEntry.Month, rawEntry.Day, rawEntry.TimeOrYear),
             Category = name.StartsWith('.') ? EntryCategory.Hidden : EntryCategory.Default,
-            IsDirectory = rawEntry.Type == "d", 
+            IsDirectory = rawEntry.Type == "d",
             ParentCatalog = this
         };
     }
@@ -79,12 +79,12 @@ public class BsdtarArchiveCatalog : ShellCatalog, IReadStreamCatalog
         string name = Path.GetFileName(entryPath);
         return new FileEntry
         {
-            Path = name, 
-            Name = name, 
-            FullPath = entryPath, 
+            Path = name,
+            Name = name,
+            FullPath = entryPath,
             TimeStamp = timeStamp,
             Category = name.StartsWith('.') ? EntryCategory.Hidden : EntryCategory.Default,
-            IsDirectory = true, 
+            IsDirectory = true,
             ParentCatalog = this
         };
     }

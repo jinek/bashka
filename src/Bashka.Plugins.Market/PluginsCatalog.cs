@@ -12,31 +12,39 @@ public sealed class PluginsCatalog : PathCatalog, IReadStreamCatalog, IWriteStre
     private readonly NuGetClient _nuGetClient = new("https://api.nuget.org/v3/index.json");
     public override string Title => "Plugins";
 
+    public Stream ReadStream(string fullPath)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void WriteStream(string fullPath, Stream stream)
+    {
+        throw new NotImplementedException();
+    }
+
     protected override async Task<IEnumerable<Entry>> GetChildrenInternal()
     {
         if (CurrentPath! == string.Empty)
-        {
-            return [
-            new Entry
-            {
-                Path = PluginEntry.RootPath, 
-                Name = PluginEntry.RootPath, 
-                Size = -1,
-                IsDirectory = true, 
-                ParentCatalog = this
-            }];
-        }
-        
+            return
+            [
+                new Entry
+                {
+                    Path = PluginEntry.RootPath,
+                    Name = PluginEntry.RootPath,
+                    Size = -1,
+                    IsDirectory = true,
+                    ParentCatalog = this
+                }
+            ];
+
         string pluginsDirectory = MarketHelpers.PluginsDirectory;
         var installed = new Dictionary<string, PluginMetadata>(StringComparer.OrdinalIgnoreCase);
         if (Directory.Exists(pluginsDirectory))
-        {
             foreach (string directory in Directory.EnumerateDirectories(pluginsDirectory))
             {
                 string id = Path.GetFileName(directory);
                 installed.Add(id, PluginMetadata.Read(id));
             }
-        }
 
         var versionResolver = new VersionFolderPathResolver(MarketHelpers.PackagesDirectory);
         IReadOnlyList<SearchResult> packages = await _nuGetClient.SearchAsync("tags:bashka-plugin");
@@ -74,13 +82,16 @@ public sealed class PluginsCatalog : PathCatalog, IReadStreamCatalog, IWriteStre
                     StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
                 metadata.ProjectUrl = nuspec.GetProjectUrl();
             }
-            else throw new NotImplementedException("no manifest for an installed plugin");
-            
+            else
+            {
+                throw new NotImplementedException("no manifest for an installed plugin");
+            }
+
             return CreateEntry(metadata, package.Value, true);
         });
         return
         [
-            .. localOnly, 
+            .. localOnly,
             .. updatesAvailable,
             .. latestInstalled,
             .. availableForInstallation
@@ -90,25 +101,15 @@ public sealed class PluginsCatalog : PathCatalog, IReadStreamCatalog, IWriteStre
         {
             var entry = new PluginEntry
             {
-                Path = package.PackageId, 
+                Path = package.PackageId,
                 Name = package.PackageId,
-                FullPath = PathJoin(PluginEntry.RootPath, package.PackageId), 
+                FullPath = PathJoin(PluginEntry.RootPath, package.PackageId),
                 ParentCatalog = this,
-                Package = package, 
+                Package = package,
                 LocalOnly = localOnlyParameter
             };
             metadata.ApplyTo(entry);
             return entry;
         }
-    }
-
-    public void WriteStream(string fullPath, Stream stream)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Stream ReadStream(string fullPath)
-    {
-        throw new NotImplementedException();
     }
 }

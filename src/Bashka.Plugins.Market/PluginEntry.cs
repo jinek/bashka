@@ -15,21 +15,25 @@ public sealed class PluginEntry : FileEntry
 
     public override string DisplayName => FormatDisplayName(Name);
     public override string Extension => Status == PluginStatus.Available ? string.Empty : Status.ToString();
+
     public override IReadOnlyList<string> Details => InstalledVersion == null
         ? [$"Version: {Package.Version}"]
         : [$"Version: {Package.Version}", $"Installed: {InstalledVersion.ToNormalizedString()}"];
 
-    public string FormatMetadata() => $"""
-        {Package.PackageId}
-        Version: {Package.Version}
-        {(InstalledVersion == null ? string.Empty : $"Installed version: {InstalledVersion.ToNormalizedString()}")}
-        Status: {Status}
-        Authors: {string.Join(", ", Package.Authors ?? [])}
-        Project: {Package.ProjectUrl}
+    public string FormatMetadata()
+    {
+        return $"""
+                {Package.PackageId}
+                Version: {Package.Version}
+                {(InstalledVersion == null ? string.Empty : $"Installed version: {InstalledVersion.ToNormalizedString()}")}
+                Status: {Status}
+                Authors: {string.Join(", ", Package.Authors ?? [])}
+                Project: {Package.ProjectUrl}
 
-        {Package.Description}
+                {Package.Description}
 
-        Versions:
-        {string.Join(Environment.NewLine, (Package.Versions ?? []).Select(version => version.Version))}
-        """;
+                Versions:
+                {string.Join(Environment.NewLine, (Package.Versions ?? []).Select(version => version.Version))}
+                """;
+    }
 }

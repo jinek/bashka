@@ -11,9 +11,11 @@ public sealed class MarketModule : Module
     {
         builder.FullRegister<PluginsCatalog, ICatalog>();
         builder.FullRegister<MarketVisualExtension, VisualExtension>();
-        builder.RegisterFCommand<ShowPluginDetailsCommand, PluginsCatalog>(FunctionPage.Default, FunctionKey.F3, "View");
+        builder.RegisterFCommand<ShowPluginDetailsCommand, PluginsCatalog>(FunctionPage.Default, FunctionKey.F3,
+            "View");
         builder.RegisterEnterCommand<InstallPluginCommand>();
         //   builder.RegisterFCommand<CopyPluginPackageCommand, ICatalog>(FunctionPage.Default, FunctionKey.F5, "Copy");
-        builder.RegisterFCommand<DeletePluginPackageCommand, PluginsCatalog>(FunctionPage.Default, FunctionKey.F8, "Uninstall", true);
+        builder.RegisterFCommand<DeletePluginPackageCommand, PluginsCatalog>(FunctionPage.Default, FunctionKey.F8,
+            "Uninstall", true);
     }
 }

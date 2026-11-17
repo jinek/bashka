@@ -84,10 +84,10 @@ public class FileSystemCatalog : ShellCatalog, IReadStreamCatalog, IWriteStreamC
         Entry[] result = ShellSession.PrepareQuery(logicalDrivesShellMultiScript).Select(rawDrive =>
                 new Entry
                 {
-                    Path = rawDrive.Target, 
-                    Name = rawDrive.Target, 
+                    Path = rawDrive.Target,
+                    Name = rawDrive.Target,
                     TimeStamp = DateTime.Now,
-                    IsDirectory = true, 
+                    IsDirectory = true,
                     ParentCatalog = this
                 })
             .ToArray();
@@ -132,11 +132,11 @@ public class FileSystemCatalog : ShellCatalog, IReadStreamCatalog, IWriteStreamC
                 ICommand[] commands = _commandSelector.SelectCommands(new CommandExecutionContext([
                     new FileEntry
                     {
-                        Path = name, 
-                        Name = name, 
-                        FullPath = fullPath, 
+                        Path = name,
+                        Name = name,
+                        FullPath = fullPath,
                         TimeStamp = DateTime.Now,
-                        Category = category, 
+                        Category = category,
                         ParentCatalog = this
                     }
                 ], this, null, null, null));
@@ -150,13 +150,13 @@ public class FileSystemCatalog : ShellCatalog, IReadStreamCatalog, IWriteStreamC
 
             yield return new FileEntry
             {
-                Path = name, 
-                Name = name, 
-                FullPath = fullPath, 
+                Path = name,
+                Name = name,
+                FullPath = fullPath,
                 Size = sizeBytes,
-                TimeStamp = ParseTimeStamp(timeStamp), 
+                TimeStamp = ParseTimeStamp(timeStamp),
                 Category = category,
-                IsDirectory = type == "d", 
+                IsDirectory = type == "d",
                 ParentCatalog = this,
                 Details = [$"{owner}:{group}", type + permission]
             };

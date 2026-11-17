@@ -24,7 +24,7 @@ internal sealed record PluginMetadata(NuGetVersion? InstalledVersion, long Size,
         if (package == null)
             throw new NotImplementedException($"Handle a paket file without id {packageId}");
 
-        var version = NuGetVersion.Parse(package.Version.ToString());
+        NuGetVersion version = NuGetVersion.Parse(package.Version.ToString());
         var resolver = new VersionFolderPathResolver(MarketHelpers.PackagesDirectory);
         var archive = new FileInfo(resolver.GetPackageFilePath(packageId, version));
         return new PluginMetadata(version, archive.Exists ? archive.Length : -1,

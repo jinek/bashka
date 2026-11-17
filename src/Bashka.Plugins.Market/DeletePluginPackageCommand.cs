@@ -11,8 +11,10 @@ public sealed class DeletePluginPackageCommand(IDialogProvider dialogProvider, W
 {
     protected override bool SupportsMultipleEntries => true;
 
-    protected override bool CanExecuteForEntry(Entry entry) =>
-        base.CanExecuteForEntry(entry) && ((PluginEntry)entry).InstalledVersion != null;
+    protected override bool CanExecuteForEntry(Entry entry)
+    {
+        return base.CanExecuteForEntry(entry) && ((PluginEntry)entry).InstalledVersion != null;
+    }
 
     public override async Task ExecuteAsync(CatalogCommandContext<PluginsCatalog, PluginEntry> context)
     {
@@ -23,23 +25,25 @@ public sealed class DeletePluginPackageCommand(IDialogProvider dialogProvider, W
         if (!confirmed) return;
 
         await workerTaskFactory.StartNewWorkerTask(async (cancellationToken, progress, uiTaskFactory) =>
-        {
-            try
             {
-                for (int index = 0; index < entries.Count; index++)
+                try
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    PluginEntry entry = entries[index];
-                    progress.ReportProgress($"Uninstalling {entry.Name}...", (byte)(index * 100 / entries.Count));
-                    System.IO.Directory.Delete(Path.Combine(MarketHelpers.PluginsDirectory, entry.Name), true);
-                    await PluginMetadata.RefreshAsync(entry, uiTaskFactory);
+                    for (int index = 0; index < entries.Count; index++)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        PluginEntry entry = entries[index];
+                        progress.ReportProgress($"Uninstalling {entry.Name}...", (byte)(index * 100 / entries.Count));
+                        System.IO.Directory.Delete(Path.Combine(MarketHelpers.PluginsDirectory, entry.Name), true);
+                        await PluginMetadata.RefreshAsync(entry, uiTaskFactory);
+                    }
+
+                    progress.ReportProgress("Uninstallation complete", 100);
                 }
-                progress.ReportProgress("Uninstallation complete", 100);
-            }
-            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or OperationCanceledException)
-            {
-                throw new UserErrorException(exception.Message);
-            }
-        }, $"Uninstalling {what}");
+                catch (Exception exception) when (exception is IOException or UnauthorizedAccessException
+                                                      or OperationCanceledException)
+                {
+                    throw new UserErrorException(exception.Message);
+                }
+            }, $"Uninstalling {what}");
     }
 }

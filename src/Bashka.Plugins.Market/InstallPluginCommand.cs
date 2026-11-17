@@ -19,10 +19,10 @@ public class InstallPluginCommand(WorkerTaskFactory workerTaskFactory)
                 cancellationToken.ThrowIfCancellationRequested();
                 progress.ReportProgress("Preparing installation...");
                 string appDataDir = Path.Combine(MarketHelpers.PluginsDirectory, package.PackageId);
-                
+
                 System.IO.Directory.CreateDirectory(appDataDir);
                 string framework = MarketHelpers.GetFramework().GetShortFolderName();
-                
+
                 string dependenciesFile = Path.Combine(appDataDir, "paket.dependencies");
                 await System.IO.File.WriteAllTextAsync(dependenciesFile, $"""
                                                                           source https://api.nuget.org/v3/index.json
@@ -37,21 +37,20 @@ public class InstallPluginCommand(WorkerTaskFactory workerTaskFactory)
                     $"{Assembly.GetEntryAssembly()!.GetName().Name}.deps.json");
                 using JsonDocument hostDependencies =
                     JsonDocument.Parse(await System.IO.File.ReadAllTextAsync(hostDependenciesFile, cancellationToken));
-                
+
                 HashSet<string> hostPackages = hostDependencies.RootElement
                     .GetProperty("libraries")
                     .EnumerateObject()
                     .Select(library => Path.GetDirectoryName(library.Name)!)
                     .ToHashSet(StringComparer.OrdinalIgnoreCase);
-                
+
                 var installer = new PluginPackageInstaller(new NuGetClient("https://api.nuget.org/v3/index.json"),
                     hostPackages);
-                
+
                 await installer.InstallAsync(dependenciesFile, cancellationToken, progress);
-                
+
                 await PluginMetadata.RefreshAsync(context.SingleEntry, uiTaskFactory);
                 progress.ReportProgress("Installation complete", 100);
             }, $"Installing {package.PackageId}");
-
     }
 }
