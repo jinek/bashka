@@ -1,18 +1,22 @@
-using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 
 namespace Bashka.Plugins.Foundation.FileSystem;
 
 public class FileEntry : Entry
 {
-    public FileEntry(
-        (string Path, string Name, string FullPath, long Size, DateTime TimeStamp, EntryCategory Catetgory) pathAndName,
-        bool isDirectory, ICatalog catalog)
-        : base((pathAndName.Path, pathAndName.Name, pathAndName.Size, pathAndName.TimeStamp, pathAndName.Catetgory),
-            isDirectory, catalog)
+    public required string FullPath { get; init; }
+
+    public override string Extension
     {
-        FullPath = pathAndName.FullPath;
+        get
+        {
+            string extension = System.IO.Path.GetExtension(Name);
+            return !IsDirectory && extension.Length > 0 && extension.Length < Name.Length
+                ? extension[1..]
+                : string.Empty;
+        }
     }
 
-    public string FullPath { get; }
+    public override string DisplayName => FormatDisplayName(
+        Extension.Length == 0 ? Name : System.IO.Path.GetFileNameWithoutExtension(Name));
 }

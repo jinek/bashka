@@ -13,6 +13,7 @@ using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Foundation;
 using Bashka.Plugins.Foundation.FileSystem;
 using Bashka.Plugins.Foundation.ShellInteraction;
+using Bashka.Plugins.Market;
 
 namespace Bashka.Launcher;
 
@@ -23,14 +24,14 @@ internal static partial class Program
         var builder = new ContainerBuilder();
         builder.RegisterType<CommandExecutionContext>().AsSelf();
         builder.FullRegister<RootsCatalog, ICatalog>().Keyed<ICatalog>(ICatalog.RootCatalogKey);
-        builder.FullRegister<FileSystemCatalog, ICatalog>().Keyed<ICatalog>(ICatalog.DefeaultCatalogTypeKey).AsSelf();
+        builder.FullRegister<FileSystemCatalog, ICatalog>().Keyed<ICatalog>(ICatalog.DefeaultCatalogTypeKey);
         builder.RegisterEnterCommand<ShellExecuteCommand>();
         builder.RegisterEnterCommand<OpenDirectoryCommand>();
-        builder.FullRegister<ZipArchiveCatalog, IArchiveCatalog>().AsSelf();
-        builder.FullRegister<TarArchiveCatalog, IArchiveCatalog>().AsSelf();
-        builder.FullRegister<TarGzArchiveCatalog, IArchiveCatalog>().AsSelf();
-        builder.FullRegister<GZipArchiveCatalog, IArchiveCatalog>().AsSelf();
-        builder.FullRegister<BsdtarArchiveCatalog, IReadStreamCatalog>().AsSelf();
+        builder.FullRegister<ZipArchiveCatalog, IArchiveCatalog>();
+        builder.FullRegister<TarArchiveCatalog, IArchiveCatalog>();
+        builder.FullRegister<TarGzArchiveCatalog, IArchiveCatalog>();
+        builder.FullRegister<GZipArchiveCatalog, IArchiveCatalog>();
+        builder.FullRegister<BsdtarArchiveCatalog, IReadStreamCatalog>();
         builder.RegisterEnterCommand<OpenZipArchiveCommand>();
         builder.RegisterEnterCommand<OpenTarArchiveCommand>();
         builder.RegisterEnterCommand<OpenTarGzArchiveCommand>();
@@ -128,6 +129,10 @@ internal static partial class Program
 //builder.FullRegister<VolkovCommander,IUIRoot>();
 
         builder.RegisterModule<AttributedMetadataModule>();
+        builder.RegisterModule<MarketModule>();
+
+        PluginLoader.LoadInstalledPlugins(builder);
+
         if (DevelopmentHost.PluginModule is { } pluginModule)
             builder.RegisterModule(pluginModule);
 

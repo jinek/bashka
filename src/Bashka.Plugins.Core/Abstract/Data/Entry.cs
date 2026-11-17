@@ -5,43 +5,34 @@ namespace Bashka.Plugins.Core.Abstract.Data;
 
 public class Entry : BaseObject
 {
-    public Entry((string Path, string Name, long Size, DateTime TimeStamp, EntryCategory Category) pathAndName,
-        bool isDirectory, ICatalog catalog)
-    {
-        ParentCatalog = catalog;
-        PathAndName = pathAndName;
-        IsDirectory = isDirectory;
-        Size = pathAndName.Size;
-        TimeStamp = pathAndName.TimeStamp;
-        Category = pathAndName.Category;
-    }
+    private string? _goneMarker;
 
-    public string Path => PathAndName.Path;
-    public string Name => PathAndName.Name;
-    public ICatalog ParentCatalog { get; }
+    public required string Path { get; init; }
 
-    public long Size { get; init; }
+    [AlsoNotifyFor(nameof(Extension))] public required string Name { get; init; }
 
-    public DateTime TimeStamp { get; init; }
-    public EntryCategory Category { get; }
+    public virtual string DisplayName => FormatDisplayName(Name);
+    public virtual string Extension { get; init; } = string.Empty;
+    public required ICatalog ParentCatalog { get; init; }
 
-    public (string Path, string Name, long Size, DateTime TimeStamp, EntryCategory Category) PathAndName
-    {
-        get;
-        private set;
-    }
+    [AlsoNotifyFor(nameof(SelfHack))] public long Size { get; set; }
 
+    public DateTime TimeStamp { get; set; }
+
+    [AlsoNotifyFor(nameof(SelfHack))] public EntryCategory Category { get; set; }
+
+    [AlsoNotifyFor(nameof(Extension), nameof(DisplayName))]
     public bool IsDirectory { get; init; }
 
     /// <summary>
     ///     Additional information about the entry as received from the catalog read command (owner, group, permissions etc.)
     /// </summary>
-    public IReadOnlyList<string> Details { get; init; } = [];
+    public virtual IReadOnlyList<string> Details { get; init; } = [];
 
     /// <summary>
     ///     Entry does not exist in its parent catalog anymore, it was deleted or moved away
     /// </summary>
-    [AlsoNotifyFor(nameof(SelfHack))]
+    [AlsoNotifyFor(nameof(SelfHack), nameof(DisplayName))]
     public bool IsGone { get; private set; }
 
     /// <summary>
@@ -51,6 +42,11 @@ public class Entry : BaseObject
     public bool IsMarked { get; set; }
 
     public Entry SelfHack => this;
+
+    protected string FormatDisplayName(string name)
+    {
+        return _goneMarker == null ? name : $"[{_goneMarker}] {name}";
+    }
 
     public void MarkDeleted()
     {
@@ -67,11 +63,8 @@ public class Entry : BaseObject
         if (IsGone)
             throw new NotImplementedException();
 
+        _goneMarker = marker;
         IsGone = true;
-        (string Path, string Name, long Size, DateTime TimeStamp, EntryCategory Category) pathAndName = PathAndName;
-
-        pathAndName.TimeStamp = DateTime.Now;
-        pathAndName.Name = $"[{marker}] {pathAndName.Name}";
-        PathAndName = pathAndName;
+        TimeStamp = DateTime.Now;
     }
 }

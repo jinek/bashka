@@ -82,7 +82,14 @@ public class FileSystemCatalog : ShellCatalog, IReadStreamCatalog, IWriteStreamC
         var logicalDrivesShellMultiScript = new GetLogicalDrivesShellMultiScript();
 
         Entry[] result = ShellSession.PrepareQuery(logicalDrivesShellMultiScript).Select(rawDrive =>
-                new Entry((rawDrive.Target, rawDrive.Target, 0, DateTime.Now, EntryCategory.Default), true, this))
+                new Entry
+                {
+                    Path = rawDrive.Target,
+                    Name = rawDrive.Target,
+                    TimeStamp = DateTime.Now,
+                    IsDirectory = true,
+                    ParentCatalog = this
+                })
             .ToArray();
 
         Entry? linuxRoot = result.SingleOrDefault(entry => entry.Path == LinuxRootCatalog);
@@ -123,9 +130,15 @@ public class FileSystemCatalog : ShellCatalog, IReadStreamCatalog, IWriteStreamC
             {
                 //todo: this is very slow for us
                 ICommand[] commands = _commandSelector.SelectCommands(new CommandExecutionContext([
-                    new FileEntry(
-                        (name, name, fullPath, 0, DateTime.Now, category),
-                        false, this)
+                    new FileEntry
+                    {
+                        Path = name,
+                        Name = name,
+                        FullPath = fullPath,
+                        TimeStamp = DateTime.Now,
+                        Category = category,
+                        ParentCatalog = this
+                    }
                 ], this, null, null, null));
                 if (commands.OfType<IRegexCommand>()
                     .Any(command => command.Regexp != null && command.DoesRegexMatch(fullPath)))
@@ -135,11 +148,16 @@ public class FileSystemCatalog : ShellCatalog, IReadStreamCatalog, IWriteStreamC
                     category = EntryCategory.Executable;
             }
 
-            yield return new FileEntry(
-                (name, name, fullPath, sizeBytes, ParseTimeStamp(timeStamp), category),
-                type == "d",
-                this)
+            yield return new FileEntry
             {
+                Path = name,
+                Name = name,
+                FullPath = fullPath,
+                Size = sizeBytes,
+                TimeStamp = ParseTimeStamp(timeStamp),
+                Category = category,
+                IsDirectory = type == "d",
+                ParentCatalog = this,
                 Details = [$"{owner}:{group}", type + permission]
             };
         }

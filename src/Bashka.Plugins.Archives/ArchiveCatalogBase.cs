@@ -61,8 +61,17 @@ public abstract class ArchiveCatalogBase : PathCatalog, IArchiveCatalog, IDispos
         string normalizedPath = ArchivePath.Normalize(fullPath);
         string name = Path.GetFileName(normalizedPath);
 
-        return new FileEntry((name, name, normalizedPath, size, timeStamp,
-            name.StartsWith('.') ? EntryCategory.Hidden : EntryCategory.Default), isDirectory, this);
+        return new FileEntry
+        {
+            Path = name,
+            Name = name,
+            FullPath = normalizedPath,
+            Size = size,
+            TimeStamp = timeStamp,
+            Category = name.StartsWith('.') ? EntryCategory.Hidden : EntryCategory.Default,
+            IsDirectory = isDirectory,
+            ParentCatalog = this
+        };
     }
 
     protected virtual void Dispose(bool disposing)

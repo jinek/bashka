@@ -32,6 +32,8 @@ public class EntryToFileSizeConverter : IValueConverter
 
     private static string FormatSize(long bytes)
     {
+        if (bytes == -1) return string.Empty;
+
         int counter = 0;
         decimal number = bytes;
         while (Math.Round(number / 1024) >= 1)

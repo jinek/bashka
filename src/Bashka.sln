@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bashka.Plugins", "Bashka.Pl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bashka.Templates", "Bashka.Templates\Bashka.Templates.csproj", "{4DEE08C1-FF1E-47D4-82C1-780EC9B07E3E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bashka.Plugins.Market", "Bashka.Plugins.Market\Bashka.Plugins.Market.csproj", "{B2FE5F8A-5379-4E08-988D-CE953DC7770A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,5 +75,9 @@ Global
 		{4DEE08C1-FF1E-47D4-82C1-780EC9B07E3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DEE08C1-FF1E-47D4-82C1-780EC9B07E3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DEE08C1-FF1E-47D4-82C1-780EC9B07E3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2FE5F8A-5379-4E08-988D-CE953DC7770A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2FE5F8A-5379-4E08-988D-CE953DC7770A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2FE5F8A-5379-4E08-988D-CE953DC7770A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2FE5F8A-5379-4E08-988D-CE953DC7770A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

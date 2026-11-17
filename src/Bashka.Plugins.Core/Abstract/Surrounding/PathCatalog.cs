@@ -30,7 +30,7 @@ public abstract class PathCatalog : BaseObject, ICatalog
 
     [DependsOn(nameof(CurrentPath))] public abstract string Title { get; }
 
-    public IEnumerable<Entry> Children => _children ?? Array.Empty<Entry>(); //todo: create empty static array
+    public IEnumerable<Entry> Children => _children ?? [];
 
     public virtual async Task NavigateAsync(string path)
     {
@@ -71,6 +71,7 @@ public abstract class PathCatalog : BaseObject, ICatalog
 
     private void StartLoadingChildren()
     {
+        //todo: F35896B1-7D8B-4E44-A6C4-367F8801EFE2 exceptions crossing dispatcher (ui tasks) somehow not hitting the dispatcher.Exception events 
         _children = null;
 
         _currentPathLoadingTask = Worker.StartNewWorkerTask(async (_, _, uiTaskFactory) =>

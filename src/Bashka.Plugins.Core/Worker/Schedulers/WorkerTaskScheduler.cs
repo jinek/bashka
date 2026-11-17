@@ -25,13 +25,11 @@ internal class WorkerTaskScheduler(
         TaskFactory uiTaskFactory = taskFactory; //todo: implement UI task factory
 
         ProgressViewModel? dialogContent = null;
-        IDisposable? currentExecutionRootTaskRegion = null;
 
         bool subtask = !WorkerTaskFactory.Title.HasCurrentValue ||
                        WorkerTaskFactory.CurrentExecutionRootTask.HasCurrentValue;
         if (!subtask)
         {
-            currentExecutionRootTaskRegion = WorkerTaskFactory.CurrentExecutionRootTask.StartRegion(task);
             string? titleCurrentValue = WorkerTaskFactory.Title.CurrentValue;
 
             // Must complete synchronously before QueueTask returns, so dialogContent is set
@@ -95,8 +93,6 @@ internal class WorkerTaskScheduler(
                 WorkerTaskFactory.InternalCurrentProgress.Value = null;
                 WorkerTaskFactory.InternalCurrentUITaskFactory.Value = null;
                 cancellationTokenSource.Dispose();
-
-                if (!subtask) currentExecutionRootTaskRegion!.Dispose();
             }
         });
     }

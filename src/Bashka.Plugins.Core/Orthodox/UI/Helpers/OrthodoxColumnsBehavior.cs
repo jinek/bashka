@@ -1,8 +1,10 @@
 using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
+using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
 using Bashka.Plugins.Core.Abstract.Data;
 using Consolonia.Controls;
@@ -47,41 +49,65 @@ public class OrthodoxColumnsBehavior : Behavior<VerticalScrollDataGrid>
                 }
             });
 
-            AddColumn("Name", nameof(Entry.Name), new Binding(nameof(Entry.Name)) { Mode = BindingMode.OneWay }, null,
-                dockPanel);
+            AddColumn("Name", nameof(Entry.Name), new DataGridTemplateColumn
+            {
+                SortMemberPath = nameof(Entry.Name),
+                CellTemplate = new FuncDataTemplate<Entry>((_, _) =>
+                {
+                    var name = new TextBlock { TextTrimming = TextTrimming.CharacterEllipsis };
+                    name.Bind(TextBlock.TextProperty,
+                        new Binding(nameof(Entry.DisplayName)) { Mode = BindingMode.OneWay });
+
+                    var extension = new TextBlock
+                    {
+                        TextAlignment = TextAlignment.Right,
+                        Margin = new Thickness(1, 0, 0, 0)
+                    };
+                    extension.Bind(TextBlock.TextProperty,
+                        new Binding(nameof(Entry.Extension)) { Mode = BindingMode.OneWay });
+                    Grid.SetColumn(extension, 1);
+
+                    return new Grid
+                    {
+                        Margin = new Thickness(0, 0, 1, 0),
+                        ColumnDefinitions = new ColumnDefinitions("*,Auto"),
+                        Children = { name, extension }
+                    };
+                })
+            }, null, dockPanel);
         }
 
-        AddColumn("Size", nameof(Entry.Size), new Binding
+        AddColumn("Size", nameof(Entry.Size), new DataGridTextColumn
         {
-            Path = "SelfHack",
-            Mode = BindingMode.OneWay,
-            Converter = new EntryToFileSizeConverter()
+            Binding = new Binding(nameof(Entry.SelfHack))
+            {
+                Mode = BindingMode.OneWay,
+                Converter = new EntryToFileSizeConverter()
+            }
         }, 7);
 
-        AddColumn("Access", nameof(Entry.TimeStamp), new Binding(nameof(Entry.TimeStamp))
+        AddColumn("Access", nameof(Entry.TimeStamp), new DataGridTextColumn
         {
-            StringFormat = "{0:d}",
-            Mode = BindingMode.OneWay
+            Binding = new Binding(nameof(Entry.TimeStamp))
+            {
+                Converter = new AccessTimeConverter(),
+                Mode = BindingMode.OneWay
+            }
         }, 10);
     }
 
-    private void AddColumn(string columnTitle, string fieldName, Binding columnBinding, int? size = null,
+    private void AddColumn(string columnTitle, string fieldName, DataGridColumn column, int? size = null,
         Control? additional = null)
     {
-        var dataGridTextColumn = new DataGridTextColumn
-        {
-            Binding = columnBinding
-        };
-
         if (size != null)
         {
-            dataGridTextColumn.Width = new DataGridLength((double)size, DataGridLengthUnitType.Pixel);
-            dataGridTextColumn.MaxWidth = (double)size;
-            dataGridTextColumn.MinWidth = (double)size;
+            column.Width = new DataGridLength((double)size, DataGridLengthUnitType.Pixel);
+            column.MaxWidth = (double)size;
+            column.MinWidth = (double)size;
         }
         else
         {
-            dataGridTextColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+            column.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
         }
 
         (SymbolsControl upIcon, SymbolsControl downIcon) = GetDirectionIcons(fieldName);
@@ -101,7 +127,7 @@ public class OrthodoxColumnsBehavior : Behavior<VerticalScrollDataGrid>
                 }
             };
 
-        dataGridTextColumn.Header = new DockPanel
+        column.Header = new DockPanel
         {
             LastChildFill = true,
             Children =
@@ -112,7 +138,7 @@ public class OrthodoxColumnsBehavior : Behavior<VerticalScrollDataGrid>
             }
         };
 
-        AssociatedObject!.Columns.Add(dataGridTextColumn);
+        AssociatedObject!.Columns.Add(column);
     }
 
     private static (SymbolsControl upIcon, SymbolsControl downIcon) GetDirectionIcons(string fieldName)
