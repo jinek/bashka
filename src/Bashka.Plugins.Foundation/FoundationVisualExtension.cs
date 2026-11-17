@@ -6,13 +6,15 @@ public class FoundationVisualExtension : VisualExtension
 {
     protected override IEnumerable<string> StyleUris =>
     [
-        "avares://Bashka.Plugins.Foundation/TestDialogStyles.axaml"
+        "avares://Bashka.Plugins.Foundation/TestDialogStyles.axaml",
+        "avares://Iciclecreek.Avalonia.Terminal/Themes/Generic.axaml"
     ];
 
     protected override IEnumerable<string> ResourceUris =>
     [
         "avares://Bashka.Plugins.Foundation/TestDialog.axaml",
         "avares://Bashka.Plugins.Foundation/AboutDialogContent.axaml",
-        "avares://Bashka.Plugins.Foundation/TextViewerDialogContent.axaml"
+        "avares://Bashka.Plugins.Foundation/TextViewerDialogContent.axaml",
+        "avares://Bashka.Plugins.Foundation/TerminalDialogContent.axaml"
     ];
 }

@@ -1,7 +1,9 @@
-using System.Diagnostics;
 using System.Globalization;
+using Avalonia.Threading;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
+using Bashka.Plugins.Core.Dialog.Abstract;
+using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Core.Worker.ProgressUI;
 using Bashka.Plugins.Core.Worker.Schedulers;
 using Bashka.Plugins.Foundation.ShellInteraction;
@@ -28,23 +30,18 @@ public class FileSystemCatalog : ShellCatalog, IReadStreamCatalog, IWriteStreamC
         NotifyDependentProperties(nameof(CurrentPath), nameof(Title));
     }
 
-    public Task ExecuteAsResidentAsync(string workingDir, string applicationName, string arguments,
+    [AutoWire] protected IDialogProvider DialogProvider { get; set; } = null!;
+
+    public async Task ExecuteAsResidentAsync(string workingDir, string applicationName, string arguments,
         CancellationToken cancellationToken)
     {
-        var processStartInfo = new ProcessStartInfo
-        {
-            FileName = applicationName,
-            Arguments = arguments,
-            UseShellExecute = false,
-            WorkingDirectory = workingDir
-        };
-
-        return Task.Run(() =>
-        {
-            using Process process = Process.Start(processStartInfo)!;
-            //WaitForExitAsync probably can be used, but seems we can not continue on initial thread
-            process.WaitForExit();
-        }, cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        var dialog = new TerminalDialogContent(workingDir, applicationName, arguments);
+        Task<object?> showDialog = DialogProvider.ShowDialogAsync(dialog);
+        await using CancellationTokenRegistration registration = cancellationToken.Register(() =>
+            Dispatcher.UIThread.Post(dialog.Close));
+        await showDialog;
+        cancellationToken.ThrowIfCancellationRequested();
     }
 
     public override string Title => CurrentPath ?? "File System";
