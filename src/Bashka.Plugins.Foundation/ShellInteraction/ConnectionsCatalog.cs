@@ -1,7 +1,7 @@
-using Autofac;
 using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
+using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Foundation.FileSystem;
 
 namespace Bashka.Plugins.Foundation.ShellInteraction;
@@ -13,19 +13,13 @@ public class ConnectionsCatalog : FileSystemCatalog
 {
     public static readonly string ConnectionsDirectory = Path.Combine(BashkaHelpers.DataDirectory, "Connections");
 
-    private readonly ShellSession _localShellSession;
-
-    public ConnectionsCatalog(ILifetimeScope scope, ICommandSelector commandSelector) : base(commandSelector)
+    public ConnectionsCatalog(ICommandSelector commandSelector) : base(commandSelector)
     {
-        ILifetimeScope localSystemScope = scope.BeginLifetimeScope(builder =>
-        {
-            var shellConnection = scope.ResolveKeyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey);
-            builder.RegisterInstance(shellConnection);
-        });
-
-        _localShellSession = localSystemScope.Resolve<ShellSession>();
         Directory.CreateDirectory(ConnectionsDirectory);
     }
+
+    [AutoWire(Key = IShellConnection.DefaultShellConnectionKey)]
+    public override ShellSession ShellSession { get; internal set; } = null!;
 
     public override string Title => "Connections";
 
@@ -37,7 +31,6 @@ public class ConnectionsCatalog : FileSystemCatalog
     public override Task NavigateAsync(string path)
     {
         if (path != string.Empty) throw new NotSupportedException();
-        ShellSession = _localShellSession;
         return base.NavigateAsync(ConnectionsDirectory);
     }
 

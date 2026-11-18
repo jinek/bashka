@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Autofac;
 using Autofac.Builder;
+using Autofac.Core;
 using Autofac.Features.AttributeFilters;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.FunctionKeys;
@@ -16,12 +17,25 @@ public static class RegistrationHelper
         FullRegister<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementer,
             TInterface>(this ContainerBuilder builder) where TImplementer : TInterface where TInterface : notnull
     {
+        Parameter[] keyedProperties =
+        [
+            .. typeof(TImplementer)
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Select(property =>
+                    (Property: property, Attribute: property.GetCustomAttribute<AutoWireAttribute>(true)))
+                .Where(item => item.Attribute?.Key != null)
+                .Select(item => (Parameter)new ResolvedParameter(
+                    (parameter, _) => parameter.Member == item.Property.SetMethod,
+                    (_, context) => context.ResolveKeyed(item.Attribute!.Key!, item.Property.PropertyType)))
+        ];
+
         return builder.RegisterType<TImplementer>()
             .AsSelf()
             .As<TInterface>()
             .Keyed<TInterface>(typeof(TImplementer).GetTypeKey())
             .WithAttributeFiltering()
-            .PropertiesAutowired((property, _) => property.GetCustomAttribute(typeof(AutoWireAttribute), true) != null);
+            .WithProperties(keyedProperties)
+            .PropertiesAutowired((property, _) => property.GetCustomAttribute<AutoWireAttribute>(true) is { Key: null });
     }
 
     /// <summary>

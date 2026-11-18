@@ -40,6 +40,10 @@ public class ConnectionEditingTests : BashkaAppTestBase
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 catalog = scope.Resolve<ConnectionsCatalog>();
+                Assert.That(catalog.LifetimeScope, Is.SameAs(scope));
+                Assert.That(catalog.ShellSession.ShellConnection, Is.TypeOf<LocalSystemShellConnection>());
+                Assert.That(scope.Resolve<FileSystemCatalog>().ShellSession.ShellConnection, Is.SameAs(remote));
+                Assert.That(scope.Resolve<ShellSession>().ShellConnection, Is.SameAs(remote));
                 execution = catalog.NavigateAsync(string.Empty);
             });
             await execution.WaitAsync(TimeSpan.FromSeconds(20));

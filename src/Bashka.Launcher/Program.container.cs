@@ -1,4 +1,5 @@
 using Autofac;
+using Autofac.Core;
 using Autofac.Extras.AttributeMetadata;
 using Bashka.Plugins.Archives;
 using Bashka.Plugins.Archives.Implementations;
@@ -43,6 +44,9 @@ internal static partial class Program
         builder.FullRegister<OrthodoxCommander, IUIRoot>().AsSelf().InstancePerHierarchy();
         builder.FullRegister<BashExecutor, IScriptExecutor>().Keyed<IScriptExecutor>(BashExecutor.BashKey);
         builder.RegisterType<ShellSession>().AsSelf();
+        builder.RegisterType<ShellSession>()
+            .Keyed<ShellSession>(IShellConnection.DefaultShellConnectionKey)
+            .WithParameter(ResolvedParameter.ForKeyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey));
         builder.FullRegister<LocalSystemConnectionCatalog, ICatalog>();
         builder.FullRegister<LocalSystemShellConnection, IShellConnection>()
             .Keyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey);
