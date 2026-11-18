@@ -6,15 +6,17 @@ using Bashka.Plugins.Foundation.ShellInteraction;
 
 namespace Bashka.Plugins.Foundation;
 
-public class NanoCatalogCommand()
+public class EditFileCommand()
     : CatalogCommand<IPtyExecutor, FileEntry>(TextFileSupport.SupportedExtensions, false, true),
         IFunctionBarCatalogCommand
 {
     public override async Task ExecuteAsync(CatalogCommandContext<IPtyExecutor, FileEntry> context)
     {
         var ptyExecutorCatalog = (IPtyExecutor)context.CommandExecutionContext.Catalog!;
-        await NanoLauncher.OpenAsync(ptyExecutorCatalog,
+        string editor = EditorLocator.FindEditor()
+                        ?? throw new UserErrorException("No text editor was found. Install edit.net, micro, msedit, or nano and add it to PATH.");
+        await ptyExecutorCatalog.ExecuteAsResidentAsync(
             await ptyExecutorCatalog.ResolveCurrentPathAsync(),
-            context.SingleEntry.Path);
+            editor, context.SingleEntry.FullPath, CancellationToken.None);
     }
 }

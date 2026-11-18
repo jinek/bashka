@@ -2,7 +2,6 @@ using Autofac;
 using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
-using Bashka.Plugins.Core.Orthodox;
 using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Foundation.FileSystem;
 
@@ -36,6 +35,11 @@ public class ConnectionsCatalog : BaseObject, IPtyExecutor
     public string CurrentPath => Connections;
 
     public string Title => Connections;
+
+    public Task<string> ResolveCurrentPathAsync()
+    {
+        return Task.FromResult(ConnectionsDirectory);
+    }
 
     public IEnumerable<Entry> Children
     {
@@ -78,10 +82,8 @@ public class ConnectionsCatalog : BaseObject, IPtyExecutor
             return null;
 
         SshConnectionSettings settings = SshConnectionSettings.Load(fileEntry.FullPath);
-        return new SwitchConnectionEntry(Path.GetFileNameWithoutExtension(fileEntry.Name), this,
-            () => new SshShellConnection(settings.ToConnectionInfo()))
-        {
-            Extension = string.IsNullOrWhiteSpace(settings.Host) ? string.Empty : $"{settings.Host}:{settings.Port}"
-        };
+        return new SwitchConnectionEntry(fileEntry, this,
+            () => new SshShellConnection(SshConnectionSettings.Load(fileEntry.FullPath).ToConnectionInfo()),
+            string.IsNullOrWhiteSpace(settings.Host) ? string.Empty : $"{settings.Host}:{settings.Port}");
     }
 }

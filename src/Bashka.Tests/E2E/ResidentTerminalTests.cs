@@ -2,7 +2,6 @@ using Autofac;
 using Avalonia.Input;
 using Avalonia.Threading;
 using Bashka.Launcher;
-using Bashka.Plugins.Foundation;
 using Bashka.Plugins.Foundation.FileSystem;
 using Bashka.Tests.Helpers;
 
@@ -27,7 +26,7 @@ public class ResidentTerminalTests : BashkaAppTestBase
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 var catalog = MainWindow.Scope.Resolve<FileSystemCatalog>();
-                execution = NanoLauncher.OpenAsync(catalog, directory, file);
+                execution = catalog.ExecuteAsResidentAsync(directory, "nano", file, CancellationToken.None);
             });
             await UITest.WaitText("GNU nano");
             await UITest.WaitText("resident editor test");

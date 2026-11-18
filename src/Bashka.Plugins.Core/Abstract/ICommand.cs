@@ -9,6 +9,7 @@ public interface ICommand
     ///     Only such commands are selected by <see cref="ICommandSelector.SelectCommands" />.
     /// </summary>
     const string EnterCommandKey = "EnterCommand";
+    const string EditCommandKey = "EditCommand";
 
     bool CanExecute(CommandExecutionContext context);
     Task ExecuteAsync(CommandExecutionContext context);
