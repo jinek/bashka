@@ -4,6 +4,7 @@ using Avalonia.Threading;
 using Bashka.Launcher;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
+using Bashka.Plugins.Core.FunctionKeys;
 using Bashka.Plugins.Core.Orthodox;
 using Bashka.Plugins.Foundation;
 using Bashka.Plugins.Foundation.FileSystem;
@@ -15,6 +16,78 @@ namespace Bashka.Tests.E2E;
 [TestFixture]
 public class ConnectionEditingTests : BashkaAppTestBase
 {
+    [Test]
+    public async Task ConnectionsUseLocalFileListingAndExistingDeleteCommand()
+    {
+        await UITest.WaitNoText("Processing");
+        string prefix = $"Bashka.DeleteConnection.{Guid.NewGuid():N}";
+        string filePath = Path.Combine(ConnectionsCatalog.ConnectionsDirectory, prefix + " with 'quotes'.ini");
+        string otherPath = Path.Combine(ConnectionsCatalog.ConnectionsDirectory, prefix + ".ini");
+        string ignoredPath = Path.Combine(ConnectionsCatalog.ConnectionsDirectory, prefix + ".txt");
+        string directoryPath = Path.Combine(ConnectionsCatalog.ConnectionsDirectory, prefix + ".folder.ini");
+        var remote = new UnavailableRemoteConnection();
+        using ILifetimeScope scope = MainWindow.Scope.BeginLifetimeScope(builder =>
+            builder.RegisterInstance(remote).As<IShellConnection>());
+        ConnectionsCatalog catalog = null!;
+        Task execution = Task.CompletedTask;
+        try
+        {
+            Directory.CreateDirectory(ConnectionsCatalog.ConnectionsDirectory);
+            Directory.CreateDirectory(directoryPath);
+            SshConnectionSettings.CreateDefault(filePath);
+            SshConnectionSettings.CreateDefault(otherPath);
+            await File.WriteAllTextAsync(ignoredPath, "not a saved connection");
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                catalog = scope.Resolve<ConnectionsCatalog>();
+                execution = catalog.NavigateAsync(string.Empty);
+            });
+            await execution.WaitAsync(TimeSpan.FromSeconds(20));
+            Assert.That(catalog.CurrentPath, Is.EqualTo(ConnectionsCatalog.ConnectionsDirectory));
+            Assert.That(catalog.ShellSession.ShellConnection, Is.TypeOf<LocalSystemShellConnection>());
+            Assert.That(catalog.CanNavigateBack, Is.False);
+            Assert.That(catalog.Children.OfType<NewConnectionEntry>().Count(), Is.EqualTo(1));
+            Assert.That(catalog.Children.OfType<FileEntry>().Any(entry =>
+                entry.FullPath == ignoredPath || entry.FullPath == directoryPath), Is.False);
+
+            SwitchConnectionEntry entry = catalog.Children.OfType<SwitchConnectionEntry>()
+                .Single(connection => connection.FullPath == filePath);
+            var context = new CommandExecutionContext([entry], catalog, null, null, null);
+            var delete = scope.Resolve<DeleteDirOrFileCommand>();
+            Assert.That(delete, Is.InstanceOf<IFunctionBarCommand<ConnectionsCatalog>>());
+            Assert.That(delete.CanExecute(context), Is.True);
+            Assert.That(delete.CanExecute(context with { Entries = [new NewConnectionEntry(catalog)] }), Is.False);
+
+            await Dispatcher.UIThread.InvokeAsync(() => { execution = ((ICommand)delete).ExecuteAsync(context); });
+            await UITest.WaitText("Confirm delete");
+            await UITest.KeyInput(Key.Escape);
+            await execution.WaitAsync(TimeSpan.FromSeconds(20));
+            Assert.That(File.Exists(filePath), Is.True);
+            Assert.That(entry.IsGone, Is.False);
+
+            await Dispatcher.UIThread.InvokeAsync(() => { execution = ((ICommand)delete).ExecuteAsync(context); });
+            await UITest.WaitText("Confirm delete");
+            await UITest.KeyInput(Key.Enter);
+            await execution.WaitAsync(TimeSpan.FromSeconds(20));
+            Assert.That(File.Exists(filePath), Is.False);
+            Assert.That(entry.IsGone, Is.True);
+            Assert.That(delete.CanExecute(context), Is.False);
+            Assert.That(File.Exists(otherPath), Is.True);
+            Assert.That(File.Exists(ignoredPath), Is.True);
+            Assert.That(Directory.Exists(directoryPath), Is.True);
+            await Dispatcher.UIThread.InvokeAsync(() => { execution = catalog.NavigateAsync(string.Empty); });
+            await execution.WaitAsync(TimeSpan.FromSeconds(20));
+            Assert.That(catalog.Children.OfType<FileEntry>().Any(item => item.FullPath == filePath), Is.False);
+        }
+        finally
+        {
+            File.Delete(filePath);
+            File.Delete(otherPath);
+            File.Delete(ignoredPath);
+            Directory.Delete(directoryPath, true);
+        }
+    }
+
     [Test]
     public async Task CreatingConnectionPassesRealFileEntryToEditorAndRefreshesSettings()
     {
@@ -88,4 +161,15 @@ public class ConnectionEditingTests : BashkaAppTestBase
                 """);
         }
     }
+    private sealed class UnavailableRemoteConnection : IShellConnection
+    {
+        public string Title => "Remote connection must not be used for saved connection files";
+        public byte MessageIdHitCount => 1;
+
+        public IEnumerable<string> PrepareExecution(string command, string parameter)
+            => throw new InvalidOperationException("Saved connection files must use the local shell.");
+
+        public bool IsEquivalentTo(object another) => ReferenceEquals(this, another);
+    }
+
 }

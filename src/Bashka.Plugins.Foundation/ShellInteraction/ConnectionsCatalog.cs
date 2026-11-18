@@ -2,7 +2,6 @@ using Autofac;
 using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
-using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Foundation.FileSystem;
 
 namespace Bashka.Plugins.Foundation.ShellInteraction;
@@ -10,72 +9,55 @@ namespace Bashka.Plugins.Foundation.ShellInteraction;
 /// <summary>
 ///     SSH Connections
 /// </summary>
-public class ConnectionsCatalog : BaseObject, IPtyExecutor
+public class ConnectionsCatalog : FileSystemCatalog
 {
-    private const string Connections = "Connections";
+    public static readonly string ConnectionsDirectory = Path.Combine(BashkaHelpers.DataDirectory, "Connections");
 
-    public static readonly string ConnectionsDirectory = Path.Combine(BashkaHelpers.DataDirectory, Connections);
+    private readonly ShellSession _localShellSession;
 
-    private readonly FileSystemCatalog _inner;
-
-    public ConnectionsCatalog(ILifetimeScope scope)
+    public ConnectionsCatalog(ILifetimeScope scope, ICommandSelector commandSelector) : base(commandSelector)
     {
         ILifetimeScope localSystemScope = scope.BeginLifetimeScope(builder =>
         {
             var shellConnection = scope.ResolveKeyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey);
-
             builder.RegisterInstance(shellConnection);
         });
 
-        _inner = localSystemScope.Resolve<FileSystemCatalog>();
+        _localShellSession = localSystemScope.Resolve<ShellSession>();
         Directory.CreateDirectory(ConnectionsDirectory);
-        _inner.PropertyChanged += (_, args) => OnPropertyChanged(args.PropertyName);
     }
 
-    public string CurrentPath => Connections;
+    public override string Title => "Connections";
 
-    public string Title => Connections;
-
-    public Task<string> ResolveCurrentPathAsync()
+    public override Task<string> ResolveCurrentPathAsync()
     {
         return Task.FromResult(ConnectionsDirectory);
     }
 
-    public IEnumerable<Entry> Children
+    public override Task NavigateAsync(string path)
     {
-        get
-        {
-            return
-            [
-                new NewConnectionEntry(this), .._inner.Children
-                    .Select(ToConnectionEntry)
-                    .Where(entry => entry != null)
-                    .Cast<Entry>()
-            ];
-        }
+        if (path != string.Empty) throw new NotSupportedException();
+        ShellSession = _localShellSession;
+        return base.NavigateAsync(ConnectionsDirectory);
     }
 
-    public Task NavigateAsync(string path)
-    {
-        return path != string.Empty
-            ? throw new NotSupportedException()
-            : _inner.NavigateAsync(ConnectionsDirectory);
-    }
+    public override bool CanNavigateBack => false;
 
-    public bool CanNavigateBack => false;
-
-    public Task NavigateBack()
+    public override Task NavigateBack()
     {
         throw new NotSupportedException();
     }
 
-    public Task ExecuteAsResidentAsync(string workingDir, string applicationName, string arguments,
-        CancellationToken cancellationToken)
+    protected override async Task<IEnumerable<Entry>> GetChildrenInternal()
     {
-        return _inner.ExecuteAsResidentAsync(workingDir, applicationName, arguments, cancellationToken);
+        IEnumerable<Entry> files = await base.GetChildrenInternal();
+        return
+        [
+            new NewConnectionEntry(this), .. files.Select(ToConnectionEntry).OfType<SwitchConnectionEntry>()
+        ];
     }
 
-    private Entry? ToConnectionEntry(Entry entry)
+    private SwitchConnectionEntry? ToConnectionEntry(Entry entry)
     {
         if (entry is not FileEntry { IsDirectory: false } fileEntry ||
             !fileEntry.Name.EndsWith(".ini", StringComparison.OrdinalIgnoreCase))

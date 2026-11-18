@@ -48,7 +48,7 @@ public class FileSystemCatalog : ShellCatalog, IReadStreamCatalog, IWriteStreamC
 
     //public override string Title => Path.GetPathRoot(CurrentPath) ?? " ";
 
-    public Task<string> ResolveCurrentPathAsync()
+    public virtual Task<string> ResolveCurrentPathAsync()
     {
         CurrentDirectoryLine currentDirectory = ShellSession.ExecuteScalar(new GetCurrentDirectoryShellMultiScript());
         return Task.FromResult(currentDirectory.Line);
