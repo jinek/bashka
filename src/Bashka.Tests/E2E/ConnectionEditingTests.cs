@@ -28,7 +28,7 @@ public class ConnectionEditingTests : BashkaAppTestBase
         using ILifetimeScope scope = MainWindow.Scope.BeginLifetimeScope(builder =>
             builder.RegisterInstance(remote).As<IShellConnection>());
         ConnectionsCatalog catalog = null!;
-        Task execution = Task.CompletedTask;
+        var execution = Task.CompletedTask;
         try
         {
             Directory.CreateDirectory(ConnectionsCatalog.ConnectionsDirectory);
@@ -101,7 +101,7 @@ public class ConnectionEditingTests : BashkaAppTestBase
         using ILifetimeScope scope = MainWindow.Scope.BeginLifetimeScope(builder =>
             builder.RegisterInstance(editor).Keyed<ICommand>(ICommand.EditCommandKey));
         ConnectionsCatalog catalog = null!;
-        Task execution = Task.CompletedTask;
+        var execution = Task.CompletedTask;
         try
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
@@ -131,7 +131,9 @@ public class ConnectionEditingTests : BashkaAppTestBase
             Assert.That(refreshed.DisplayName, Is.EqualTo(title));
             Assert.That(refreshed.Extension, Is.EqualTo("example.test:2222"));
             Assert.That(new EditFileCommand().CanExecute(editContext with
-                { Entries = [new NewConnectionEntry(catalog)] }), Is.False);
+            {
+                Entries = [new NewConnectionEntry(catalog)]
+            }), Is.False);
 
             var local = scope.Resolve<LocalSystemConnectionCatalog>();
             await local.NavigateAsync(string.Empty);
@@ -150,29 +152,37 @@ public class ConnectionEditingTests : BashkaAppTestBase
     {
         public FileEntry? Entry { get; private set; }
 
-        public bool CanExecute(CommandExecutionContext context) => true;
+        public bool CanExecute(CommandExecutionContext context)
+        {
+            return true;
+        }
 
         public async Task ExecuteAsync(CommandExecutionContext context)
         {
             Entry = (FileEntry)context.Entries.Single();
             await File.WriteAllTextAsync(Entry.FullPath, """
-                [Connection]
-                Host=example.test
-                Port=2222
-                Username=test
-                Password=
-                """);
+                                                         [Connection]
+                                                         Host=example.test
+                                                         Port=2222
+                                                         Username=test
+                                                         Password=
+                                                         """);
         }
     }
+
     private sealed class UnavailableRemoteConnection : IShellConnection
     {
         public string Title => "Remote connection must not be used for saved connection files";
         public byte MessageIdHitCount => 1;
 
         public IEnumerable<string> PrepareExecution(string command, string parameter)
-            => throw new InvalidOperationException("Saved connection files must use the local shell.");
+        {
+            throw new InvalidOperationException("Saved connection files must use the local shell.");
+        }
 
-        public bool IsEquivalentTo(object another) => ReferenceEquals(this, another);
+        public bool IsEquivalentTo(object another)
+        {
+            return ReferenceEquals(this, another);
+        }
     }
-
 }

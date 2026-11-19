@@ -1,11 +1,14 @@
 using System.Reflection;
 using Autofac;
+using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Bashka.Launcher;
 using Bashka.Plugins.Core.Dialog.Abstract;
 using Bashka.Plugins.Foundation;
 using Bashka.Tests.Helpers;
+using Consolonia;
 using Iciclecreek.Terminal;
 
 namespace Bashka.Tests.E2E;
@@ -57,7 +60,7 @@ public class TerminalRenderingWorkaroundTests : BashkaAppTestBase
             await UITest.WaitRendered();
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                var window = ((Consolonia.ConsoloniaLifetime)Avalonia.Application.Current!.ApplicationLifetime!).MainWindow!;
+                Window window = ((ConsoloniaLifetime)Application.Current!.ApplicationLifetime!).MainWindow!;
                 TerminalControl terminal = window.GetVisualDescendants().OfType<TerminalControl>()
                     .Single(control => ReferenceEquals(control.DataContext, dialog));
                 terminal.Terminal.Write(ProbeText);
@@ -70,10 +73,7 @@ public class TerminalRenderingWorkaroundTests : BashkaAppTestBase
         }
         finally
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                dialog.Close();
-            });
+            await Dispatcher.UIThread.InvokeAsync(() => { dialog.Close(); });
             await showDialog;
         }
     }

@@ -6,6 +6,5 @@ namespace Bashka.Plugins.Foundation.ShellInteraction;
 
 public abstract class ShellCatalog : PathCatalog
 {
-    [AutoWire]
-    public virtual ShellSession ShellSession { get; [UsedImplicitly] internal set; } = null!;
+    [AutoWire] public virtual ShellSession ShellSession { get; [UsedImplicitly] internal set; } = null!;
 }

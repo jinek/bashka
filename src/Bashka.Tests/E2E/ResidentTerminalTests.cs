@@ -19,7 +19,7 @@ public class ResidentTerminalTests : BashkaAppTestBase
         string directory = Path.Combine(Path.GetTempPath(), $"Bashka.Nano.{Guid.NewGuid():N}");
         Directory.CreateDirectory(directory);
         string file = Path.Combine(directory, "file with spaces.txt");
-        Task execution = Task.CompletedTask;
+        var execution = Task.CompletedTask;
         try
         {
             await File.WriteAllTextAsync(file, "resident editor test\n");
@@ -57,7 +57,7 @@ public class ResidentTerminalTests : BashkaAppTestBase
         Directory.CreateDirectory(directory);
         string script = Path.Combine(directory, "resident script.sh");
         using var cancellation = new CancellationTokenSource();
-        Task execution = Task.CompletedTask;
+        var execution = Task.CompletedTask;
         try
         {
             await File.WriteAllTextAsync(script, "printf 'Resident ready\\n'\nread answer\n");

@@ -21,7 +21,7 @@ public class AutoWireTests
         using ILifetimeScope scope = container.BeginLifetimeScope(registrations =>
             registrations.RegisterInstance(remoteService).As<IService>());
 
-        KeyedConsumer consumer = scope.Resolve<KeyedConsumer>();
+        var consumer = scope.Resolve<KeyedConsumer>();
         Assert.That(consumer.Service, Is.SameAs(keyedService));
         Assert.That(consumer.Service, Is.SameAs(keyedService));
         Assert.That(consumer.OtherService, Is.SameAs(remoteService));

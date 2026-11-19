@@ -1,7 +1,7 @@
 namespace Bashka.Plugins.Foundation;
 
 /// <summary>
-/// vibe-coded, will be replaced by settings
+///     vibe-coded, will be replaced by settings
 /// </summary>
 public static class EditorLocator
 {

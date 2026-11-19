@@ -12,8 +12,6 @@ namespace Bashka.Tests;
 [NonParallelizable]
 public class TextEditorTests
 {
-    private string _directory = null!;
-
     [SetUp]
     public void SetUp()
     {
@@ -26,6 +24,8 @@ public class TextEditorTests
     {
         Directory.Delete(_directory, true);
     }
+
+    private string _directory = null!;
 
     [TestCase(true, "nano.exe,micro.exe,edit.exe,msedit.exe,edit.net.exe", "edit.net.exe")]
     [TestCase(true, "nano.exe,micro.exe,edit.exe,msedit.exe", "msedit.exe")]
@@ -103,9 +103,20 @@ public class TextEditorTests
         public IEnumerable<Entry> Children => [];
         public bool CanNavigateBack => false;
 
-        public Task<string> ResolveCurrentPathAsync() => Task.FromResult(directory);
-        public Task NavigateAsync(string path) => throw new NotSupportedException();
-        public Task NavigateBack() => throw new NotSupportedException();
+        public Task<string> ResolveCurrentPathAsync()
+        {
+            return Task.FromResult(directory);
+        }
+
+        public Task NavigateAsync(string path)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Task NavigateBack()
+        {
+            throw new NotSupportedException();
+        }
 
         public Task ExecuteAsResidentAsync(string workingDir, string applicationName, string arguments,
             CancellationToken cancellationToken)

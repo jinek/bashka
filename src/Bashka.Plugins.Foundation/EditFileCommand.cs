@@ -14,7 +14,8 @@ public class EditFileCommand()
     {
         var ptyExecutorCatalog = (IPtyExecutor)context.CommandExecutionContext.Catalog!;
         string editor = EditorLocator.FindEditor()
-                        ?? throw new UserErrorException("No text editor was found. Install edit.net, micro, msedit, or nano and add it to PATH.");
+                        ?? throw new UserErrorException(
+                            "No text editor was found. Install edit.net, micro, msedit, or nano and add it to PATH.");
         await ptyExecutorCatalog.ExecuteAsResidentAsync(
             await ptyExecutorCatalog.ResolveCurrentPathAsync(),
             editor, context.SingleEntry.FullPath, CancellationToken.None);

@@ -23,6 +23,8 @@ public class ConnectionsCatalog : FileSystemCatalog
 
     public override string Title => "Connections";
 
+    public override bool CanNavigateBack => false;
+
     public override Task<string> ResolveCurrentPathAsync()
     {
         return Task.FromResult(ConnectionsDirectory);
@@ -33,8 +35,6 @@ public class ConnectionsCatalog : FileSystemCatalog
         if (path != string.Empty) throw new NotSupportedException();
         return base.NavigateAsync(ConnectionsDirectory);
     }
-
-    public override bool CanNavigateBack => false;
 
     public override Task NavigateBack()
     {

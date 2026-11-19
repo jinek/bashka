@@ -35,7 +35,8 @@ public static class RegistrationHelper
             .Keyed<TInterface>(typeof(TImplementer).GetTypeKey())
             .WithAttributeFiltering()
             .WithProperties(keyedProperties)
-            .PropertiesAutowired((property, _) => property.GetCustomAttribute<AutoWireAttribute>(true) is { Key: null });
+            .PropertiesAutowired((property, _) => property.GetCustomAttribute<AutoWireAttribute>(true) is
+                { Key: null });
     }
 
     /// <summary>

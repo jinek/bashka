@@ -11,6 +11,8 @@ public class UITaskScheduler : TaskScheduler
     // everything else keeps the default (Normal) priority.
     public static readonly AsyncLocalParameter<DispatcherPriority> Priority = new();
 
+    private static bool IsCalledFromWorker => WorkerTaskFactory.CurrentExecutionRootTask.HasCurrentValue;
+
     protected override IEnumerable<Task> GetScheduledTasks()
     {
         throw new NotImplementedException();
@@ -42,9 +44,7 @@ public class UITaskScheduler : TaskScheduler
             RaiseFaultOnDispatcher(task);
         return true;
     }
-    
-    private static bool IsCalledFromWorker => WorkerTaskFactory.CurrentExecutionRootTask.HasCurrentValue;
-    
+
     private static void RaiseFaultOnDispatcher(Task task)
     {
         if (!task.IsFaulted) return;

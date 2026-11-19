@@ -14,5 +14,4 @@ public static class BashkaHelpers
     {
         return visual.Get<T>(elementName!);
     }
-
 }

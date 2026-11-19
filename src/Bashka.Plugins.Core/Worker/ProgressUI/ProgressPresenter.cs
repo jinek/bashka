@@ -27,16 +27,16 @@ public class ProgressPresenter : DialogContent, IProgressPresenter
             ShowDialog();
     }
 
-    private async void ShowDialog()
-    {
-        await _dialogProvider.ShowDialogAsync(this);
-    }
-
     public void HideProgress(ProgressViewModel viewModel)
     {
         Dispatcher.UIThread.VerifyAccess();
         ProgressViewModels.Remove(viewModel);
         if (ProgressViewModels.Count == 0)
             RaiseClose();
+    }
+
+    private async void ShowDialog()
+    {
+        await _dialogProvider.ShowDialogAsync(this);
     }
 }
