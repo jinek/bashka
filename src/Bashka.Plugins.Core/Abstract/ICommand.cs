@@ -10,6 +10,8 @@ public interface ICommand
     /// </summary>
     const string EnterCommandKey = "EnterCommand";
 
+    const string EditCommandKey = "EditCommand";
+
     bool CanExecute(CommandExecutionContext context);
     Task ExecuteAsync(CommandExecutionContext context);
 }

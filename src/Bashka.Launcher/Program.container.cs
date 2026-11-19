@@ -1,4 +1,5 @@
 using Autofac;
+using Autofac.Core;
 using Autofac.Extras.AttributeMetadata;
 using Bashka.Plugins.Archives;
 using Bashka.Plugins.Archives.Implementations;
@@ -43,6 +44,9 @@ internal static partial class Program
         builder.FullRegister<OrthodoxCommander, IUIRoot>().AsSelf().InstancePerHierarchy();
         builder.FullRegister<BashExecutor, IScriptExecutor>().Keyed<IScriptExecutor>(BashExecutor.BashKey);
         builder.RegisterType<ShellSession>().AsSelf();
+        builder.RegisterType<ShellSession>()
+            .Keyed<ShellSession>(IShellConnection.DefaultShellConnectionKey)
+            .WithParameter(ResolvedParameter.ForKeyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey));
         builder.FullRegister<LocalSystemConnectionCatalog, ICatalog>();
         builder.FullRegister<LocalSystemShellConnection, IShellConnection>()
             .Keyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey);
@@ -93,6 +97,8 @@ internal static partial class Program
         builder.RegisterFCommand<FileCatCommand, ShellCatalog>(FunctionPage.Default, FunctionKey.F3, "View");
         builder.RegisterFCommand<ExitApplicationCommand, ICatalog>(FunctionPage.Default, FunctionKey.F10, "Exit");
         builder.RegisterFCommand<TouchFileCommand, ShellCatalog>(FunctionPage.Shift, FunctionKey.F4, "Touch");
+        builder.RegisterFCommand<EditFileCommand, IPtyExecutor>(FunctionPage.Default, FunctionKey.F4, "Edit")
+            .Keyed<ICommand>(ICommand.EditCommandKey);
         builder.RegisterFCommand<CopyStreamCommand, IReadStreamCatalog>(FunctionPage.Default, FunctionKey.F5, "CopyS");
         builder.RegisterFCommand<CopyCommand, ShellCatalog>(FunctionPage.Default, FunctionKey.F5, "Copy");
         builder.RegisterFCommand<MoveCommand, ShellCatalog>(FunctionPage.Default, FunctionKey.F6, "RenMov");
@@ -101,7 +107,6 @@ internal static partial class Program
         builder.RegisterFCommand<NewConnectionCommand, ConnectionsCatalog>(FunctionPage.Shift, FunctionKey.F4,
             "NewConn");
         builder.RegisterEnterCommand<NewConnectionEntryCommand>();
-        builder.RegisterFCommand<NanoCatalogCommand, ICatalog>(FunctionPage.Default, FunctionKey.F4, "Nano");
 
         builder.RegisterFCommand<SortCommand, ICatalog>(FunctionPage.Ctrl, FunctionKey.F3, "SrtName")
             .WithParameter(new TypedParameter(typeof(SortKey), SortKey.Name));

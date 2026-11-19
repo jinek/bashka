@@ -163,10 +163,12 @@
             </Border>
 
             <!--ShellConnection Info-->
+            <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
             <Border BorderThickness="0"
                     Background="{DynamicResource ThemeBackgroundBrush}"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom">
+                    VerticalAlignment="Bottom"
+                    IsVisible="{Binding CurrentCatalog.ShellSession.ShellConnection, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}">
                 <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
                 <TextBlock Margin="1,0"
                            Classes="Bashka ShellConnectionInfo"

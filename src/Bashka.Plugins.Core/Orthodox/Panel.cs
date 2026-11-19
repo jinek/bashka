@@ -2,7 +2,6 @@ using System.IO.Enumeration;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Autofac.Features.Indexed;
-using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
@@ -59,9 +58,7 @@ public class Panel : BaseObject, IPanel
                     SelectedRoot = null;
             });
 
-        RootsCatalog.NavigateAsync(ICatalog.RootFavoritesPath).HandleErrors();
-
-        OpenDefaultCatalogAsync().HandleErrors();
+        InitializeCatalogs();
     }
 
     [AutoWire] public Lazy<OrthodoxCommander> Commander { get; [UsedImplicitly] internal init; } = null!;
@@ -132,6 +129,11 @@ public class Panel : BaseObject, IPanel
     public void QuickSearchNext()
     {
         JumpToMatch(SelectedIndex + 1, true);
+    }
+
+    private async void InitializeCatalogs()
+    {
+        await Task.WhenAll(RootsCatalog.NavigateAsync(ICatalog.RootFavoritesPath), OpenDefaultCatalogAsync());
     }
 
     public async Task OpenDefaultCatalogAsync()

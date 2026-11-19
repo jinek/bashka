@@ -1,15 +1,12 @@
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
+using Bashka.Plugins.Core.Orthodox;
 
-namespace Bashka.Plugins.Core.Orthodox;
+namespace Bashka.Plugins.Foundation.ShellInteraction;
 
-public class SwitchConnectionCommand : CatalogCommand<ICatalog, SwitchConnectionEntry>
+public class SwitchConnectionCommand() : CatalogCommand<ICatalog, SwitchConnectionEntry>(null, false, true)
 {
-    public SwitchConnectionCommand() : base(null, false, true)
-    {
-    }
-
     public override async Task ExecuteAsync(CatalogCommandContext<ICatalog, SwitchConnectionEntry> context)
     {
         IPanel panel = context.CommandExecutionContext.Panel!;

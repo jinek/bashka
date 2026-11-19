@@ -1,6 +1,5 @@
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
-using Bashka.Plugins.Core.Orthodox;
 using Bashka.Plugins.Core.Scoping;
 
 namespace Bashka.Plugins.Foundation.ShellInteraction;

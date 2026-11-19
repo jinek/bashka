@@ -4,6 +4,7 @@ using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Core.Dialog.Abstract;
 using Bashka.Plugins.Core.Dialog.Basic;
+using Bashka.Plugins.Core.Worker.Schedulers;
 
 namespace Bashka.Launcher;
 
@@ -14,6 +15,7 @@ public partial class App
     ///     Avalonia rethrows an exception to unobserved task, which we also handle. Thus marking this exception to know it
     ///     was handled already.
     ///     Why not just to show it from UnobservedTask? Because we don't know when that will happen (finalizer call)
+    ///     Same exception crosses the dispatcher again when an awaiter of a UI task rethrows it, such crossings are skipped.
     /// </summary>
     internal static readonly object HandledExceptionHackMark = new();
 
@@ -21,14 +23,25 @@ public partial class App
     {
         Dispatcher.UIThread.UnhandledExceptionFilter += async (_, args) =>
         {
-            switch (args.Exception)
+            Exception exception = args.Exception is UITaskFaultedException { InnerException: { } inner }
+                ? inner
+                : args.Exception;
+
+            if (exception.Data.Contains(HandledExceptionHackMark))
+            {
+                MarkHandled();
+                args.RequestCatch = true;
+                return;
+            }
+
+            switch (exception)
             {
                 case UserCancelException:
-                    args.Exception.Data[HandledExceptionHackMark] = null;
+                    MarkHandled();
                     args.RequestCatch = true;
                     break;
                 case UserErrorException userErrorException:
-                    args.Exception.Data[HandledExceptionHackMark] = null;
+                    MarkHandled();
                     args.RequestCatch = true;
                     await ShowUserError(userErrorException);
                     break;
@@ -39,22 +52,34 @@ public partial class App
                 default:
 #if HANDLE_CRASH
                     args.RequestCatch = true;
-                    args.Exception.Data[HandledExceptionHackMark] = null;
-                    await ShowApplicationError(args.Exception);
+                    MarkHandled();
+                    await ShowApplicationError(exception);
 #else
                     args.RequestCatch = false;
 #endif
                     break;
+            }
+
+            return;
+
+            // the wrapper goes to the unobserved task of the dispatcher operation, the inner one comes back via awaiters
+            void MarkHandled()
+            {
+                args.Exception.Data[HandledExceptionHackMark] = null;
+                exception.Data[HandledExceptionHackMark] = null;
             }
         };
 
         Dispatcher.UIThread.UnhandledException += (_, args) => { args.Handled = true; };
     }
 
-    private static async Task ShowUserError(UserErrorException userErrorException)
+    private static Task ShowUserError(UserErrorException userErrorException)
     {
-        var dialogProvider = MainWindow.Scope.Resolve<IDialogProvider>();
-        await dialogProvider.ShowDialogAsync(new ErrorDialogContent(userErrorException.Message));
+        return Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            var dialogProvider = MainWindow.Scope.Resolve<IDialogProvider>();
+            await dialogProvider.ShowDialogAsync(new ErrorDialogContent(userErrorException.Message));
+        });
     }
 
     /// <summary>

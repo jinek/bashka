@@ -1,6 +1,5 @@
 using Avalonia.Collections;
 using Avalonia.Threading;
-using Bashka.Helpers;
 using Bashka.Plugins.Core.Dialog.Abstract;
 
 namespace Bashka.Plugins.Core.Worker.ProgressUI;
@@ -25,7 +24,7 @@ public class ProgressPresenter : DialogContent, IProgressPresenter
         Dispatcher.UIThread.VerifyAccess();
         ProgressViewModels.Add(viewModel);
         if (ProgressViewModels.Count == 1)
-            _dialogProvider.ShowDialogAsync(this).HandleErrors();
+            ShowDialog();
     }
 
     public void HideProgress(ProgressViewModel viewModel)
@@ -34,5 +33,10 @@ public class ProgressPresenter : DialogContent, IProgressPresenter
         ProgressViewModels.Remove(viewModel);
         if (ProgressViewModels.Count == 0)
             RaiseClose();
+    }
+
+    private async void ShowDialog()
+    {
+        await _dialogProvider.ShowDialogAsync(this);
     }
 }

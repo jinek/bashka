@@ -50,7 +50,7 @@ public class TouchFileCommand : TypeKeyedObject, IFunctionBarCommand<ShellCatalo
         Entry? newEntry = context.Catalog.Children.SingleOrDefault(entry => entry.Path == fileName);
         if (newEntry == null) throw new UserErrorException("File was removed");
 
-        ICommand editCommand = _commandFactory[typeof(NanoCatalogCommand).GetTypeKey()];
+        ICommand editCommand = _commandFactory[ICommand.EditCommandKey];
         await editCommand.ExecuteAsync(context with { Entries = [newEntry] });
 
         // now selecting new entry

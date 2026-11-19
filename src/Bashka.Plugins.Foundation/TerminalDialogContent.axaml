@@ -1,0 +1,16 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:foundation="clr-namespace:Bashka.Plugins.Foundation"
+                    xmlns:terminal="clr-namespace:Iciclecreek.Terminal;assembly=Iciclecreek.Avalonia.Terminal">
+    <DataTemplate DataType="{x:Type foundation:TerminalDialogContent}"
+                  x:Key="{x:Type foundation:TerminalDialogContent}">
+        <terminal:TerminalControl StartingDirectory="{Binding WorkingDirectory}"
+                                  Process="{Binding ApplicationName}"
+                                  ProcessArgs="{Binding Arguments}"
+                                  BufferSize="1000">
+            <Interaction.Behaviors>
+                <foundation:TerminalDialogBehavior />
+            </Interaction.Behaviors>
+        </terminal:TerminalControl>
+    </DataTemplate>
+</ResourceDictionary>

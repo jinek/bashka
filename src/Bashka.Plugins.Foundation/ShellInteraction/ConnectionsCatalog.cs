@@ -1,8 +1,6 @@
-using Autofac;
 using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
-using Bashka.Plugins.Core.Orthodox;
 using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Foundation.FileSystem;
 
@@ -11,77 +9,56 @@ namespace Bashka.Plugins.Foundation.ShellInteraction;
 /// <summary>
 ///     SSH Connections
 /// </summary>
-public class ConnectionsCatalog : BaseObject, IPtyExecutor
+public class ConnectionsCatalog : FileSystemCatalog
 {
-    private const string Connections = "Connections";
+    public static readonly string ConnectionsDirectory = Path.Combine(BashkaHelpers.DataDirectory, "Connections");
 
-    public static readonly string ConnectionsDirectory = Path.Combine(BashkaHelpers.DataDirectory, Connections);
-
-    private readonly FileSystemCatalog _inner;
-
-    public ConnectionsCatalog(ILifetimeScope scope)
+    public ConnectionsCatalog(ICommandSelector commandSelector) : base(commandSelector)
     {
-        ILifetimeScope localSystemScope = scope.BeginLifetimeScope(builder =>
-        {
-            var shellConnection = scope.ResolveKeyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey);
-
-            builder.RegisterInstance(shellConnection);
-        });
-
-        _inner = localSystemScope.Resolve<FileSystemCatalog>();
         Directory.CreateDirectory(ConnectionsDirectory);
-        _inner.PropertyChanged += (_, args) => OnPropertyChanged(args.PropertyName);
     }
 
-    public string CurrentPath => Connections;
+    [AutoWire(Key = IShellConnection.DefaultShellConnectionKey)]
+    public override ShellSession ShellSession { get; internal set; } = null!;
 
-    public string Title => Connections;
+    public override string Title => "Connections";
 
-    public IEnumerable<Entry> Children
+    public override bool CanNavigateBack => false;
+
+    public override Task<string> ResolveCurrentPathAsync()
     {
-        get
-        {
-            return
-            [
-                new NewConnectionEntry(this), .._inner.Children
-                    .Select(ToConnectionEntry)
-                    .Where(entry => entry != null)
-                    .Cast<Entry>()
-            ];
-        }
+        return Task.FromResult(ConnectionsDirectory);
     }
 
-    public Task NavigateAsync(string path)
+    public override Task NavigateAsync(string path)
     {
-        return path != string.Empty
-            ? throw new NotSupportedException()
-            : _inner.NavigateAsync(ConnectionsDirectory);
+        if (path != string.Empty) throw new NotSupportedException();
+        return base.NavigateAsync(ConnectionsDirectory);
     }
 
-    public bool CanNavigateBack => false;
-
-    public Task NavigateBack()
+    public override Task NavigateBack()
     {
         throw new NotSupportedException();
     }
 
-    public Task ExecuteAsResidentAsync(string workingDir, string applicationName, string arguments,
-        CancellationToken cancellationToken)
+    protected override async Task<IEnumerable<Entry>> GetChildrenInternal()
     {
-        return _inner.ExecuteAsResidentAsync(workingDir, applicationName, arguments, cancellationToken);
+        IEnumerable<Entry> files = await base.GetChildrenInternal();
+        return
+        [
+            new NewConnectionEntry(this), .. files.Select(ToConnectionEntry).OfType<SwitchConnectionEntry>()
+        ];
     }
 
-    private Entry? ToConnectionEntry(Entry entry)
+    private SwitchConnectionEntry? ToConnectionEntry(Entry entry)
     {
         if (entry is not FileEntry { IsDirectory: false } fileEntry ||
             !fileEntry.Name.EndsWith(".ini", StringComparison.OrdinalIgnoreCase))
             return null;
 
         SshConnectionSettings settings = SshConnectionSettings.Load(fileEntry.FullPath);
-        return new SwitchConnectionEntry(Path.GetFileNameWithoutExtension(fileEntry.Name), this,
-            () => new SshShellConnection(settings.ToConnectionInfo()))
-        {
-            Extension = string.IsNullOrWhiteSpace(settings.Host) ? string.Empty : $"{settings.Host}:{settings.Port}"
-        };
+        return new SwitchConnectionEntry(fileEntry, this,
+            () => new SshShellConnection(SshConnectionSettings.Load(fileEntry.FullPath).ToConnectionInfo()),
+            string.IsNullOrWhiteSpace(settings.Host) ? string.Empty : $"{settings.Host}:{settings.Port}");
     }
 }
