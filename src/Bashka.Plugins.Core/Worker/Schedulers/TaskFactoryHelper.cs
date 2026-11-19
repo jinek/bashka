@@ -20,7 +20,7 @@ public static class TaskFactoryHelper
                 : WorkerTaskFactory.CurrentExecutionRootTask.StartRegion(task);
             WorkerTaskFactory.CurrentProgress.ReportProgress("Working...");
             action(WorkerTaskFactory.CurrentCancellationToken, WorkerTaskFactory.CurrentProgress,
-                WorkerTaskFactory.CurrentUITaskFactory).Wait(); //todo: should call async here better?
+                WorkerTaskFactory.CurrentUITaskFactory).GetAwaiter().GetResult(); //todo: should call async here better?
         }, taskFactory.CancellationToken, taskFactory.CreationOptions);
         workerTask.Start(taskFactory.Scheduler!);
         await workerTask;

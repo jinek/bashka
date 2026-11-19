@@ -59,9 +59,7 @@ public class Panel : BaseObject, IPanel
                     SelectedRoot = null;
             });
 
-        RootsCatalog.NavigateAsync(ICatalog.RootFavoritesPath).HandleErrors();
-
-        OpenDefaultCatalogAsync().HandleErrors();
+        InitializeCatalogs();
     }
 
     [AutoWire] public Lazy<OrthodoxCommander> Commander { get; [UsedImplicitly] internal init; } = null!;
@@ -132,6 +130,11 @@ public class Panel : BaseObject, IPanel
     public void QuickSearchNext()
     {
         JumpToMatch(SelectedIndex + 1, true);
+    }
+
+    private async void InitializeCatalogs()
+    {
+        await Task.WhenAll(RootsCatalog.NavigateAsync(ICatalog.RootFavoritesPath), OpenDefaultCatalogAsync());
     }
 
     public async Task OpenDefaultCatalogAsync()

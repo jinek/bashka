@@ -25,7 +25,12 @@ public class ProgressPresenter : DialogContent, IProgressPresenter
         Dispatcher.UIThread.VerifyAccess();
         ProgressViewModels.Add(viewModel);
         if (ProgressViewModels.Count == 1)
-            _dialogProvider.ShowDialogAsync(this).HandleErrors();
+            ShowDialog();
+    }
+
+    private async void ShowDialog()
+    {
+        await _dialogProvider.ShowDialogAsync(this);
     }
 
     public void HideProgress(ProgressViewModel viewModel)

@@ -19,6 +19,7 @@ public class UITaskScheduler : TaskScheduler
     protected override void QueueTask(Task task)
     {
         DispatcherPriority priority = Priority.HasCurrentValue ? Priority.CurrentValue : DispatcherPriority.Normal;
+        bool calledFromWorker = IsCalledFromWorker;
 
         Dispatcher.UIThread.Post(() =>
         {
@@ -28,6 +29,8 @@ public class UITaskScheduler : TaskScheduler
 
             if (!TryExecuteTask(task))
                 throw new NotImplementedException();
+            if (!calledFromWorker)
+                RaiseFaultOnDispatcher(task);
         }, priority);
     }
 
@@ -35,6 +38,21 @@ public class UITaskScheduler : TaskScheduler
     {
         if (!Dispatcher.UIThread.CheckAccess()) return false;
         TryExecuteTask(task);
+        if (!IsCalledFromWorker)
+            RaiseFaultOnDispatcher(task);
         return true;
+    }
+    
+    private static bool IsCalledFromWorker => WorkerTaskFactory.CurrentExecutionRootTask.HasCurrentValue;
+    
+    private static void RaiseFaultOnDispatcher(Task task)
+    {
+        if (!task.IsFaulted) return;
+
+        AggregateException aggregateException = task.Exception!;
+        Exception exception = aggregateException.InnerExceptions.Count == 1
+            ? aggregateException.InnerExceptions[0]
+            : aggregateException;
+        Dispatcher.UIThread.Post(() => throw new UITaskFaultedException(exception));
     }
 }
