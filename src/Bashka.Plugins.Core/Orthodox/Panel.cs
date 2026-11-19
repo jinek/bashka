@@ -2,7 +2,6 @@ using System.IO.Enumeration;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Autofac.Features.Indexed;
-using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;

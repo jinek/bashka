@@ -23,7 +23,7 @@ public class AutoWireTests
 
         KeyedConsumer consumer = scope.Resolve<KeyedConsumer>();
         Assert.That(consumer.Service, Is.SameAs(keyedService));
-        Assert.That(((Consumer)consumer).Service, Is.SameAs(keyedService));
+        Assert.That(consumer.Service, Is.SameAs(keyedService));
         Assert.That(consumer.OtherService, Is.SameAs(remoteService));
         Assert.That(consumer.Assignments, Is.EqualTo(1));
         Assert.That(scope.Resolve<IService>(), Is.SameAs(remoteService));
@@ -39,30 +39,32 @@ public class AutoWireTests
         using IContainer container = builder.Build();
         Assert.Throws<DependencyResolutionException>(() => container.Resolve<KeyedConsumer>());
     }
+}
 
-    public interface IService;
-    public sealed class Service : IService;
+#pragma warning disable CA1040 // marker service for resolution tests
+public interface IService;
+#pragma warning restore CA1040
+public sealed class Service : IService;
 
-    public class Consumer
+public class Consumer
+{
+    [AutoWire] public virtual IService Service { get; internal set; } = null!;
+    [AutoWire] public IService OtherService { get; internal set; } = null!;
+}
+
+public sealed class KeyedConsumer : Consumer
+{
+    private IService _service = null!;
+    public int Assignments { get; private set; }
+
+    [AutoWire(Key = "local")]
+    public override IService Service
     {
-        [AutoWire] public virtual IService Service { get; internal set; } = null!;
-        [AutoWire] public IService OtherService { get; internal set; } = null!;
-    }
-
-    public sealed class KeyedConsumer : Consumer
-    {
-        private IService _service = null!;
-        public int Assignments { get; private set; }
-
-        [AutoWire(Key = "local")]
-        public override IService Service
+        get => _service;
+        internal set
         {
-            get => _service;
-            internal set
-            {
-                Assignments++;
-                _service = value;
-            }
+            Assignments++;
+            _service = value;
         }
     }
 }

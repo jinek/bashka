@@ -4,7 +4,7 @@ using Bashka.Plugins.Foundation.FileSystem;
 
 namespace Bashka.Plugins.Foundation.ShellInteraction;
 
-public class SwitchConnectionEntry : FileEntry
+public sealed class SwitchConnectionEntry : FileEntry
 {
     private readonly string _extension = string.Empty;
 
