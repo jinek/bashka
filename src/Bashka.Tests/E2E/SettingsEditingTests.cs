@@ -1,4 +1,5 @@
 using Autofac;
+using Avalonia.Input;
 using Avalonia.Threading;
 using Bashka.Launcher;
 using Bashka.Plugins.Core.Abstract;
@@ -75,6 +76,25 @@ public class SettingsEditingTests : BashkaAppTestBase
         {
             return new CommandExecutionContext([entry], entry.ParentCatalog, null, null, null);
         }
+    }
+
+    [Test]
+    public async Task SettingsAreOpenedFromOptionsMenuInsteadOfRoots()
+    {
+        await UITest.WaitNoText("Processing");
+        await UITest.KeyInput(Key.F1, RawInputModifiers.Alt);
+        await UITest.WaitText("All catalogs");
+        await UITest.WaitNoText("orthodoxcommander");
+        await UITest.KeyInput(Key.Escape);
+        await UITest.WaitNoText("All catalogs");
+
+        await UITest.KeyInput(Key.F9);
+        await UITest.KeyInput(3, Key.Right);
+        await UITest.KeyInput(Key.Enter);
+        await UITest.WaitText("Settings");
+        await UITest.KeyInput(Key.Enter);
+        await UITest.WaitText(@"orthodoxcommander \(Bashka\.Plugins\.Core\)");
+        await UITest.WaitText(@"texteditor \(Bashka\.Plugins\.Foundation\)");
     }
 
     private sealed class RecordingEditor : ICommand

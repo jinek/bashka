@@ -40,7 +40,13 @@ public class OrthodoxCommander : BaseObject, IUIRoot
         this.WhenChanged(navigator => navigator.LeftPanel!.IsFocused,
                 navigator => navigator.RightPanel!.IsFocused,
                 (navigator, _, _) => navigator.LeftPanel!.IsFocused ^ navigator.RightPanel!.IsFocused)
-            .Subscribe(_ => { OnPropertyChanged(nameof(CurrentPanel)); });
+            .Subscribe(_ =>
+            {
+                if (LeftPanel.IsFocused)
+                    CurrentPanel = LeftPanel;
+                if (RightPanel.IsFocused)
+                    CurrentPanel = RightPanel;
+            });
 
         this.WhenPropertyChanged(navigator => navigator.CurrentPanel!.CurrentCatalog)
             .Subscribe(value => { FunctionBar.CatalogType = value.Value?.GetType(); });
@@ -88,8 +94,8 @@ public class OrthodoxCommander : BaseObject, IUIRoot
     /// </summary>
     public IPanel? RightPanel { get; private set; }
 
-    public IPanel? CurrentPanel => RightPanel?.IsFocused ?? false ? RightPanel : LeftPanel;
-    public IPanel? AnotherPanel => RightPanel?.IsFocused ?? false ? LeftPanel : RightPanel;
+    public IPanel? CurrentPanel { get; private set; }
+    public IPanel? AnotherPanel => CurrentPanel == RightPanel ? LeftPanel : RightPanel;
 
     public ReactiveCommand<KeyDownModel, Unit> KeyDownCommand { get; }
 

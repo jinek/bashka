@@ -53,7 +53,7 @@ internal static partial class Program
         builder.FullRegister<LocalSystemShellConnection, IShellConnection>()
             .Keyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey);
         builder.FullRegister<ConnectionsCatalog, ICatalog>();
-        builder.FullRegister<SettingsCatalog, ICatalog>();
+        builder.FullRegister<SettingsCatalog, SettingsCatalog>().Keyed<ICatalog>(ICatalog.SettingsCatalogKey);
         builder.RegisterType<Settings>().AsSelf().SingleInstance();
         builder.RegisterBuiltinSettingsFile(typeof(OrthodoxCommander).Assembly, "orthodoxcommander.ini");
         builder.RegisterSettings<OrthodoxCommanderSettings>();

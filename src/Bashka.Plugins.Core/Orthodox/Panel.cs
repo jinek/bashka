@@ -114,10 +114,26 @@ public class Panel : BaseObject, IPanel
 
     public async void EntrySelected()
     {
-        var commandExecutionContext =
-            new CommandExecutionContext([SelectedEntry!], CurrentCatalog, this, Commander.Value, null);
-        ICommand[] selectCommands = _commandSelector.SelectCommands(commandExecutionContext);
-        ICommand command = selectCommands.Last(); //the latest registered in IOC overrides previous ones
+        await EnterAsync(SelectedEntry!, CurrentCatalog);
+    }
+    
+    [UsedImplicitly]
+    public async void OpenSettings()
+    {
+        await EnterAsync(new Entry
+        {
+            Path = string.Empty, 
+            Name = "Settings", 
+            IsDirectory = true,
+            ParentCatalog = _catalogsFactory[ICatalog.SettingsCatalogKey]
+        }, CurrentCatalog);
+    }
+
+    private async Task EnterAsync(Entry entry, ICatalog? catalog)
+    {
+        var commandExecutionContext = new CommandExecutionContext([entry], catalog, this, Commander.Value, null);
+        ICommand command = _commandSelector.SelectCommands(commandExecutionContext)
+            .Last(); //the latest registered in IOC overrides previous ones
         await command.ExecuteAsync(commandExecutionContext);
     }
 
@@ -200,13 +216,7 @@ public class Panel : BaseObject, IPanel
             return;
 
         _catalogStack.Clear();
-        var commandExecutionContext = new CommandExecutionContext([newRoot], RootsCatalog, this,
-            Commander.Value, null);
-        ICommand[] selectCommands =
-            _commandSelector.SelectCommands(commandExecutionContext);
-        ICommand command = selectCommands.Last(); //the latest registered in IOC overrides previous ones
-
-        await command.ExecuteAsync(commandExecutionContext);
+        await EnterAsync(newRoot, RootsCatalog);
     }
 
     [UsedImplicitly]
