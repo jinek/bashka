@@ -11,8 +11,7 @@ public static class EditorLocator
             (Environment.GetEnvironmentVariable("PATH") ?? string.Empty)
             .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries));
     }
-
-    /// <param name="editor"><see cref="TextEditorSettings.AutoEditor" />, executable name or full path</param>
+    
     public static string? FindEditor(string editor, bool windows, IEnumerable<string> searchDirectories)
     {
         editor = editor.Trim();
