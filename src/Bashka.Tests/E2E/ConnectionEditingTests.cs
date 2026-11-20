@@ -123,14 +123,14 @@ public class ConnectionEditingTests : BashkaAppTestBase
             Assert.That(editor.Entry.Path, Is.EqualTo(title + ".ini"));
             Assert.That(editor.Entry.ParentCatalog, Is.SameAs(catalog));
             var editContext = new CommandExecutionContext([editor.Entry], catalog, null, null, null);
-            Assert.That(new EditFileCommand().CanExecute(editContext), Is.True);
+            Assert.That(new EditFileCommand(new TextEditorSettings()).CanExecute(editContext), Is.True);
             Assert.That(new SwitchConnectionCommand().CanExecute(editContext), Is.True);
             SwitchConnectionEntry refreshed = catalog.Children.OfType<SwitchConnectionEntry>()
                 .Single(entry => entry.FullPath == filePath);
             Assert.That(refreshed.Name, Is.EqualTo(title));
             Assert.That(refreshed.DisplayName, Is.EqualTo(title));
             Assert.That(refreshed.Extension, Is.EqualTo("example.test:2222"));
-            Assert.That(new EditFileCommand().CanExecute(editContext with
+            Assert.That(new EditFileCommand(new TextEditorSettings()).CanExecute(editContext with
             {
                 Entries = [new NewConnectionEntry(catalog)]
             }), Is.False);
@@ -140,7 +140,7 @@ public class ConnectionEditingTests : BashkaAppTestBase
             Entry localEntry = local.Children.Single();
             var localContext = new CommandExecutionContext([localEntry], local, null, null, null);
             Assert.That(new SwitchConnectionCommand().CanExecute(localContext), Is.True);
-            Assert.That(new EditFileCommand().CanExecute(localContext), Is.False);
+            Assert.That(new EditFileCommand(new TextEditorSettings()).CanExecute(localContext), Is.False);
         }
         finally
         {

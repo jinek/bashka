@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Reactive;
 using Autofac;
+using Autofac.Features.Indexed;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.FunctionKeys;
@@ -13,15 +14,22 @@ namespace Bashka.Plugins.Core.Orthodox;
 public class OrthodoxCommander : BaseObject, IUIRoot
 {
     private readonly Func<IShellConnection> _connectionFactory;
-    private readonly KeyBindingService _keyBindingsService;
+    private readonly IIndex<string, ICommand> _commandFactory;
+    private readonly OrthodoxCommanderKeyBindings _keyBindings;
+    private readonly OrthodoxCommanderSettings _settings;
 
 
-    public OrthodoxCommander(Func<IShellConnection> connectionFactory, KeyBindingService keyBindingsService,
-        FunctionBar functionBar)
+    public OrthodoxCommander(Func<IShellConnection> connectionFactory,
+        OrthodoxCommanderKeyBindings keyBindings,
+        IIndex<string, ICommand> commandFactory,
+        FunctionBar functionBar,
+        OrthodoxCommanderSettings settings)
     {
         FunctionBar = functionBar;
         _connectionFactory = connectionFactory;
-        _keyBindingsService = keyBindingsService;
+        _keyBindings = keyBindings;
+        _commandFactory = commandFactory;
+        _settings = settings;
         /*ToolBoxItems = new[]
             {
                 "  Help ", "UserMn", "View", "Edit", "Copy", "RenMov", "MkFold", "Delete", "ConfMn", "Quit", "Plugin",
@@ -133,7 +141,11 @@ public class OrthodoxCommander : BaseObject, IUIRoot
     private async void KeyDown(KeyDownModel parameter)
     {
         //todo: Need to consider what to do with async void, because besides crashes (which is mostly fine), also business exceptions come to unobserved tasks. F35896B1-7D8B-4E44-A6C4-367F8801EFE2
-        ICommand[] commands = _keyBindingsService.MatchCommands(parameter.KeyCombination, nameof(OrthodoxCommander));
+        ICommand[] commands =
+        [
+            .. _keyBindings.MatchCommandNames(parameter.KeyCombination)
+                .Select(name => _commandFactory[name])
+        ];
         foreach (ICommand command in commands)
         {
             var executionContext = new CommandExecutionContext(this);
@@ -143,7 +155,7 @@ public class OrthodoxCommander : BaseObject, IUIRoot
             await command.ExecuteAsync(executionContext);
         }
 
-        if (!parameter.Handled && _keyBindingsService.AltCharActivatesSearch &&
+        if (!parameter.Handled && _settings.AltCharActivatesSearch &&
             parameter.KeyCombination is { Alt: true, Ctrl: false } &&
             TryGetChar(parameter.KeyCombination, out char ch) &&
             CurrentPanel is { IsQuickSearchActive: false, CurrentCatalog: not null } panel)

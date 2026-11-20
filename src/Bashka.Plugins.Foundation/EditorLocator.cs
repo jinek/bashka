@@ -1,38 +1,54 @@
 namespace Bashka.Plugins.Foundation;
 
 /// <summary>
-///     vibe-coded, will be replaced by settings
+/// Vibe-coded
 /// </summary>
 public static class EditorLocator
 {
-    public static string? FindEditor()
+    public static string? FindEditor(string editor)
     {
-        return FindEditor(OperatingSystem.IsWindows(),
+        return FindEditor(editor, OperatingSystem.IsWindows(),
             (Environment.GetEnvironmentVariable("PATH") ?? string.Empty)
             .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries));
     }
 
-    public static string? FindEditor(bool windows, IEnumerable<string> searchDirectories)
+    /// <param name="editor"><see cref="TextEditorSettings.AutoEditor" />, executable name or full path</param>
+    public static string? FindEditor(string editor, bool windows, IEnumerable<string> searchDirectories)
     {
+        editor = editor.Trim();
+        if (Path.IsPathFullyQualified(editor))
+            return IsExecutable(editor, windows) ? editor : null;
+
         string[] directories = searchDirectories.Select(directory => directory.Trim('"'))
             .Where(Path.IsPathFullyQualified).ToArray();
-        string[] editors = windows
-            ? ["edit.net", "msedit", "edit", "micro", "nano"]
-            : ["edit.net", "micro", "msedit", "nano"];
-        string[] extensions = windows ? [".exe", ".com"] : [string.Empty];
-        foreach (string editor in editors)
-        foreach (string directory in directories)
-        foreach (string extension in extensions)
-        {
-            string executable = Path.Combine(directory, editor + extension);
-            if (!File.Exists(executable)) continue;
-            if (!windows && !OperatingSystem.IsWindows() &&
-                (File.GetUnixFileMode(executable) &
-                 (UnixFileMode.UserExecute | UnixFileMode.GroupExecute | UnixFileMode.OtherExecute)) == 0)
-                continue;
-            return executable;
-        }
+        bool auto = editor.Length == 0 ||
+                    editor.Equals(TextEditorSettings.AutoEditor, StringComparison.OrdinalIgnoreCase);
+        string[] editors = auto
+            ? windows
+                ? ["edit.net", "msedit", "edit", "micro", "nano"]
+                : ["edit.net", "micro", "msedit", "nano"]
+            : [editor];
+        string[] extensions = windows ? auto ? [".exe", ".com"] : [".exe", ".com", string.Empty] : [string.Empty];
+        return (from name in editors
+                from directory in directories
+                from extension in extensions
+                select auto ? Path.Combine(directory, name + extension) : FindIgnoringCase(directory, name + extension))
+            .FirstOrDefault(executable => executable != null && IsExecutable(executable, windows));
+    }
 
-        return null;
+    private static string? FindIgnoringCase(string directory, string fileName)
+    {
+        string exact = Path.Combine(directory, fileName);
+        if (File.Exists(exact) || !Directory.Exists(directory)) return exact;
+        return Directory.EnumerateFiles(directory)
+            .FirstOrDefault(file => Path.GetFileName(file).Equals(fileName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool IsExecutable(string path, bool windows)
+    {
+        if (!File.Exists(path)) return false;
+        return windows || OperatingSystem.IsWindows() ||
+               (File.GetUnixFileMode(path) &
+                (UnixFileMode.UserExecute | UnixFileMode.GroupExecute | UnixFileMode.OtherExecute)) != 0;
     }
 }

@@ -39,7 +39,7 @@ public class TextEditorTests
     public void ChoosesPreferredInstalledEditor(bool windows, string installed, string expected)
     {
         foreach (string name in installed.Split(',')) CreateExecutable(_directory, name);
-        Assert.That(EditorLocator.FindEditor(windows, [_directory]),
+        Assert.That(EditorLocator.FindEditor(TextEditorSettings.AutoEditor, windows, [_directory]),
             Is.EqualTo(Path.Combine(_directory, expected)));
     }
 
@@ -52,8 +52,33 @@ public class TextEditorTests
         CreateExecutable(_directory, "nano");
         File.WriteAllText(Path.Combine(_directory, "edit.net"), string.Empty);
         CreateExecutable(second, "edit.net");
-        Assert.That(EditorLocator.FindEditor(false, [_directory, second]),
+        Assert.That(EditorLocator.FindEditor("AUTO", false, [_directory, second]),
             Is.EqualTo(Path.Combine(second, "edit.net")));
+    }
+
+    [TestCase(false, "edit.net,micro,nano", "nano", "nano")]
+    [TestCase(false, "edit.net,micro", "Edit.NET", "edit.net")]
+    [TestCase(false, "edit.net", "micro", null)]
+    [TestCase(true, "edit.net.exe,micro.exe", "micro", "micro.exe")]
+    [TestCase(true, "edit.net.exe,micro.exe", "micro.exe", "micro.exe")]
+    public void ConfiguredEditorIsLookedUpInPath(bool windows, string installed, string editor, string? expected)
+    {
+        foreach (string name in installed.Split(',')) CreateExecutable(_directory, name);
+        Assert.That(EditorLocator.FindEditor(editor, windows, [_directory]),
+            Is.EqualTo(expected == null ? null : Path.Combine(_directory, expected)));
+    }
+
+    [Test]
+    public void ConfiguredFullPathIsUsedAsIs()
+    {
+        string other = Path.Combine(_directory, "other");
+        Directory.CreateDirectory(other);
+        CreateExecutable(other, "my-editor");
+        string fullPath = Path.Combine(other, "my-editor");
+        Assert.That(EditorLocator.FindEditor(fullPath, OperatingSystem.IsWindows(), [_directory]),
+            Is.EqualTo(fullPath));
+        Assert.That(EditorLocator.FindEditor(fullPath + "-missing", OperatingSystem.IsWindows(), [_directory]),
+            Is.Null);
     }
 
     [Test]
@@ -65,7 +90,7 @@ public class TextEditorTests
         try
         {
             Environment.SetEnvironmentVariable("PATH", _directory);
-            ICommand command = new EditFileCommand();
+            ICommand command = new EditFileCommand(new TextEditorSettings());
             var catalog = new RecordingCatalog(_directory);
             var entry = new FileEntry
             {
@@ -78,7 +103,19 @@ public class TextEditorTests
             Assert.That(catalog.Execution,
                 Is.EqualTo((_directory, Path.Combine(_directory, executable), entry.FullPath)));
 
+            string micro = "micro" + (OperatingSystem.IsWindows() ? ".exe" : string.Empty);
+            CreateExecutable(_directory, micro);
+            await new EditFileCommand(new TextEditorSettings { Editor = "micro" }).ExecuteAsync(context);
+            Assert.That(catalog.Execution!.Value.Application, Is.EqualTo(Path.Combine(_directory, micro)),
+                "configured editor wins over the preferred one");
+
+            command = new EditFileCommand(new TextEditorSettings { Editor = "missing-editor" });
+            Assert.That(Assert.ThrowsAsync<UserErrorException>(() => command.ExecuteAsync(context))!.Message,
+                Does.Contain("missing-editor"), "configured editor does not fall back to detection");
+
+            command = new EditFileCommand(new TextEditorSettings());
             File.Delete(Path.Combine(_directory, executable));
+            File.Delete(Path.Combine(_directory, micro));
             Assert.ThrowsAsync<UserErrorException>(() => command.ExecuteAsync(context));
         }
         finally

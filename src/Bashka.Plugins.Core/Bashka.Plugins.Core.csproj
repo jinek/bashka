@@ -14,9 +14,7 @@
         <AdditionalFiles Include="Worker\ProgressUI\ProgressDialogStyle.axaml"/>
     </ItemGroup>
     <ItemGroup>
-        <None Update="keybindings.ini">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
+        <EmbeddedResource Include="orthodoxcommander.ini" LogicalName="orthodoxcommander.ini"/>
     </ItemGroup>
     <ItemGroup>
         <AvaloniaXaml Update="Orthodox\UI\Commander.SortingMenu.axaml">

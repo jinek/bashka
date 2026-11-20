@@ -3,8 +3,8 @@
 Browse, create, and extract archives using `bsdtar` in local and remote shells.
 The shell where you work with archives must have `bsdtar` installed.
 
-Install `Bashka.Plugins.Archives.Bsdtar` from Bashka's **Plugins** catalog
-(`Alt+F1` or `Alt+F2`), then restart Bashka to load it.
+Install `Bashka.Plugins.Archives.Bsdtar` from Bashka's **Plugins** catalog (`Alt+F1` or `Alt+F2`), then restart Bashka
+to load it.
 
 The plugin registers archive navigation with `Enter`, packing with `Alt+F5` or
 `Shift+F1`, and extraction with `Shift+F2`. Its archive navigation takes precedence

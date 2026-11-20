@@ -8,7 +8,7 @@
     <helpers1:EntryToForegroundConverter x:Key="EntryToForegroundConverter"
                                          DirectoryBrush="{DynamicResource ThemeForegroundBrush}"
                                          ItemBrush="{DynamicResource ThemeForegroundBrush}"
-                                         HiddenBrush="{DynamicResource ThemeBorderBrush}"
+                                         HiddenBrush="{DynamicResource ThemeNoDisturbBrush}"
                                          ImportantBrush="{DynamicResource BashkaImportantBrush}"
                                          ExecutableBrush="{DynamicResource BashkaExecutableBrush}"
                                          MarkedBrush="{DynamicResource BashkaMarkedBrush}"
