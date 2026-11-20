@@ -38,7 +38,7 @@ public partial class App : Application
         //Styles.Add(new TurboVisionDarkTheme(baseUri));
         //Styles.Add(new TurboVisionBlackTheme(baseUri));
 
-        Styles.Add(new TurboVisionCompatibleTheme());
+        Styles.Add(new TurboVisionElegantTheme());
         Styles.Add(new ModalTheme());
         Styles.Add(new AutoDataGridStyles());
         //everything else visual is brought by plugins as VisualExtension and is registered in the application

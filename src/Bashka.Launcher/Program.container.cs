@@ -53,7 +53,9 @@ internal static partial class Program
         builder.FullRegister<LocalSystemShellConnection, IShellConnection>()
             .Keyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey);
         builder.FullRegister<ConnectionsCatalog, ICatalog>();
-        builder.FullRegister<SettingsCatalog, SettingsCatalog>().Keyed<ICatalog>(ICatalog.SettingsCatalogKey);
+        builder.FullRegister<SettingsCatalog, SettingsCatalog>()
+            .Keyed<ICatalog>(typeof(SettingsCatalog).GetTypeKey())
+            .Keyed<ICatalog>(ICatalog.SettingsCatalogKey);
         builder.RegisterType<Settings>().AsSelf().SingleInstance();
         builder.RegisterBuiltinSettingsFile(typeof(OrthodoxCommander).Assembly, "orthodoxcommander.ini");
         builder.RegisterSettings<OrthodoxCommanderSettings>();
@@ -79,6 +81,7 @@ internal static partial class Program
         builder.FullRegister<UnmarkAllCommand, ICommand>().Keyed<ICommand>("UnmarkAllCommand");
         builder.FullRegister<InvertMarksCommand, ICommand>().Keyed<ICommand>("InvertMarksCommand");
         builder.FullRegister<QuickSearchCommand, ICommand>().Keyed<ICommand>("QuickSearchCommand");
+        builder.FullRegister<OpenSettingsCommand, ICommand>().Keyed<ICommand>(nameof(OpenSettingsCommand));
 
         builder.RegisterFCommand<AboutCatalogCommand, ICatalog>(FunctionPage.Default, FunctionKey.F1, "About")
             .Keyed<ICommand>("AboutCommand");

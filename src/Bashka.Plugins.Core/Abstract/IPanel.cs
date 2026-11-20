@@ -31,4 +31,5 @@ public interface IPanel : INotifyPropertyChanged
     void Pop();
     void EntrySelected();
     void QuickSearchNext();
+    Task EnterAsync(Entry entry, ICatalog? catalog);
 }

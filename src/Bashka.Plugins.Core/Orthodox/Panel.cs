@@ -116,20 +116,8 @@ public class Panel : BaseObject, IPanel
     {
         await EnterAsync(SelectedEntry!, CurrentCatalog);
     }
-    
-    [UsedImplicitly]
-    public async void OpenSettings()
-    {
-        await EnterAsync(new Entry
-        {
-            Path = string.Empty, 
-            Name = "Settings", 
-            IsDirectory = true,
-            ParentCatalog = _catalogsFactory[ICatalog.SettingsCatalogKey]
-        }, CurrentCatalog);
-    }
 
-    private async Task EnterAsync(Entry entry, ICatalog? catalog)
+    public async Task EnterAsync(Entry entry, ICatalog? catalog)
     {
         var commandExecutionContext = new CommandExecutionContext([entry], catalog, this, Commander.Value, null);
         ICommand command = _commandSelector.SelectCommands(commandExecutionContext)

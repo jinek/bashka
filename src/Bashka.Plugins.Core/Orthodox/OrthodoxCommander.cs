@@ -42,9 +42,9 @@ public class OrthodoxCommander : BaseObject, IUIRoot
                 (navigator, _, _) => navigator.LeftPanel!.IsFocused ^ navigator.RightPanel!.IsFocused)
             .Subscribe(_ =>
             {
-                if (LeftPanel.IsFocused)
+                if (LeftPanel?.IsFocused ?? false)
                     CurrentPanel = LeftPanel;
-                if (RightPanel.IsFocused)
+                if (RightPanel?.IsFocused ?? false)
                     CurrentPanel = RightPanel;
             });
 

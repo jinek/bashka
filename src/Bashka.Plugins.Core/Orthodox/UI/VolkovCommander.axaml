@@ -52,8 +52,8 @@
                               IsTabStop="False" />
                     <MenuItem Header="Options"
                               IsTabStop="False">
-                        <MenuItem Header="Settings"
-                                  Command="{Binding CurrentPanel.OpenSettings}" />
+                        <ui:CommandMenuItem Header="Settings"
+                                            CommandKey="OpenSettingsCommand" />
                     </MenuItem>
                     <MenuItem Header="Right"
                               IsTabStop="False"
