@@ -102,6 +102,7 @@ public class SettingsTests
     {
         public string LeftPath { get; set; } = "/";
         public string RightPath { get; set; } = "/";
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public bool SortDescending { get; set; }
     }
 }

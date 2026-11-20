@@ -97,7 +97,8 @@
                 <ComboBox ItemsSource="{Binding Roots}"
                           SelectedItem="{Binding SelectedRoot}"
                           IsDropDownOpen="{Binding IsRootsVisible, Mode=TwoWay}"
-                          IsTabStop="False">
+                          IsTabStop="False"
+                          x:Name="RootsComboBox">
                     <ComboBox.PlaceholderText>
                         <Binding Path="CurrentCatalog.Title"
                                  FallbackValue="Select a catalog" />
@@ -117,7 +118,7 @@
                         <DataTemplate DataType="data:Entry">
                             <TextBlock Text="{Binding Name}" />
                         </DataTemplate>
-                    </ComboBox.ItemTemplate>
+                    </ComboBox.ItemTemplate>    
                 </ComboBox>
                 <Border BorderThickness="0"
                         IsHitTestVisible="False"
@@ -126,7 +127,8 @@
                         Margin="0,0,1,0">
                     <TextBlock Margin="1,0"
                                HorizontalAlignment="Center"
-                               MinWidth="1">
+                               MinWidth="1"
+                               Foreground="{Binding ElementName=RootsComboBox, Path=Foreground}">
                         <TextBlock.Text>
                             <Binding Path="CurrentCatalog.Title"
                                      FallbackValue="Select a catalog" />
