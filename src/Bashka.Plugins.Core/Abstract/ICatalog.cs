@@ -10,7 +10,7 @@ public interface ICatalog : ITypeKeyedObject, INotifyPropertyChanged
     const string RootFavoritesPath = "favorites";
     const string DefeaultCatalogTypeKey = "default_catalog_type";
     const string SettingsCatalogKey = "settings_catalog";
-    
+
     string? CurrentPath { get; }
     string Title { get; }
     IEnumerable<Entry> Children { get; }

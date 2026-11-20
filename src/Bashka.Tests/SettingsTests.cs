@@ -9,19 +9,19 @@ namespace Bashka.Tests;
 [TestFixture]
 public class SettingsTests
 {
-    private const string RangerDefaults = """
-                                          [OrthodoxCommander(keys)]
-                                          ; find as in ranger
-                                          RangerFindCommand = CTRL+G
-                                          QuickSearchCommand = CTRL+S
-                                          """;
-
     [SetUp]
     [TearDown]
     public void DeleteSettings()
     {
         TestDataDirectory.DeleteSettings();
     }
+
+    private const string RangerDefaults = """
+                                          [OrthodoxCommander(keys)]
+                                          ; find as in ranger
+                                          RangerFindCommand = CTRL+G
+                                          QuickSearchCommand = CTRL+S
+                                          """;
 
     [Test]
     public void PluginUserAndStateFilesMergeAtStartup()
@@ -102,6 +102,7 @@ public class SettingsTests
     {
         public string LeftPath { get; set; } = "/";
         public string RightPath { get; set; } = "/";
+
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public bool SortDescending { get; set; }
     }

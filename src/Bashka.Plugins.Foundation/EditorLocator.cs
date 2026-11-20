@@ -1,7 +1,7 @@
 namespace Bashka.Plugins.Foundation;
 
 /// <summary>
-/// Vibe-coded
+///     Vibe-coded
 /// </summary>
 public static class EditorLocator
 {
@@ -11,7 +11,7 @@ public static class EditorLocator
             (Environment.GetEnvironmentVariable("PATH") ?? string.Empty)
             .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries));
     }
-    
+
     public static string? FindEditor(string editor, bool windows, IEnumerable<string> searchDirectories)
     {
         editor = editor.Trim();

@@ -23,7 +23,7 @@ public sealed class Settings
     public Settings(IEnumerable<PluginSettingsFile> defaultPluginFiles)
     {
         PluginFiles = [.. defaultPluginFiles];
-        
+
         foreach (string text in PluginFiles.Select(file => file.Content))
             Merge(Parse(text));
         foreach (string userFile in UserFiles)

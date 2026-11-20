@@ -118,7 +118,7 @@
                         <DataTemplate DataType="data:Entry">
                             <TextBlock Text="{Binding Name}" />
                         </DataTemplate>
-                    </ComboBox.ItemTemplate>    
+                    </ComboBox.ItemTemplate>
                 </ComboBox>
                 <Border BorderThickness="0"
                         IsHitTestVisible="False"

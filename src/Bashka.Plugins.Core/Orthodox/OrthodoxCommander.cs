@@ -13,8 +13,8 @@ namespace Bashka.Plugins.Core.Orthodox;
 
 public class OrthodoxCommander : BaseObject, IUIRoot
 {
-    private readonly Func<IShellConnection> _connectionFactory;
     private readonly IIndex<string, ICommand> _commandFactory;
+    private readonly Func<IShellConnection> _connectionFactory;
     private readonly OrthodoxCommanderKeyBindings _keyBindings;
     private readonly OrthodoxCommanderSettings _settings;
 
