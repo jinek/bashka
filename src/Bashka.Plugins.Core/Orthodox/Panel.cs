@@ -43,6 +43,14 @@ public class Panel : BaseObject, IPanel
                 (panel, _, _) => panel.CurrentCatalog?.Children)
             .Subscribe(_ => { OnPropertyChanged(nameof(CurrentChildren)); });
 
+        // vibe-voded subscription, caution!
+        this.WhenPropertyChanged(panel => panel.CurrentChildren)
+            .Select(children => (children.Value ?? [])
+                .Select(entry => entry.WhenPropertyChanged(e => e.IsMarked, false))
+                .Merge())
+            .Switch()
+            .Subscribe(_ => { OnPropertyChanged(nameof(MarkedEntries)); });
+
         RootsCatalog.WhenPropertyChanged(catalog => catalog.Children)
             .Skip(1)
             .Subscribe(_ => { OnPropertyChanged(nameof(Roots)); });
@@ -104,7 +112,9 @@ public class Panel : BaseObject, IPanel
     }
 
     public IReadOnlyList<Entry> MarkedEntries =>
-        [.. CurrentCatalog?.Children.Where(entry => entry is { IsMarked: true, IsGone: false }) ?? []];
+        (CurrentCatalog?.Children ?? []).Where(entry => entry is { IsMarked: true, IsGone: false })
+        .ToArray()
+        .AsReadOnly();
 
     public Entry? SelectedRoot { get; set; }
     public Entry? SelectedEntry { get; set; }

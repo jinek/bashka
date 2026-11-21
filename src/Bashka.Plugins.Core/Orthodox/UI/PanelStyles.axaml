@@ -1,0 +1,50 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:data="clr-namespace:Bashka.Plugins.Core.Abstract.Data"
+        xmlns:helpers="clr-namespace:Bashka.Plugins.Core.Orthodox.UI.Helpers">
+    <Styles.Resources>
+        <helpers:EntryToForegroundConverter x:Key="EntryToForegroundConverter"
+                                            DirectoryBrush="{DynamicResource ThemeForegroundBrush}"
+                                            ItemBrush="{DynamicResource ThemeForegroundBrush}"
+                                            HiddenBrush="{DynamicResource ThemeNoDisturbBrush}"
+                                            ImportantBrush="{DynamicResource BashkaImportantBrush}"
+                                            ExecutableBrush="{DynamicResource BashkaExecutableBrush}"
+                                            MarkedBrush="{DynamicResource BashkaMarkedBrush}"
+                                            DeletedBrush="{DynamicResource BashkaDeletedBrush}" />
+        <helpers:EntryToForegroundConverter x:Key="CurrentEntryToForegroundConverter"
+                                            DirectoryBrush="{DynamicResource ThemeChooserForegroundBrush}"
+                                            ItemBrush="{DynamicResource ThemeChooserForegroundBrush}"
+                                            HiddenBrush="{DynamicResource ThemeChooserForegroundBrush}"
+                                            ImportantBrush="{DynamicResource ThemeChooserForegroundBrush}"
+                                            ExecutableBrush="{DynamicResource ThemeChooserForegroundBrush}"
+                                            MarkedBrush="{DynamicResource BashkaMarkedBrush}"
+                                            DeletedBrush="{DynamicResource BashkaDeletedBrush}" />
+    </Styles.Resources>
+
+    <!--Current row is highlighted only in the focused panel-->
+    <Style Selector="Grid.Bashka.Panel:not(:focus-within) DataGridRow:selected /template/ Rectangle#SelectionRectangle">
+        <Setter Property="IsVisible"
+                Value="False" />
+    </Style>
+
+    <Style Selector="Grid.Bashka.Panel DataGridRow"
+           x:DataType="data:Entry">
+        <Setter Property="Foreground"
+                Value="{Binding Path=SelfHack, Converter={StaticResource EntryToForegroundConverter}}" />
+    </Style>
+    <Style Selector="Grid.Bashka.Panel:focus-within DataGridRow:selected"
+           x:DataType="data:Entry">
+        <Setter Property="Foreground"
+                Value="{Binding Path=SelfHack, Converter={StaticResource CurrentEntryToForegroundConverter}}" />
+    </Style>
+    <Style Selector="Grid.Bashka.Panel:not(:focus-within) DataGridRow:selected"
+           x:DataType="data:Entry">
+        <Setter Property="Foreground"
+                Value="{Binding Path=SelfHack, Converter={StaticResource EntryToForegroundConverter}}" />
+    </Style>
+    <!--Without marked rows the current row of the unfocused panel stays visible by marked color-->
+    <Style Selector="Grid.Bashka.Panel.NoMarked:not(:focus-within) DataGridRow:selected">
+        <Setter Property="Foreground"
+                Value="{DynamicResource BashkaMarkedBrush}" />
+    </Style>
+</Styles>

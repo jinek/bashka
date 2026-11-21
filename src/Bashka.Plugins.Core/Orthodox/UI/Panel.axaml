@@ -5,19 +5,16 @@
                     xmlns:core="clr-namespace:Bashka.Plugins.Core.Abstract;assembly=Bashka.Plugins.Core"
                     xmlns:data="clr-namespace:Bashka.Plugins.Core.Abstract.Data"
                     xmlns:helpers1="clr-namespace:Bashka.Plugins.Core.Orthodox.UI.Helpers">
-    <helpers1:EntryToForegroundConverter x:Key="EntryToForegroundConverter"
-                                         DirectoryBrush="{DynamicResource ThemeForegroundBrush}"
-                                         ItemBrush="{DynamicResource ThemeForegroundBrush}"
-                                         HiddenBrush="{DynamicResource ThemeNoDisturbBrush}"
-                                         ImportantBrush="{DynamicResource BashkaImportantBrush}"
-                                         ExecutableBrush="{DynamicResource BashkaExecutableBrush}"
-                                         MarkedBrush="{DynamicResource BashkaMarkedBrush}"
-                                         DeletedBrush="{DynamicResource BashkaDeletedBrush}" />
+    <helpers1:EqualsConverter x:Key="EqualsConverter" />
+    <x:Int32 x:Key="Zero">0</x:Int32>
 
     <DataTemplate DataType="{x:Type core:IPanel}"
                   x:Key="{x:Type core:IPanel}">
-        <Grid RowDefinitions="* Auto">
+        <Grid RowDefinitions="* Auto"
+              Classes="Bashka Panel"
+              Classes.NoMarked="{Binding MarkedEntries.Count, Converter={StaticResource EqualsConverter}, ConverterParameter={StaticResource Zero}}">
             <Grid.Styles>
+                <StyleInclude Source="avares://Bashka.Plugins.Core/Orthodox/UI/PanelStyles.axaml" />
                 <Style Selector="brushes|CaretControl">
                     <Setter Property="Template">
                         <ControlTemplate>
@@ -44,12 +41,6 @@
                                              SelectionMode="Single"
                                              IsReadOnly="True"
                                              d:DataContext="{d:DesignInstance core:IPanel}">
-                <!--<DataGrid.Styles>
-                    <Style Selector="DataGridRow:selected /template/ Rectangle#SelectionRectangle">
-                         <Setter Property="IsVisible"
-                                 Value="False" />
-                     </Style>
-                </DataGrid.Styles>-->
                 <Interaction.Behaviors>
                     <helpers1:OrthodoxColumnsBehavior />
                     <!--<helpers1:PagingScrollBehavior/>-->
@@ -77,14 +68,6 @@
                     <KeyBinding Command="{Binding EntrySelected}"
                                 Gesture="ENTER" />
                 </DataGrid.KeyBindings>
-                <DataGrid.Styles>
-                    <Style Selector="DataGridRow">
-                        <Setter Property="Foreground"
-                                d:DataContext="{x:Type data:Entry}"
-                                x:DataType="data:Entry"
-                                Value="{Binding Path=SelfHack , Converter={StaticResource EntryToForegroundConverter}}" />
-                    </Style>
-                </DataGrid.Styles>
                 <DataGrid.BorderBrush>
                     <brushes:LineBrush LineStyle="DoubleLine"
                                        Brush="{DynamicResource ThemeBorderBrush}" />
