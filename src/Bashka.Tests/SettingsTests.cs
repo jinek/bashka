@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Autofac;
 using Bashka.Plugins.Core.Configuration;
 using Bashka.Plugins.Core.Orthodox;
@@ -68,17 +69,21 @@ public class SettingsTests
 
         File.WriteAllText(Path.Combine(Settings.UserDirectory, "10-mine.ini"),
             "[Panels]\nLeftPath = /user\nRightPath = /tmp\n");
+        File.WriteAllText(Settings.StateFilePath, "[panels]\nleftpath = /home\n");
         using (IContainer restarted = Build())
         {
             var panels = restarted.Resolve<PanelState>();
-            Assert.That(panels.LeftPath, Is.EqualTo("/home"), "state overrides user files");
+            Assert.That(panels.LeftPath, Is.EqualTo("/home"), "state overrides user files, names ignore case");
             Assert.That(panels.RightPath, Is.EqualTo("/tmp"));
             panels.SortDescending = true;
+            panels.LeftPath = "/var";
         }
 
         string state = File.ReadAllText(Settings.StateFilePath);
-        Assert.That(state, Does.Contain("LeftPath").And.Contain("/home"), "state is written over the current file");
-        Assert.That(state, Does.Contain("SortDescending").And.Contain("True"));
+        Assert.That(Regex.Count(state, "leftpath", RegexOptions.IgnoreCase), Is.EqualTo(1),
+            "state key written in another case replaces the existing one");
+        Assert.That(state, Does.Contain("/var"));
+        Assert.That(state, Does.Contain("SortDescending").And.Contain("True"), "state is written over the current file");
     }
 
     private static IContainer Build()

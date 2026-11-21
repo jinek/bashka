@@ -117,7 +117,8 @@ public sealed class Settings
             {
                 AllowDuplicateKeys = true,
                 OverrideDuplicateKeys = true,
-                AllowDuplicateSections = true
+                AllowDuplicateSections = true,
+                CaseInsensitive = true
             }
         };
         return parser.Parse(text);
