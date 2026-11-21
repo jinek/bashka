@@ -1,4 +1,5 @@
 using System.IO.Enumeration;
+using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Autofac.Features.Indexed;
@@ -46,8 +47,10 @@ public class Panel : BaseObject, IPanel
         // vibe-voded subscription, caution!
         this.WhenPropertyChanged(panel => panel.CurrentChildren)
             .Select(children => (children.Value ?? [])
-                .Select(entry => entry.WhenPropertyChanged(e => e.IsMarked, false))
-                .Merge())
+                .Select(entry => entry.WhenAnyPropertyChanged(nameof(Entry.IsMarked), nameof(Entry.IsGone)))
+                .Merge()
+                .Select(_ => Unit.Default)
+                .StartWith(Unit.Default))
             .Switch()
             .Subscribe(_ => { OnPropertyChanged(nameof(MarkedEntries)); });
 

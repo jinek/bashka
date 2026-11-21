@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
@@ -42,6 +43,26 @@ public class BasicTests : BashkaAppTestBase
         await UITest.WaitNoText(SampleFileDisplay);
         await QuickSearchAndOpen("..");
         await UITest.WaitText(SampleFileDisplay);
+
+        // deleting the last marked entry: nothing is marked anymore, so the current row of the unfocused panel
+        // is shown with marked color, unlike other unmarked rows
+        await QuickSearchAndSelect(NewFolderName);
+        await UITest.WaitBuffer(
+            buffer => LeftPanelInfo(buffer).StartsWith($"║{NewFolderName} ", StringComparison.InvariantCulture),
+            $"{NewFolderName} is not selected");
+        await UITest.KeyInput(Key.Insert);
+        await UITest.KeyInput(Key.Up);
+        await UITest.KeyInput(Key.F8);
+        await UITest.WaitText($"delete {NewFolderName}\\?");
+        await UITest.KeyInput(Key.Enter);
+        await UITest.WaitText("DELETED");
+        await QuickSearchAndSelect(SampleFile);
+        await UITest.KeyInput(Key.Tab);
+        await UITest.WaitBuffer(buffer => LeftPanelRowOf(buffer, SampleFileDisplay) is { } current &&
+                                          LeftPanelRowOf(buffer, @"^║\.\. ") is { } other &&
+                                          Foreground(buffer, current) != Foreground(buffer, other),
+            "Unfocused current row is not shown with marked color after the last marked entry was deleted");
+        await UITest.KeyInput(Key.Tab);
 
         // only the focused panel highlights its current row, the other one keeps selection without highlighting
         await WaitHighlightedRows(1, 0);
@@ -114,6 +135,32 @@ public class BasicTests : BashkaAppTestBase
         await UITest.WaitBuffer(buffer => Foreground(buffer, second) == marked &&
                                           Foreground(buffer, first) == Foreground(buffer, fourth),
             "Unfocused current row is not shown with marked color while nothing is marked");
+
+        // entering another catalog having no marks, while the previous one has
+        await UITest.KeyInput(Key.Tab);
+        await UITest.KeyInput(Key.Insert);
+        await UITest.KeyInput(Key.Up);
+        await UITest.KeyInput(Key.Enter);
+        await UITest.WaitText(@"net10\.0/cs ");
+        await UITest.KeyInput(Key.Tab);
+        await UITest.WaitBuffer(buffer => Foreground(buffer, 4) == marked,
+            "Unfocused current row is not shown with marked color after entering a catalog without marks");
+    }
+
+    private static ushort? LeftPanelRowOf(PixelBuffer buffer, string regex)
+    {
+        int row = Array.FindIndex(LeftPanelLines(buffer), line => Regex.IsMatch(line, regex));
+        return row == -1 ? null : (ushort)row;
+    }
+
+    private static string LeftPanelInfo(PixelBuffer buffer)
+    {
+        return LeftPanelLines(buffer)[buffer.Height - 4];
+    }
+
+    private static string[] LeftPanelLines(PixelBuffer buffer)
+    {
+        return [.. buffer.PrintBuffer().Split('\n').Select(line => line[..Math.Min(line.Length, buffer.Width / 2)])];
     }
 
     private static Color Foreground(PixelBuffer buffer, ushort y)
