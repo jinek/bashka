@@ -86,8 +86,7 @@ public abstract class CopyOrMoveCommandBase : CatalogCommand<ShellCatalog, FileE
             foreach (FileEntry entry in entries)
             {
                 string sourcePath = entry.FullPath;
-                string destinationPath = Path.Combine(
-                    await destinationCatalog.ResolveCurrentPathAsync(), singleFileName ?? entry.Name);
+                string destinationPath = Path.Combine(destinationCatalog.CurrentPath!, singleFileName ?? entry.Name);
 
                 ((ShellCatalog)innerContext.Catalog!)
                     .ShellSession
