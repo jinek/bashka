@@ -88,7 +88,7 @@ public abstract class CopyOrMoveCommandBase : CatalogCommand<ShellCatalog, FileE
                 string sourcePath = entry.FullPath;
                 string destinationPath = Path.Combine(
                     await destinationCatalog.ResolveCurrentPathAsync(), singleFileName ?? entry.Name);
-                
+
                 ((ShellCatalog)innerContext.Catalog!)
                     .ShellSession
                     .ExecuteNonQuery(CreateScript(sourcePath, destinationPath));

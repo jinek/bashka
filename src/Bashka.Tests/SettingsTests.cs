@@ -83,7 +83,8 @@ public class SettingsTests
         Assert.That(Regex.Count(state, "leftpath", RegexOptions.IgnoreCase), Is.EqualTo(1),
             "state key written in another case replaces the existing one");
         Assert.That(state, Does.Contain("/var"));
-        Assert.That(state, Does.Contain("SortDescending").And.Contain("True"), "state is written over the current file");
+        Assert.That(state, Does.Contain("SortDescending").And.Contain("True"),
+            "state is written over the current file");
     }
 
     private static IContainer Build()
