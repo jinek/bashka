@@ -48,6 +48,10 @@ public static class EditorLocator
         {
             return null;
         }
+        catch (DirectoryNotFoundException)
+        {
+            return null;
+        }
     }
 
     private static bool IsExecutable(string path, bool windows)
