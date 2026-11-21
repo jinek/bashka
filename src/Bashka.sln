@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bashka.Plugins.Archives", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bashka.Plugins.Archives.Bsdtar", "Bashka.Plugins.Archives.Bsdtar\Bashka.Plugins.Archives.Bsdtar.csproj", "{B7DC4BC0-F0AE-4E48-A904-81D687C57980}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bashka.Plugins.Themes.TurboVisionDark", "Bashka.Plugins.Themes.TurboVisionDark\Bashka.Plugins.Themes.TurboVisionDark.csproj", "{896A62B7-C5D8-4C57-B5D9-A48DC380FD72}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bashka.Tests", "Bashka.Tests\Bashka.Tests.csproj", "{EAEE8AE1-14D7-4664-94BD-5681E30D2A66}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bashka.Plugins", "Bashka.Plugins\Bashka.Plugins.csproj", "{85C01AAB-12CB-4B36-8C59-56F413A1918A}"
@@ -67,6 +69,10 @@ Global
 		{B7DC4BC0-F0AE-4E48-A904-81D687C57980}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7DC4BC0-F0AE-4E48-A904-81D687C57980}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7DC4BC0-F0AE-4E48-A904-81D687C57980}.Release|Any CPU.Build.0 = Release|Any CPU
+		{896A62B7-C5D8-4C57-B5D9-A48DC380FD72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{896A62B7-C5D8-4C57-B5D9-A48DC380FD72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{896A62B7-C5D8-4C57-B5D9-A48DC380FD72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{896A62B7-C5D8-4C57-B5D9-A48DC380FD72}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EAEE8AE1-14D7-4664-94BD-5681E30D2A66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EAEE8AE1-14D7-4664-94BD-5681E30D2A66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAEE8AE1-14D7-4664-94BD-5681E30D2A66}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -93,5 +99,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B7DC4BC0-F0AE-4E48-A904-81D687C57980} = {D08F2E64-D54D-4D98-AB96-3C5E147F0E85}
+		{896A62B7-C5D8-4C57-B5D9-A48DC380FD72} = {D08F2E64-D54D-4D98-AB96-3C5E147F0E85}
 	EndGlobalSection
 EndGlobal
