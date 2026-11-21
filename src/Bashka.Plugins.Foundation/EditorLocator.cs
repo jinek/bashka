@@ -37,17 +37,31 @@ public static class EditorLocator
 
     private static string? FindIgnoringCase(string directory, string fileName)
     {
-        string exact = Path.Combine(directory, fileName);
-        if (File.Exists(exact) || !Directory.Exists(directory)) return exact;
-        return Directory.EnumerateFiles(directory)
-            .FirstOrDefault(file => Path.GetFileName(file).Equals(fileName, StringComparison.OrdinalIgnoreCase));
+        try
+        {
+            string exact = Path.Combine(directory, fileName);
+            if (File.Exists(exact) || !Directory.Exists(directory)) return exact;
+            return Directory.EnumerateFiles(directory)
+                .FirstOrDefault(file => Path.GetFileName(file).Equals(fileName, StringComparison.OrdinalIgnoreCase));
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return null;
+        }
     }
 
     private static bool IsExecutable(string path, bool windows)
     {
-        if (!File.Exists(path)) return false;
-        return windows || OperatingSystem.IsWindows() ||
-               (File.GetUnixFileMode(path) &
-                (UnixFileMode.UserExecute | UnixFileMode.GroupExecute | UnixFileMode.OtherExecute)) != 0;
+        try
+        {
+            if (!File.Exists(path)) return false;
+            return windows || OperatingSystem.IsWindows() ||
+                   (File.GetUnixFileMode(path) &
+                    (UnixFileMode.UserExecute | UnixFileMode.GroupExecute | UnixFileMode.OtherExecute)) != 0;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return false;
+        }
     }
 }
