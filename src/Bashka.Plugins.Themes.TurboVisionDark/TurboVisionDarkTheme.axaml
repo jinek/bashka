@@ -1,0 +1,14 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:consolonia="clr-namespace:Consolonia;assembly=Consolonia.Core">
+    <Styles.Resources>
+        <SolidColorBrush x:Key="BashkaImportantBrush"
+                         Color="{consolonia:EgaColor Cyan}" />
+        <SolidColorBrush x:Key="BashkaExecutableBrush"
+                         Color="{consolonia:EgaColor Green}" />
+        <SolidColorBrush x:Key="BashkaDeletedBrush"
+                         Color="{consolonia:EgaColor Red}" />
+        <SolidColorBrush x:Key="BashkaMarkedBrush"
+                         Color="{consolonia:EgaColor Yellow}" />
+    </Styles.Resources>
+</Styles>

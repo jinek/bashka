@@ -1,4 +1,5 @@
 using System.IO.Enumeration;
+using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Autofac.Features.Indexed;
@@ -42,6 +43,16 @@ public class Panel : BaseObject, IPanel
         this.WhenChanged(panel => panel.CurrentCatalog, panel => panel.CurrentCatalog!.Children,
                 (panel, _, _) => panel.CurrentCatalog?.Children)
             .Subscribe(_ => { OnPropertyChanged(nameof(CurrentChildren)); });
+
+        // vibe-voded subscription, caution!
+        this.WhenPropertyChanged(panel => panel.CurrentChildren)
+            .Select(children => (children.Value ?? [])
+                .Select(entry => entry.WhenAnyPropertyChanged(nameof(Entry.IsMarked), nameof(Entry.IsGone)))
+                .Merge()
+                .Select(_ => Unit.Default)
+                .StartWith(Unit.Default))
+            .Switch()
+            .Subscribe(_ => { OnPropertyChanged(nameof(MarkedEntries)); });
 
         RootsCatalog.WhenPropertyChanged(catalog => catalog.Children)
             .Skip(1)
@@ -104,7 +115,9 @@ public class Panel : BaseObject, IPanel
     }
 
     public IReadOnlyList<Entry> MarkedEntries =>
-        [.. CurrentCatalog?.Children.Where(entry => entry is { IsMarked: true, IsGone: false }) ?? []];
+        (CurrentCatalog?.Children ?? []).Where(entry => entry is { IsMarked: true, IsGone: false })
+        .ToArray()
+        .AsReadOnly();
 
     public Entry? SelectedRoot { get; set; }
     public Entry? SelectedEntry { get; set; }

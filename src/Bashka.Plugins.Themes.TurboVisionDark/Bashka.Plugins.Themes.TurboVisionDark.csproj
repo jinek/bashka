@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <IsPackable>true</IsPackable>
+        <PackageId>$(AssemblyName)</PackageId>
+        <PackageTags>bashka-plugin</PackageTags>
+        <Description>Dark theme for Bashka based on Turbo Vision compatible theme.</Description>
+        <UseAppHost>false</UseAppHost>
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Bashka.Plugins\Bashka.Plugins.csproj" />
+        <ProjectReference Include="..\Bashka.Launcher\Bashka.Launcher.csproj" PrivateAssets="all" />
+    </ItemGroup>
+</Project>

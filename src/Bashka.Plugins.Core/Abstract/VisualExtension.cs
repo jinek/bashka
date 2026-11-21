@@ -13,6 +13,12 @@ namespace Bashka.Plugins.Core.Abstract;
 public abstract class VisualExtension
 {
     /// <summary>
+    ///     Key of the base theme. Only one is applied: the latest registered one overrides the previously registered.
+    ///     It is applied before other visual extensions
+    /// </summary>
+    public const string ThemeKey = "base_theme_visual_extension";
+
+    /// <summary>
     ///     Uris of axaml files containing styles, like "avares://MyPlugin/UI/MyStyles.axaml".
     /// </summary>
     protected virtual IEnumerable<string> StyleUris => [];
