@@ -11,6 +11,7 @@ namespace Bashka.Tests.E2E;
 public class BasicTests : BashkaAppTestBase
 {
     private const string SandboxFolder = "E2ESandbox";
+    private const string CurrentRowSandboxFolder = "CurrentRowSandbox";
     private const string SampleFile = "sample.txt";
     private const string SampleFileDisplay = "sample +txt";
     private const string NewFolderName = "NewFolder";
@@ -101,6 +102,8 @@ public class BasicTests : BashkaAppTestBase
     {
         const ushort first = 5, second = 6, third = 7, fourth = 8;
         await WaitProcessing();
+        await QuickSearchAndOpen(CurrentRowSandboxFolder);
+        await UITest.WaitText("fourth");
 
         // marking two rows, moving the cursor away from them; the panel lost focus while other rows are marked:
         // current unmarked row looks as any other unmarked
@@ -141,7 +144,7 @@ public class BasicTests : BashkaAppTestBase
         await UITest.KeyInput(Key.Insert);
         await UITest.KeyInput(Key.Up);
         await UITest.KeyInput(Key.Enter);
-        await UITest.WaitText(@"net10\.0/cs ");
+        await UITest.WaitText(@"inside +txt");
         await UITest.KeyInput(Key.Tab);
         await UITest.WaitBuffer(buffer => Foreground(buffer, 4) == marked,
             "Unfocused current row is not shown with marked color after entering a catalog without marks");
