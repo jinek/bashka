@@ -51,7 +51,10 @@
                     <MenuItem Header="Commands"
                               IsTabStop="False" />
                     <MenuItem Header="Options"
-                              IsTabStop="False" />
+                              IsTabStop="False">
+                        <ui:CommandMenuItem Header="Settings"
+                                            CommandKey="OpenSettingsCommand" />
+                    </MenuItem>
                     <MenuItem Header="Right"
                               IsTabStop="False"
                               x:Name="PART_RightMenuItem">

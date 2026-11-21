@@ -5,6 +5,7 @@ using Autofac.Builder;
 using Autofac.Core;
 using Autofac.Features.AttributeFilters;
 using Bashka.Plugins.Core.Abstract;
+using Bashka.Plugins.Core.Configuration;
 using Bashka.Plugins.Core.FunctionKeys;
 
 namespace Bashka.Plugins.Core.Scoping;
@@ -71,5 +72,29 @@ public static class RegistrationHelper
             .WithMetadata((string)nameof(FunctionKey), functionKey)
             .WithMetadata(IFunctionBarCommand<ICatalog>.DefaultTitleMetadataKey, defaultTitle)
             .WithMetadata(IFunctionBarCommand<ICatalog>.IsDeleteMetadataKey, isDelete);
+    }
+
+    /// <summary>
+    ///     Adds the ini file embedded in <paramref name="assembly" /> to <see cref="Settings" />
+    /// </summary>
+    public static void RegisterBuiltinSettingsFile(this ContainerBuilder builder, Assembly assembly,
+        string resourceName)
+    {
+        using Stream stream = assembly.GetManifestResourceStream(resourceName)
+                              ?? throw new InvalidOperationException(
+                                  $"Resource {resourceName} is not found in {assembly.FullName}.");
+        using var reader = new StreamReader(stream);
+        builder.RegisterInstance(new PluginSettingsFile(assembly, resourceName, reader.ReadToEnd()));
+    }
+
+    /// <summary>
+    ///     Registers <typeparamref name="T" /> filled from its section of <see cref="Settings" />.
+    ///     An inheritor registered with <c>.As&lt;Parent&gt;()</c> replaces the parent
+    /// </summary>
+    public static IRegistrationBuilder<T, SimpleActivatorData, SingleRegistrationStyle> RegisterSettings<T>(
+        this ContainerBuilder builder) where T : class, new()
+    {
+        return builder.Register(context => Settings.Bind<T>(context.Resolve<Settings>()))
+            .AsSelf().SingleInstance();
     }
 }

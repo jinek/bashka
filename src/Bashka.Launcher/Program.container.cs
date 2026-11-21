@@ -7,10 +7,12 @@ using Bashka.Plugins.Core;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
+using Bashka.Plugins.Core.Configuration;
 using Bashka.Plugins.Core.FunctionKeys;
 using Bashka.Plugins.Core.Orthodox;
 using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Foundation;
+using Bashka.Plugins.Foundation.Configuration;
 using Bashka.Plugins.Foundation.FileSystem;
 using Bashka.Plugins.Foundation.ShellInteraction;
 using Bashka.Plugins.Market;
@@ -51,7 +53,15 @@ internal static partial class Program
         builder.FullRegister<LocalSystemShellConnection, IShellConnection>()
             .Keyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey);
         builder.FullRegister<ConnectionsCatalog, ICatalog>();
-        builder.RegisterType<KeyBindingService>().AsSelf().InstancePerHierarchy();
+        builder.FullRegister<SettingsCatalog, SettingsCatalog>()
+            .Keyed<ICatalog>(typeof(SettingsCatalog).GetTypeKey())
+            .Keyed<ICatalog>(ICatalog.SettingsCatalogKey);
+        builder.RegisterType<Settings>().AsSelf().SingleInstance();
+        builder.RegisterBuiltinSettingsFile(typeof(OrthodoxCommander).Assembly, "orthodoxcommander.ini");
+        builder.RegisterSettings<OrthodoxCommanderSettings>();
+        builder.RegisterSettings<OrthodoxCommanderKeyBindings>();
+        builder.RegisterBuiltinSettingsFile(typeof(TextEditorSettings).Assembly, "texteditor.ini");
+        builder.RegisterSettings<TextEditorSettings>();
         builder.FullRegister<FunctionBar, FunctionBar>().AsSelf().InstancePerHierarchy();
 
         foreach (FunctionPage fSlotPage in Enum.GetValues<FunctionPage>())
@@ -71,6 +81,7 @@ internal static partial class Program
         builder.FullRegister<UnmarkAllCommand, ICommand>().Keyed<ICommand>("UnmarkAllCommand");
         builder.FullRegister<InvertMarksCommand, ICommand>().Keyed<ICommand>("InvertMarksCommand");
         builder.FullRegister<QuickSearchCommand, ICommand>().Keyed<ICommand>("QuickSearchCommand");
+        builder.FullRegister<OpenSettingsCommand, ICommand>().Keyed<ICommand>(nameof(OpenSettingsCommand));
 
         builder.RegisterFCommand<AboutCatalogCommand, ICatalog>(FunctionPage.Default, FunctionKey.F1, "About")
             .Keyed<ICommand>("AboutCommand");
@@ -107,6 +118,10 @@ internal static partial class Program
         builder.RegisterFCommand<NewConnectionCommand, ConnectionsCatalog>(FunctionPage.Shift, FunctionKey.F4,
             "NewConn");
         builder.RegisterEnterCommand<NewConnectionEntryCommand>();
+        builder.RegisterFCommand<ViewPluginSettingsCommand, SettingsCatalog>(FunctionPage.Default, FunctionKey.F3,
+            "View");
+        builder.RegisterFCommand<EditPluginSettingsCommand, SettingsCatalog>(FunctionPage.Default, FunctionKey.F4,
+            "Edit");
 
         builder.RegisterFCommand<SortCommand, ICatalog>(FunctionPage.Ctrl, FunctionKey.F3, "SrtName")
             .WithParameter(new TypedParameter(typeof(SortKey), SortKey.Name));

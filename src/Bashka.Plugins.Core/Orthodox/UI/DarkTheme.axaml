@@ -1,23 +1,23 @@
 <Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:consolonia="clr-namespace:Consolonia;assembly=Consolonia.Core">
 
     <!--<themes:TurboVisionTheme />-->
     <!--<StyleInclude Source="avares://Consolonia.TurboVision/" />-->
     <!--dark theme <StyleInclude Source="avares://Consolonia.Themes.TurboVision/Themes/TurboVisionDark/TurboVisionDark.axaml" />-->
+    <!--Turbo Vision palette: foreground from 16 EGA colors, background from the 8 dark ones-->
     <Styles.Resources>
         <!--Overrides-->
         <SolidColorBrush x:Key="ThemeActionBackgroundBrush"
-                         Color="DarkGoldenrod" />
-        <!--<drawing:FourBitColorBrush x:Key="ThemeChooserBackgroundBrush"
-                                   Color="DarkCyan" />-->
+                         Color="{consolonia:EgaColor DarkCyan}" />
         <!--Additional-->
         <SolidColorBrush x:Key="BashkaImportantBrush"
-                         Color="Cyan" />
+                         Color="{consolonia:EgaColor Cyan}" />
         <SolidColorBrush x:Key="BashkaExecutableBrush"
-                         Color="Magenta" />
+                         Color="{consolonia:EgaColor Green}" />
         <SolidColorBrush x:Key="BashkaDeletedBrush"
-                         Color="DarkRed" />
+                         Color="{consolonia:EgaColor Red}" />
         <SolidColorBrush x:Key="BashkaMarkedBrush"
-                         Color="Yellow" />
+                         Color="{consolonia:EgaColor Yellow}" />
     </Styles.Resources>
 </Styles>
