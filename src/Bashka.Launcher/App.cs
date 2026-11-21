@@ -1,9 +1,6 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Bashka.Plugins.Core.Abstract;
-using Consolonia.Controls.DataGrid;
-using Consolonia.Modal;
-using Consolonia.Themes;
 using PropertyChanged;
 
 namespace Bashka.Launcher;
@@ -34,20 +31,6 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        //Styles.Add(new TurboVisionTheme(baseUri));
-        //Styles.Add(new TurboVisionDarkTheme(baseUri));
-        //Styles.Add(new TurboVisionBlackTheme(baseUri));
-
-        Styles.Add(new TurboVisionElegantTheme());
-        Styles.Add(new ModalTheme());
-        Styles.Add(new AutoDataGridStyles());
-        //everything else visual is brought by plugins as VisualExtension and is registered in the application
-        //new ResourceDictionary()
-        //Resources.MergedDictionaries.Add(new ResourceInclude { Source = new Uri(@"/Domain/Templates/VolkovCommander.axaml") });
-
-        /*Styles.Add(new StyleInclude(baseUri)
-            { Source = new Uri(@"Styles/SpecialStyles.axaml", UriKind.Relative) });*/
-
         this.RegisterVisualExtensions(MainWindow.Scope);
 
         ((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow = new MainWindow();

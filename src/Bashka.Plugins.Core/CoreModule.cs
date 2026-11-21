@@ -67,6 +67,7 @@ public sealed class CoreModule : Module
         builder.RegisterFCommand<SortCommand, ICatalog>(FunctionPage.Ctrl, FunctionKey.F6, "SrtSize")
             .WithParameter(new TypedParameter(typeof(SortKey), SortKey.Size));
 
+        builder.RegisterType<TurboVisionThemeExtension>().Keyed<VisualExtension>(VisualExtension.ThemeKey);
         builder.FullRegister<CoreVisualExtension, VisualExtension>();
     }
 }
