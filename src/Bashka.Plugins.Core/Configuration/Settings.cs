@@ -34,7 +34,8 @@ public sealed class Settings
     public IReadOnlyList<PluginSettingsFile> PluginFiles { get; }
 
     public static IEnumerable<string> UserFiles => Directory.Exists(UserDirectory)
-        ? Directory.EnumerateFiles(UserDirectory, "*.ini").Order(StringComparer.Ordinal)
+        ? Directory.EnumerateFiles(UserDirectory, "*.ini", new EnumerationOptions { MatchCasing = MatchCasing.CaseInsensitive })
+            .Order(StringComparer.Ordinal)
         : [];
 
     public static T Bind<T>(Settings settings) where T : class, new()

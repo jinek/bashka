@@ -14,6 +14,7 @@ public class TestDataDirectory
     [OneTimeSetUp]
     public void SetUp()
     {
+        Directory.CreateDirectory(_directory);
         Environment.SetEnvironmentVariable(BashkaHelpers.DataDirectoryVariable, _directory);
         Assert.That(BashkaHelpers.DataDirectory, Is.EqualTo(_directory),
             "data directory was resolved before tests redirected it");

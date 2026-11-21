@@ -36,6 +36,8 @@ public class SettingsTests
                                                                                """);
         File.WriteAllText(Path.Combine(Settings.UserDirectory, "20-later.ini"),
             "[OrthodoxCommander(keys)]\nInvertMarksCommand = CTRL+J\n");
+        File.WriteAllText(Path.Combine(Settings.UserDirectory, "30-upper.INI"),
+            "[OrthodoxCommander(keys)]\nUnmarkAllCommand = CTRL+U\n");
         File.WriteAllText(Path.Combine(Settings.UserDirectory, "notes.txt"),
             "[OrthodoxCommander]\nAltCharActivatesSearch = true\n");
 
@@ -52,6 +54,7 @@ public class SettingsTests
             Assert.That(Bound("SHIFT+F5"), Is.EqualTo(new[] { "ShiftF5SlotCommand" }));
             Assert.That(Bound("ADD"), Is.Empty, "empty value unbinds the default");
             Assert.That(Bound("CTRL+J"), Is.EqualTo(new[] { "InvertMarksCommand" }), "user files merge in name order");
+            Assert.That(Bound("CTRL+U"), Is.EqualTo(new[] { "UnmarkAllCommand" }), "extension case does not matter");
             Assert.That(container.Resolve<OrthodoxCommanderSettings>().AltCharActivatesSearch, Is.False,
                 "only ini files are merged");
 
