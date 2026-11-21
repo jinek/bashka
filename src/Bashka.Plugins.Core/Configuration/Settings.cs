@@ -35,7 +35,11 @@ public sealed class Settings
 
     public static IEnumerable<string> UserFiles => Directory.Exists(UserDirectory)
         ? Directory.EnumerateFiles(UserDirectory, "*.ini",
-                new EnumerationOptions { MatchCasing = MatchCasing.CaseInsensitive })
+                new EnumerationOptions
+                {
+                    MatchCasing = MatchCasing.CaseInsensitive,
+                    AttributesToSkip = 0
+                })
             .Order(StringComparer.Ordinal)
         : [];
 
