@@ -112,7 +112,8 @@ public partial class App
                     return;
                 }
 
-                await dialogProvider.ShowDialogAsync(new ErrorDialogContent(exception.ToString()));
+                await dialogProvider.ShowDialogAsync(
+                    new ApplicationErrorDialogContent(exception, Program.ShutdownTimeoutSeconds));
             });
         }
         catch (Exception secondaryException)
