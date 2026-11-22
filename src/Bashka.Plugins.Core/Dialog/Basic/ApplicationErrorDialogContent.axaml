@@ -1,0 +1,57 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:basic="clr-namespace:Bashka.Plugins.Core.Dialog.Basic">
+    <DataTemplate DataType="{x:Type basic:ApplicationErrorDialogContent}"
+                  x:Key="{x:Type basic:ApplicationErrorDialogContent}">
+        <Border Padding="1,1,1,0"
+                XYFocus.NavigationModes="Keyboard">
+            <StackPanel Spacing="1"
+                        MaxWidth="80">
+                <TextBlock
+                    Text="An internal error has occurred within the application. We apologize for any inconvenience caused."
+                    TextWrapping="Wrap" />
+
+                <TextBlock TextWrapping="Wrap"
+                           Foreground="{DynamicResource ThemeNoDisturbBrush}">
+                    <Run
+                        Text="To prevent potential data corruption, the application will be automatically terminated in" />
+                    <Run Text="{Binding SecondsRemaining}"
+                         Foreground="{DynamicResource ThemeErrorBrush}" />
+                    <Run Text="seconds." />
+                </TextBlock>
+
+                <HyperlinkButton Command="{Binding Report}"
+                                 IsDefault="True"
+                                 HorizontalAlignment="Stretch">
+                    <Interaction.Behaviors>
+                        <FocusOnAttachedToVisualTreeBehavior />
+                    </Interaction.Behaviors>
+                    <TextBlock Text="{Binding ReportText}"
+                               TextWrapping="Wrap" />
+                </HyperlinkButton>
+
+                <Expander Header="Exception Details"
+                          HorizontalAlignment="Stretch">
+                    <TextBox Text="{Binding ExceptionText, Mode=OneWay}"
+                             IsReadOnly="True"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             MaxHeight="10" />
+                </Expander>
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Height="2"
+                            Spacing="1">
+                    <Button Content="Terminate and Print"
+                            Command="{Binding TerminateAndPrint}"
+                            VerticalAlignment="Top" />
+                    <Button Content="Ignore"
+                            Command="{Binding Ignore}"
+                            IsCancel="True"
+                            VerticalAlignment="Top" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

@@ -18,6 +18,7 @@ public class CoreVisualExtension : VisualExtension
         "avares://Bashka.Plugins.Core/Orthodox/UI/VolkovCommander.axaml",
         "avares://Bashka.Plugins.Core/Dialog/Basic/OkCancelDialogContentBase.axaml",
         "avares://Bashka.Plugins.Core/Dialog/Basic/StringInputDialog.axaml",
+        "avares://Bashka.Plugins.Core/Dialog/Basic/ApplicationErrorDialogContent.axaml",
         "avares://Bashka.Plugins.Core/Worker/ProgressUI/ProgressDialog.axaml"
     ];
 
