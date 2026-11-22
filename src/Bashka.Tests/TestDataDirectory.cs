@@ -1,3 +1,4 @@
+using Bashka.Helpers;
 using Bashka.Plugins.Core.Configuration;
 
 namespace Bashka.Tests;
