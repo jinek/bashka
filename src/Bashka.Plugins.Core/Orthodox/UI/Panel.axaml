@@ -4,8 +4,10 @@
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:core="clr-namespace:Bashka.Plugins.Core.Abstract;assembly=Bashka.Plugins.Core"
                     xmlns:data="clr-namespace:Bashka.Plugins.Core.Abstract.Data"
-                    xmlns:helpers1="clr-namespace:Bashka.Plugins.Core.Orthodox.UI.Helpers">
+                    xmlns:helpers1="clr-namespace:Bashka.Plugins.Core.Orthodox.UI.Helpers"
+                    xmlns:ui="clr-namespace:Bashka.Plugins.Core.Orthodox.UI">
     <helpers1:EqualsConverter x:Key="EqualsConverter" />
+    <helpers1:MarkedEntriesSummaryConverter x:Key="MarkedEntriesSummaryConverter" />
     <x:Int32 x:Key="Zero">0</x:Int32>
 
     <DataTemplate DataType="{x:Type core:IPanel}"
@@ -76,16 +78,15 @@
 
             <!--Roots-->
             <Panel HorizontalAlignment="Center"
-                   VerticalAlignment="Top">
+                   VerticalAlignment="Top"
+                   MinWidth="12"
+                   MaxWidth="60"
+                   Margin="5,0">
                 <ComboBox ItemsSource="{Binding Roots}"
                           SelectedItem="{Binding SelectedRoot}"
                           IsDropDownOpen="{Binding IsRootsVisible, Mode=TwoWay}"
                           IsTabStop="False"
                           x:Name="RootsComboBox">
-                    <ComboBox.PlaceholderText>
-                        <Binding Path="CurrentCatalog.Title"
-                                 FallbackValue="Select a catalog" />
-                    </ComboBox.PlaceholderText>
                     <Interaction.Behaviors>
                         <DataTriggerBehavior Binding="{Binding IsRootsVisible}"
                                              Value="True">
@@ -108,15 +109,15 @@
                         VerticalAlignment="Bottom"
                         MinWidth="3"
                         Margin="0,0,1,0">
-                    <TextBlock Margin="1,0"
-                               HorizontalAlignment="Center"
-                               MinWidth="1"
-                               Foreground="{Binding ElementName=RootsComboBox, Path=Foreground}">
-                        <TextBlock.Text>
+                    <ui:MiddleTrimmedTextBlock Margin="1,0"
+                                               HorizontalAlignment="Center"
+                                               MinWidth="1"
+                                               Foreground="{Binding ElementName=RootsComboBox, Path=Foreground}">
+                        <ui:MiddleTrimmedTextBlock.FullText>
                             <Binding Path="CurrentCatalog.Title"
                                      FallbackValue="Select a catalog" />
-                        </TextBlock.Text>
-                    </TextBlock>
+                        </ui:MiddleTrimmedTextBlock.FullText>
+                    </ui:MiddleTrimmedTextBlock>
                 </Border>
             </Panel>
 
@@ -128,23 +129,28 @@
                     <brushes:LineBrush Brush="{DynamicResource ThemeBorderBrush}"
                                        LineStyle="DoubleLine" />
                 </Border.BorderBrush>
-                <DockPanel LastChildFill="True">
-                    <ItemsControl DockPanel.Dock="Right"
-                                  ItemsSource="{Binding SelectedEntry.Details}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Margin="1,0,0,0"
-                                           Text="{Binding}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <TextBlock Text="{Binding SelectedEntry.Path}" />
-                </DockPanel>
+                <Panel>
+                    <TextBlock Classes="Bashka MarkedSummary"
+                               Text="{Binding MarkedEntries, Converter={StaticResource MarkedEntriesSummaryConverter}}" />
+                    <DockPanel LastChildFill="True"
+                               Classes="Bashka EntryInfo">
+                        <ItemsControl DockPanel.Dock="Right"
+                                      ItemsSource="{Binding SelectedEntry.Details}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Margin="1,0,0,0"
+                                               Text="{Binding}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="{Binding SelectedEntry.Path}" />
+                    </DockPanel>
+                </Panel>
             </Border>
 
             <!--ShellConnection Info-->

@@ -20,7 +20,7 @@ public class Panel : BaseObject, IPanel
     private readonly ICommandSelector _commandSelector;
 
     public Panel(ICommandSelector commandSelector, IIndex<string, ICatalog> catalogsFactory,
-        IShellConnection shellConnection)
+        IShellConnection shellConnection, string? initialPath = null)
     {
         ShellConnection = shellConnection;
         RootsCatalog = catalogsFactory[ICatalog.RootCatalogKey];
@@ -69,7 +69,7 @@ public class Panel : BaseObject, IPanel
                     SelectedRoot = null;
             });
 
-        InitializeCatalogs();
+        InitializeCatalogs(initialPath);
     }
 
     [AutoWire] public Lazy<OrthodoxCommander> Commander { get; [UsedImplicitly] internal init; } = null!;
@@ -148,17 +148,20 @@ public class Panel : BaseObject, IPanel
         JumpToMatch(SelectedIndex + 1, true);
     }
 
-    private async void InitializeCatalogs()
+    private async void InitializeCatalogs(string? initialPath)
     {
-        await Task.WhenAll(RootsCatalog.NavigateAsync(ICatalog.RootFavoritesPath), OpenDefaultCatalogAsync());
+        await Task.WhenAll(RootsCatalog.NavigateAsync(ICatalog.RootFavoritesPath),
+            OpenDefaultCatalogAsync(initialPath));
     }
 
-    public async Task OpenDefaultCatalogAsync()
+    private async Task OpenDefaultCatalogAsync(string? preferredPath)
     {
         ICatalog catalog = _catalogsFactory[ICatalog.DefeaultCatalogTypeKey];
         _catalogStack.Clear();
 
-        await catalog.NavigateAsync(await catalog.ResolveCurrentPathAsync());
+        await catalog.NavigateAsync(string.IsNullOrEmpty(preferredPath)
+            ? await catalog.ResolveCurrentPathAsync()
+            : await catalog.ResolveCurrentPathAsync(preferredPath));
 
         Push(catalog);
     }
@@ -217,7 +220,16 @@ public class Panel : BaseObject, IPanel
             return;
 
         _catalogStack.Clear();
-        await EnterAsync(newRoot, RootsCatalog);
+        try
+        {
+            await EnterAsync(newRoot, RootsCatalog);
+        }
+        finally
+        {
+            // focusing datagrid again
+            IsFocused = false;
+            IsFocused = true;
+        }
     }
 
     [UsedImplicitly]

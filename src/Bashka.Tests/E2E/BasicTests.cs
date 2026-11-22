@@ -1,7 +1,14 @@
 using System.Text.RegularExpressions;
+using Autofac;
+using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Bashka.Launcher;
+using Bashka.Plugins.Core.Configuration;
+using Bashka.Plugins.Core.Orthodox;
+using Bashka.Plugins.Core.Orthodox.UI;
+using Bashka.Plugins.Foundation.ShellInteraction;
 using Bashka.Tests.Helpers;
 using Consolonia.Core.Drawing.PixelBufferImplementation;
 
@@ -26,6 +33,8 @@ public class BasicTests : BashkaAppTestBase
         // navigate into the sandbox folder shipped as a test asset
         await QuickSearchAndOpen(SandboxFolder);
         await UITest.WaitText(SampleFileDisplay);
+        await WaitState(state => state.Contains($"LeftPath = {SandboxPath}", StringComparison.Ordinal),
+            "Location of the left panel is not saved to the state");
 
         // sorting: cycle through a couple of sort modes, the listing must survive
         await UITest.KeyInput(Key.F3, RawInputModifiers.Control);
@@ -82,9 +91,13 @@ public class BasicTests : BashkaAppTestBase
         await UITest.KeyInput(Key.Enter);
         await UITest.WaitText(@"sample_copy +txt");
 
-        // opening roots: the roots drop-down always contains the "All catalogs" entry
+        // opening roots: the roots drop-down always contains the "All catalogs" entry,
+        // catalogs are divided, connections are represented by the single entry, local system is connected already
         await UITest.KeyInput(Key.F1, RawInputModifiers.Alt);
         await UITest.WaitText("All catalogs");
+        await UITest.WaitText(@"│ ssh +│");
+        await UITest.WaitText(@"│ +─{20,} +│");
+        Assert.That(Buffer, Does.Not.Contain("Reconnect to local system"));
         await UITest.KeyInput(Key.Escape);
         await UITest.WaitNoText("All catalogs");
 
@@ -95,6 +108,57 @@ public class BasicTests : BashkaAppTestBase
         await UITest.WaitText("sample content used by BasicTests");
         await UITest.KeyInput(Key.Escape);
         await UITest.WaitNoText("sample content used by BasicTests");
+    }
+
+    [Test]
+    public async Task PanelLocationIsRestoredWhenReachable()
+    {
+        await WaitProcessing();
+        OrthodoxCommander commander = MainWindow.Scope.Resolve<OrthodoxCommander>();
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+            commander.RecreatePanel(commander.LeftPanel, new LocalSystemShellConnection(), SandboxPath));
+        await UITest.WaitBuffer(_ => commander.LeftPanel!.CurrentCatalog?.CurrentPath == SandboxPath,
+            "Left panel is not opened at the restored location");
+        await UITest.WaitText(SampleFileDisplay);
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+            commander.RecreatePanel(commander.LeftPanel, new LocalSystemShellConnection(),
+                Path.Combine(SandboxPath, "gone")));
+        await UITest.WaitBuffer(
+            _ => commander.LeftPanel!.CurrentCatalog?.CurrentPath == TestContext.CurrentContext.TestDirectory,
+            "Left panel is not opened at the start directory when the restored location is gone");
+    }
+
+    [Test]
+    public async Task RootTitleIsCutInTheMiddle()
+    {
+        await WaitProcessing();
+        string[] texts = await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var title = new MiddleTrimmedTextBlock { FullText = "0123456789" };
+            return new[] { 20d, 10, 6, 5, 1 }.Select(width =>
+            {
+                title.Measure(new Size(width, 1));
+                return title.Text!;
+            }).ToArray();
+        });
+        Assert.That(texts, Is.EqualTo(new[] { "0123456789", "0123456789", "01..89", "01..9", "." }));
+
+        // long location in the panel header is cut, both corners of the panel stay
+        string directory = Path.Combine(Path.GetTempPath(), "Bashka.LongTitle." + new string('x', 80));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            OrthodoxCommander commander = MainWindow.Scope.Resolve<OrthodoxCommander>();
+            await Dispatcher.UIThread.InvokeAsync(() =>
+                commander.RecreatePanel(commander.LeftPanel, new LocalSystemShellConnection(), directory));
+            await UITest.WaitText(@"╔═+ \S*\.\.x+ ↓═+╗╔");
+        }
+        finally
+        {
+            Directory.Delete(directory);
+        }
     }
 
     [Test]
@@ -110,6 +174,7 @@ public class BasicTests : BashkaAppTestBase
         await UITest.KeyInput(Key.Down);
         await UITest.KeyInput(Key.Down, RawInputModifiers.Shift);
         await UITest.KeyInput(Key.Down, RawInputModifiers.Shift);
+        await UITest.WaitText(@"║Selected 2: \d+ files?, \d+ folders?, ");
         await UITest.KeyInput(Key.Down);
         await UITest.KeyInput(Key.Tab);
         await UITest.WaitBuffer(buffer => Foreground(buffer, fourth) == Foreground(buffer, third) &&
@@ -148,6 +213,18 @@ public class BasicTests : BashkaAppTestBase
         await UITest.KeyInput(Key.Tab);
         await UITest.WaitBuffer(buffer => Foreground(buffer, 4) == marked,
             "Unfocused current row is not shown with marked color after entering a catalog without marks");
+    }
+
+    private static string SandboxPath => Path.Combine(TestContext.CurrentContext.TestDirectory, SandboxFolder);
+
+    private static async Task WaitState(Func<string, bool> condition, string description)
+    {
+        DateTime deadline = DateTime.UtcNow.AddSeconds(20);
+        while (!(File.Exists(Settings.StateFilePath) && condition(await File.ReadAllTextAsync(Settings.StateFilePath))))
+        {
+            if (DateTime.UtcNow > deadline) Assert.Fail(description);
+            await Task.Delay(200);
+        }
     }
 
     private static ushort? LeftPanelRowOf(PixelBuffer buffer, string regex)

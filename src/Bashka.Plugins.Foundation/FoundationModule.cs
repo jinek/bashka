@@ -59,6 +59,8 @@ public sealed class FoundationModule : Module
             "View");
         builder.RegisterFCommand<EditPluginSettingsCommand, SettingsCatalog>(FunctionPage.Default, FunctionKey.F4,
             "Edit");
+        builder.RegisterFCommand<ClonePluginSettingsCommand, SettingsCatalog>(FunctionPage.Default, FunctionKey.F6,
+            "Clone");
 
         builder.FullRegister<FoundationVisualExtension, VisualExtension>();
     }
