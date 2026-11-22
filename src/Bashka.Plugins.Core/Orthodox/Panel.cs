@@ -19,7 +19,8 @@ public class Panel : BaseObject, IPanel
     private readonly IIndex<string, ICatalog> _catalogsFactory;
     private readonly ICommandSelector _commandSelector;
 
-    public Panel(ICommandSelector commandSelector, IIndex<string, ICatalog> catalogsFactory,
+    public Panel(ICommandSelector commandSelector, 
+        IIndex<string, ICatalog> catalogsFactory,
         IShellConnection shellConnection)
     {
         ShellConnection = shellConnection;
