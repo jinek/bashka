@@ -79,7 +79,7 @@
             <!--Roots-->
             <Panel HorizontalAlignment="Center"
                    VerticalAlignment="Top"
-                   MinWidth="12"
+                   MinWidth="4"
                    MaxWidth="60"
                    Margin="5,0">
                 <ComboBox ItemsSource="{Binding Roots}"
@@ -107,7 +107,6 @@
                 <Border BorderThickness="0"
                         IsHitTestVisible="False"
                         VerticalAlignment="Bottom"
-                        MinWidth="3"
                         Margin="0,0,1,0">
                     <ui:MiddleTrimmedTextBlock Margin="1,0"
                                                HorizontalAlignment="Center"
