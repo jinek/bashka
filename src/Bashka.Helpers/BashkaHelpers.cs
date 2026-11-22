@@ -6,15 +6,15 @@ namespace Bashka.Helpers;
 
 public static class BashkaHelpers
 {
-    public const string DataDirectoryVariable = "BASHKA_DATA_DIR";
-
     /// <summary>
-    ///     Can be redirected with <see cref="DataDirectoryVariable" /> environment variable
+    ///     Builds made outside CI keep data next to the binaries
     /// </summary>
     public static readonly string DataDirectory =
-        Environment.GetEnvironmentVariable(DataDirectoryVariable) is { Length: > 0 } dataDirectory
-            ? Path.GetFullPath(dataDirectory)
-            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Bashka");
+#if LOCAL_DATA
+        Path.Combine(AppContext.BaseDirectory, "BashkaData");
+#else
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Bashka");
+#endif
 
     public static T GetElement<T>(this ILogical visual, [CallerMemberName] string? elementName = null)
         where T : class, ILogical
