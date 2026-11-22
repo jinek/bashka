@@ -39,6 +39,23 @@ public class ExceptionHandlingTests : BashkaAppTestBase
         await UITest.WaitNoText("Processing");
     }
 
+    [Test]
+    public async Task ApplicationErrorIsShownWithCountdownAndCanBeIgnored()
+    {
+        await UITest.WaitNoText("Processing");
+        Task shown = App.ShowApplicationError(new InvalidOperationException("Cute failure"));
+
+        await UITest.WaitText("Unexpected Error");
+        await UITest.WaitText("We apologize");
+        await UITest.WaitText("terminated in");
+        await UITest.WaitText("Exception Details");
+
+        await UITest.KeyInput(Key.Escape);
+        await shown.WaitAsync(TimeSpan.FromSeconds(20));
+
+        await UITest.WaitNoText("Unexpected Error");
+    }
+
     /// <summary>
     ///     Simulates a UI handler (async void, like commands) awaiting a worker which awaits a failing UI call.
     ///     Returned task completes right before the exception leaves the handler.
