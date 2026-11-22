@@ -13,7 +13,8 @@
 
                 <TextBlock TextWrapping="Wrap"
                            Foreground="{DynamicResource ThemeNoDisturbBrush}">
-                    <Run Text="To prevent potential data corruption, the application will be automatically terminated in" />
+                    <Run
+                        Text="To prevent potential data corruption, the application will be automatically terminated in" />
                     <Run Text="{Binding SecondsRemaining}"
                          Foreground="{DynamicResource ThemeErrorBrush}" />
                     <Run Text="seconds." />
