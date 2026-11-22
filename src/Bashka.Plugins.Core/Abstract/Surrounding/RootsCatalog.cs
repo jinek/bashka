@@ -8,6 +8,7 @@ public class RootsCatalog : PathCatalog, IRootsCatalog
 {
     private readonly Func<IEnumerable<ICatalog>> _catalogsFunction;
     private readonly UITaskFactory _iuiTaskFactory;
+    private const int FavoritesPerCatalog = 6;
     private ICatalog[]? _catalogs;
 
     public RootsCatalog(Func<IEnumerable<ICatalog>> catalogsFunction, IUITaskFactory iuiTaskFactory)
@@ -61,7 +62,7 @@ public class RootsCatalog : PathCatalog, IRootsCatalog
                 Entry[] children = _catalogs.SelectMany(catalog => catalog.Children).ToArray();
                 return children.Union(additionalEntries)
                     .GroupBy(entry => entry.ParentCatalog)
-                    .SelectMany(group => group.Take(3))
+                    .SelectMany(group => group.Take(FavoritesPerCatalog))
                     .ToArray();
 
             default: throw new InvalidPathException(CurrentPath);
