@@ -25,13 +25,12 @@ public static class DevelopmentHost
                 .ThrowOnErrors()
                 .StartWithConsoleLifetime(args);
         }
-        catch(Exception exception)
+        catch (Exception exception)
         {
             // the lifetime has not started, so nothing leaves the alternate screen and the crash report is lost there
             (ConsoloniaLifetime.Console as IDisposable)?.Dispose();
 
-            // throw will do it itself: Console.WriteLine(new CrashAppException(exception).Message);
-            throw;
+            throw new CrashAppException(exception);
         }
     }
 }

@@ -36,7 +36,9 @@ public class PluginLoadingTests : BashkaAppTestBase
         foreach (string directory in new[]
                  {
                      Path.Combine(MarketHelpers.PluginsDirectory, plugin),
+#pragma warning disable CA1308 //todo: what?????
                      Path.Combine(MarketHelpers.PackagesDirectory, plugin.ToLowerInvariant())
+#pragma warning restore CA1308
                  })
             if (Directory.Exists(directory))
                 Directory.Delete(directory, true);

@@ -46,7 +46,13 @@ public partial class MainWindow : Window
                 toastNotificationProvider.ShowToast($"Plugin {plugin} is skipped", reason, NotificationType.Error);
 
             if (PluginLoadException is { } pluginLoadException)
-                Dispatcher.UIThread.Post(() => throw pluginLoadException);
+            {
+                Dispatcher.UIThread.Post(async () =>
+                {
+                    await Task.Delay(5000); //todo: sleep driven development, but needed to be done after loader is closed only //todo: same time it's issue that we can not report exception at random moment because another dialog is might be shown
+                    throw pluginLoadException;
+                });
+            }
         }, DispatcherPriority.Loaded);
     }
 
