@@ -44,6 +44,6 @@ public class ClonePluginSettingsCommand(IDialogProvider dialogProvider, WorkerTa
         if (panel.CurrentCatalog != catalog)
             throw new InvalidProgramException("Must not happen");
         panel.IsFocused = true;
-        panel.SelectedEntry = catalog.Children.OfType<FileEntry>().SingleOrDefault(file => file.FullPath == path);
+        panel.SelectedEntry = catalog.Children.OfType<FileEntry>().SingleOrDefault(file => file.Path == fileName);
     }
 }

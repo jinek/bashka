@@ -24,13 +24,14 @@ public class NewConnectionCommand(IDialogProvider dialogProvider, IIndex<string,
             new StringInputDialog("Enter connection name", validationMode: InputValidationMode.FileName));
 
         var catalog = (ConnectionsCatalog)context.Catalog!;
-        string filePath = Path.Combine(ConnectionsCatalog.ConnectionsDirectory, $"{title}.ini");
+        string fileName = $"{title}.ini";
+        string filePath = Path.Combine(ConnectionsCatalog.ConnectionsDirectory, fileName);
 
         SshConnectionSettings.CreateDefault(filePath);
 
         await catalog.NavigateAsync(string.Empty);
         SwitchConnectionEntry entry = catalog.Children.OfType<SwitchConnectionEntry>()
-            .Single(connection => connection.FullPath == filePath);
+            .Single(connection => connection.Path == fileName);
         await editCommand.ExecuteAsync(context with { Entries = [entry] });
 
         await catalog.NavigateAsync(string.Empty);
