@@ -19,12 +19,17 @@ internal static partial class Program
         builder.RegisterModule<ArchivesModule>();
         builder.RegisterModule<MarketModule>();
 
-        PluginLoader.LoadInstalledPlugins(builder);
+        var incompatiblePlugins = new List<(string Plugin, string Reason)>();
+        var pluginErrors = new List<Exception>();
+        PluginLoader.LoadInstalledPlugins(builder, (plugin, reason) => incompatiblePlugins.Add((plugin, reason)),
+            pluginErrors.Add);
 
         if (DevelopmentHost.PluginModule is { } pluginModule)
             builder.RegisterModule(pluginModule);
 
         IContainer container = builder.Build();
         MainWindow.Scope = container.BeginLifetimeScope();
+        MainWindow.IncompatiblePlugins = incompatiblePlugins.AsReadOnly();
+        MainWindow.PluginLoadException = pluginErrors.Count == 0 ? null : new AggregateException(pluginErrors);
     }
 }

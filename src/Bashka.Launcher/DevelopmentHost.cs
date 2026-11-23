@@ -1,5 +1,6 @@
 using Autofac;
 using Avalonia;
+using Bashka.Helpers;
 using Consolonia;
 using Consolonia.Fonts;
 
@@ -13,13 +14,24 @@ public static class DevelopmentHost
     {
         PluginModule = pluginModule;
 
-        AppBuilder.Configure<App>()
-            .LogToException()
-            .UseSkia()
-            .UseConsolonia()
-            .UseAutoDetectedConsole()
-            .WithConsoleFonts()
-            .ThrowOnErrors()
-            .StartWithConsoleLifetime(args);
+        try
+        {
+            AppBuilder.Configure<App>()
+                .LogToException()
+                .UseSkia()
+                .UseConsolonia()
+                .UseAutoDetectedConsole()
+                .WithConsoleFonts()
+                .ThrowOnErrors()
+                .StartWithConsoleLifetime(args);
+        }
+        catch(Exception exception)
+        {
+            // the lifetime has not started, so nothing leaves the alternate screen and the crash report is lost there
+            (ConsoloniaLifetime.Console as IDisposable)?.Dispose();
+
+            // throw will do it itself: Console.WriteLine(new CrashAppException(exception).Message);
+            throw;
+        }
     }
 }
