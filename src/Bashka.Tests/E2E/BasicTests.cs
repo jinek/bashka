@@ -158,14 +158,24 @@ public class BasicTests : BashkaAppTestBase
         // long location in the panel header is cut, both corners of the panel stay
         string directory = Path.Combine(Path.GetTempPath(), "Bashka.LongTitle." + new string('x', 80));
         Directory.CreateDirectory(directory);
+        bool passed = false;
         try
         {
             await OpenLeftPanelAt(directory);
             await UITest.WaitText(@"╔═+ \S*\.\.x+ ↓═+╗╔");
+            passed = true;
         }
         finally
         {
-            Directory.Delete(directory);
+            try
+            {
+                await MoveLeftPanelAwayFrom(directory);
+                Directory.Delete(directory);
+            }
+            catch (Exception exception) when (!passed)
+            {
+                await TestContext.Out.WriteLineAsync($"Cleanup after the failed test failed too: {exception}");
+            }
         }
     }
 
@@ -235,6 +245,27 @@ public class BasicTests : BashkaAppTestBase
             MainWindow.Scope.Resolve<OrthodoxCommanderState>().LeftPath = location;
             Commander.RecreatePanel(Commander.LeftPanel, new LocalSystemShellConnection());
         });
+    }
+
+    /// <summary>
+    ///     The shell of the panel works in the directory it lists, so the directory can not be deleted on some systems.
+    ///     The panel navigates away and the shell follows
+    /// </summary>
+    private static async Task MoveLeftPanelAwayFrom(string directory)
+    {
+        string away = TestContext.CurrentContext.TestDirectory;
+        var navigation = Task.CompletedTask;
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            navigation = Commander.LeftPanel!.CurrentCatalog!.NavigateAsync(away);
+        });
+        await navigation.WaitAsync(TimeSpan.FromSeconds(20));
+
+        string workingDirectory =
+            await Dispatcher.UIThread.InvokeAsync(() => Commander.LeftPanel!.CurrentCatalog!.ResolveCurrentPathAsync());
+        if (workingDirectory != away)
+            throw new InvalidOperationException(
+                $"Shell of the left panel works in {workingDirectory} instead of {away}, {directory} is still in use");
     }
 
     private static string SandboxPath => Path.Combine(TestContext.CurrentContext.TestDirectory, SandboxFolder);

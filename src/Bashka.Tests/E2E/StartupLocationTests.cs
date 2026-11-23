@@ -51,13 +51,22 @@ public class StartupFromTerminalTests : BashkaAppTestBase
     [TearDown]
     public void RestoreDirectory()
     {
-        Environment.CurrentDirectory = _previousDirectory;
-        TestDataDirectory.DeleteSettings();
+        try
+        {
+            // not set when the setup failed before changing the directory
+            if (_previousDirectory != null)
+                Environment.CurrentDirectory = _previousDirectory;
+        }
+        finally
+        {
+            _previousDirectory = null;
+            TestDataDirectory.DeleteSettings();
+        }
     }
 
     private static string Sandbox => StartupLocationTests.Sandbox;
     private static OrthodoxCommander Commander => StartupLocationTests.Commander;
-    private string _previousDirectory = null!;
+    private string? _previousDirectory;
 
     protected override AppBuilder CreateAppBuilder()
     {
