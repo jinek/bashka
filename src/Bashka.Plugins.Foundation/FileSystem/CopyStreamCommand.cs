@@ -1,3 +1,4 @@
+using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Core.Dialog.Abstract;
@@ -35,7 +36,7 @@ public class CopyStreamCommand : CatalogCommand<IReadStreamCatalog, FileEntry>
 
         await _workerTaskFactory.StartNewWorkerTask(async (_, _, _) =>
         {
-            string destinationPath = Path.Combine(innerContext.AnotherCatalog!.CurrentPath!, fileName);
+            string destinationPath = BashkaHelpers.PathJoin(innerContext.AnotherCatalog!.CurrentPath!, fileName);
             await using Stream sourceStream =
                 ((IReadStreamCatalog)innerContext.Catalog!).ReadStream(entry.FullPath);
             ((IWriteStreamCatalog)innerContext.AnotherCatalog).WriteStream(destinationPath, sourceStream);

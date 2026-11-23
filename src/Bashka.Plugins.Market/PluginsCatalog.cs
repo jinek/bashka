@@ -1,3 +1,4 @@
+using Bashka.Helpers;
 using BaGetter.Protocol;
 using BaGetter.Protocol.Models;
 using Bashka.Plugins.Core.Abstract.Data;
@@ -103,7 +104,7 @@ public sealed class PluginsCatalog : PathCatalog, IReadStreamCatalog, IWriteStre
             {
                 Path = package.PackageId,
                 Name = package.PackageId,
-                FullPath = PathJoin(PluginEntry.RootPath, package.PackageId),
+                FullPath = BashkaHelpers.PathJoin(PluginEntry.RootPath, package.PackageId),
                 ParentCatalog = this,
                 Package = package,
                 LocalOnly = localOnlyParameter

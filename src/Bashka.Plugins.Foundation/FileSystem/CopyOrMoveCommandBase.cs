@@ -1,3 +1,4 @@
+using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
@@ -86,7 +87,7 @@ public abstract class CopyOrMoveCommandBase : CatalogCommand<ShellCatalog, FileE
             foreach (FileEntry entry in entries)
             {
                 string sourcePath = entry.FullPath;
-                string destinationPath = Path.Combine(destinationCatalog.CurrentPath!, singleFileName ?? entry.Name);
+                string destinationPath = BashkaHelpers.PathJoin(destinationCatalog.CurrentPath!, singleFileName ?? entry.Name);
 
                 ((ShellCatalog)innerContext.Catalog!)
                     .ShellSession

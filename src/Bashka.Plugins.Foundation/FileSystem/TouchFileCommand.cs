@@ -1,3 +1,4 @@
+using Bashka.Helpers;
 using Autofac.Features.Indexed;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
@@ -39,7 +40,7 @@ public class TouchFileCommand : TypeKeyedObject, IFunctionBarCommand<ShellCatalo
 
         await _workerTaskFactory.StartNewWorkerTask(async (_, _, _) =>
         {
-            string path = Path.Combine(context.Catalog!.CurrentPath!, fileName);
+            string path = BashkaHelpers.PathJoin(context.Catalog!.CurrentPath!, fileName);
             ((ShellCatalog)context.Catalog)
                 .ShellSession
                 .ExecuteNonQuery(new TouchFileMultiScript(path));
