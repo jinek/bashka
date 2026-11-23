@@ -83,10 +83,10 @@ public class SettingsEditingTests : BashkaAppTestBase
     {
         await UITest.WaitNoText("Processing");
         await UITest.KeyInput(Key.F1, RawInputModifiers.Alt);
-        await UITest.WaitText("All catalogs");
+        await UITest.WaitText("everything");
         await UITest.WaitNoText("orthodoxcommander");
         await UITest.KeyInput(Key.Escape);
-        await UITest.WaitNoText("All catalogs");
+        await UITest.WaitNoText("everything");
 
         await UITest.KeyInput(Key.F9);
         await UITest.KeyInput(3, Key.Right);

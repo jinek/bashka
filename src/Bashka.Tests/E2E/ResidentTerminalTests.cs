@@ -39,7 +39,7 @@ public class ResidentTerminalTests : BashkaAppTestBase
             Assert.That(Directory.GetFiles(directory), Is.EqualTo(new[] { file }));
             await UITest.WaitNoText("GNU nano");
             await UITest.KeyInput(Key.F1, RawInputModifiers.Alt);
-            await UITest.WaitText("All catalogs");
+            await UITest.WaitText("everything");
             await UITest.KeyInput(Key.Escape);
         }
         finally
@@ -72,7 +72,7 @@ public class ResidentTerminalTests : BashkaAppTestBase
                 await execution.WaitAsync(TimeSpan.FromSeconds(20)));
             await UITest.WaitNoText("Resident ready");
             await UITest.KeyInput(Key.F1, RawInputModifiers.Alt);
-            await UITest.WaitText("All catalogs");
+            await UITest.WaitText("everything");
             await UITest.KeyInput(Key.Escape);
         }
         finally

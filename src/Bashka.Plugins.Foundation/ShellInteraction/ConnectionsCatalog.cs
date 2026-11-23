@@ -30,6 +30,11 @@ public class ConnectionsCatalog : FileSystemCatalog
         return Task.FromResult(ConnectionsDirectory);
     }
 
+    public override Task NavigateAsync(string path)
+    {
+        return path != string.Empty ? throw new NotSupportedException() : base.NavigateAsync(ConnectionsDirectory);
+    }
+
     public override Task NavigateBack()
     {
         throw new NotSupportedException();
@@ -37,20 +42,6 @@ public class ConnectionsCatalog : FileSystemCatalog
 
     protected override async Task<IEnumerable<Entry>> GetChildrenInternal()
     {
-        if (CurrentPath == string.Empty)
-            return
-            [
-                new Entry
-                {
-                    Path = ConnectionsDirectory,
-                    Name = "ssh",
-                    Size = -1,
-                    TimeStamp = DateTime.Now,
-                    IsDirectory = true,
-                    ParentCatalog = this
-                }
-            ];
-
         IEnumerable<Entry> files = await base.GetChildrenInternal();
         return
         [

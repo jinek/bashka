@@ -9,7 +9,7 @@ public class TestDataDirectory
     public void SetUp()
     {
 #if LOCAL_DATA
-        if (Directory.Exists(BashkaHelpers.DataDirectory)) Directory.Delete(BashkaHelpers.DataDirectory, true);
+        if (Directory.Exists(Bashka.Helpers.BashkaHelpers.DataDirectory)) Directory.Delete(Bashka.Helpers.BashkaHelpers.DataDirectory, true);
 #endif
     }
 

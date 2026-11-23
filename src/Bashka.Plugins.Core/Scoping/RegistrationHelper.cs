@@ -41,6 +41,18 @@ public static class RegistrationHelper
     }
 
     /// <summary>
+    ///     Registers a catalog listed in roots, see <see cref="ICatalog.FavoritesCountMetadataKey" />
+    /// </summary>
+    public static IRegistrationBuilder<TCatalog, ConcreteReflectionActivatorData, SingleRegistrationStyle>
+        RegisterCatalog<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TCatalog>(
+            this ContainerBuilder builder, string name, int favoritesCount = 0) where TCatalog : ICatalog
+    {
+        return builder.FullRegister<TCatalog, ICatalog>()
+            .WithMetadata(ICatalog.NameMetadataKey, name)
+            .WithMetadata(ICatalog.FavoritesCountMetadataKey, favoritesCount);
+    }
+
+    /// <summary>
     ///     Registers a command which can be executed for the selected entry (by Enter).
     ///     The latest registered one overrides the previously registered.
     /// </summary>

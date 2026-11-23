@@ -13,7 +13,7 @@ public sealed class FoundationModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.FullRegister<FileSystemCatalog, ICatalog>().Keyed<ICatalog>(ICatalog.DefeaultCatalogTypeKey);
+        builder.RegisterCatalog<FileSystemCatalog>("File system", 6).Keyed<ICatalog>(ICatalog.DefeaultCatalogTypeKey);
         builder.RegisterEnterCommand<ShellExecuteCommand>();
         builder.RegisterEnterCommand<OpenDirectoryCommand>();
         builder.RegisterEnterCommand<SwitchConnectionCommand>();
@@ -23,13 +23,11 @@ public sealed class FoundationModule : Module
         builder.RegisterType<ShellSession>()
             .Keyed<ShellSession>(IShellConnection.DefaultShellConnectionKey)
             .WithParameter(ResolvedParameter.ForKeyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey));
-        builder.FullRegister<LocalSystemConnectionCatalog, ICatalog>();
+        builder.RegisterCatalog<LocalSystemConnectionCatalog>("Local system", 1);
         builder.FullRegister<LocalSystemShellConnection, IShellConnection>()
             .Keyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey);
-        builder.FullRegister<ConnectionsCatalog, ICatalog>();
-        builder.FullRegister<SettingsCatalog, SettingsCatalog>()
-            .Keyed<ICatalog>(typeof(SettingsCatalog).GetTypeKey())
-            .Keyed<ICatalog>(ICatalog.SettingsCatalogKey);
+        builder.RegisterCatalog<ConnectionsCatalog>("SSH");
+        builder.RegisterCatalog<SettingsCatalog>("Settings", -1).Keyed<ICatalog>(ICatalog.SettingsCatalogKey);
         builder.RegisterBuiltinSettingsFile(typeof(TextEditorSettings).Assembly, "texteditor.ini");
         builder.RegisterSettings<TextEditorSettings>();
 

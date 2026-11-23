@@ -25,19 +25,6 @@ public sealed class PluginsCatalog : PathCatalog, IReadStreamCatalog, IWriteStre
 
     protected override async Task<IEnumerable<Entry>> GetChildrenInternal()
     {
-        if (CurrentPath! == string.Empty)
-            return
-            [
-                new Entry
-                {
-                    Path = PluginEntry.RootPath,
-                    Name = PluginEntry.RootPath,
-                    Size = -1,
-                    IsDirectory = true,
-                    ParentCatalog = this
-                }
-            ];
-
         string pluginsDirectory = MarketHelpers.PluginsDirectory;
         var installed = new Dictionary<string, PluginMetadata>(StringComparer.OrdinalIgnoreCase);
         if (Directory.Exists(pluginsDirectory))

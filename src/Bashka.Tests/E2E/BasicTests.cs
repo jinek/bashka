@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Bashka.Launcher;
+using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Configuration;
 using Bashka.Plugins.Core.Orthodox;
 using Bashka.Plugins.Core.Orthodox.UI;
@@ -91,14 +92,17 @@ public class BasicTests : BashkaAppTestBase
         await UITest.KeyInput(Key.Enter);
         await UITest.WaitText(@"sample_copy +txt");
 
-        // opening roots: the roots drop-down always contains the "All catalogs" entry,
-        // connections are represented by the single entry, local system is connected already
+        // opening roots: the roots drop-down always contains the "everything" entry,
+        // catalogs without favorites are represented by their names, settings are not offered,
+        // local system is connected already
         await UITest.KeyInput(Key.F1, RawInputModifiers.Alt);
-        await UITest.WaitText("All catalogs");
-        await UITest.WaitText(@"│ ssh +│");
+        await UITest.WaitText("everything");
+        await UITest.WaitText(@"│ SSH +│");
+        await UITest.WaitText(@"│ Plugins +│");
         Assert.That(Buffer, Does.Not.Contain("Reconnect to local system"));
+        Assert.That(Buffer, Does.Not.Match(@"│ Settings +│"));
         await UITest.KeyInput(Key.Escape);
-        await UITest.WaitNoText("All catalogs");
+        await UITest.WaitNoText("everything");
 
         // viewing: F3 opens the file viewer, its content must be read and displayed,
         // and Escape must close it again
@@ -119,6 +123,21 @@ public class BasicTests : BashkaAppTestBase
         await UITest.WaitText(SampleFileDisplay);
         Assert.That(Commander.RightPanel!.CurrentCatalog?.CurrentPath,
             Is.EqualTo(TestContext.CurrentContext.TestDirectory), "location of the other panel is kept apart");
+    }
+
+    [Test]
+    public async Task EverythingListsAllCatalogs()
+    {
+        await WaitProcessing();
+        IPanel panel = Commander.LeftPanel!;
+        await UITest.WaitBuffer(_ => panel.Roots.Any(), "Roots are not loaded");
+        await Dispatcher.UIThread.InvokeAsync(() =>
+            panel.SelectedRoot = panel.Roots.Single(entry => entry.Name == "everything"));
+        foreach (string catalog in new[] { "File system", "Local system", "SSH", "Settings", "Plugins" })
+            await UITest.WaitText($@"║{catalog} ");
+
+        await QuickSearchAndOpen("File system");
+        await UITest.WaitText(@"║/ ");
     }
 
     [Test]
