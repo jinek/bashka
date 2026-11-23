@@ -87,7 +87,8 @@ public abstract class CopyOrMoveCommandBase : CatalogCommand<ShellCatalog, FileE
             foreach (FileEntry entry in entries)
             {
                 string sourcePath = entry.FullPath;
-                string destinationPath = BashkaHelpers.PathJoin(destinationCatalog.CurrentPath!, singleFileName ?? entry.Name);
+                string destinationPath =
+                    BashkaHelpers.PathJoin(destinationCatalog.CurrentPath!, singleFileName ?? entry.Name);
 
                 ((ShellCatalog)innerContext.Catalog!)
                     .ShellSession

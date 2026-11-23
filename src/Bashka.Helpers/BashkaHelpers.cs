@@ -1,7 +1,3 @@
-using System.Runtime.CompilerServices;
-using Avalonia.Controls;
-using Avalonia.LogicalTree;
-
 namespace Bashka.Helpers;
 
 public static class BashkaHelpers
@@ -31,7 +27,7 @@ public static class BashkaHelpers
 
     public static string PathJoin(params string[] pathSegments)
     {
-        var result = string.Empty;
+        string result = string.Empty;
         foreach (string segment in pathSegments)
         {
             if (segment.Length == 0)
