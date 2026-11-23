@@ -16,6 +16,16 @@ public static class BashkaHelpers
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Bashka");
 #endif
 
+    public static bool IsStartedByLauncher =>
+        new[] { Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), AppContext.BaseDirectory }
+            .Select(Normalize)
+            .Contains(Normalize(Environment.CurrentDirectory));
+
+    private static string Normalize(string directory)
+    {
+        return Path.TrimEndingDirectorySeparator(Path.GetFullPath(directory));
+    }
+
     public static T GetElement<T>(this ILogical visual, [CallerMemberName] string? elementName = null)
         where T : class, ILogical
     {

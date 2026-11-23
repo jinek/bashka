@@ -22,6 +22,7 @@ public sealed class CoreModule : Module
         builder.RegisterType<Settings>().AsSelf().SingleInstance();
         builder.RegisterBuiltinSettingsFile(typeof(OrthodoxCommander).Assembly, "orthodoxcommander.ini");
         builder.RegisterSettings<OrthodoxCommanderSettings>();
+        builder.RegisterSettings<OrthodoxCommanderState>();
         builder.RegisterSettings<OrthodoxCommanderKeyBindings>();
         builder.FullRegister<FunctionBar, FunctionBar>().AsSelf().InstancePerHierarchy();
 

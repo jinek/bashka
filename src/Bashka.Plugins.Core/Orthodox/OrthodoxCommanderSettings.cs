@@ -1,23 +1,21 @@
 using Bashka.Plugins.Core.Configuration;
-using PropertyChanged;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace Bashka.Plugins.Core.Orthodox;
 
 [SettingsSection(nameof(OrthodoxCommander))]
-[AddINotifyPropertyChangedInterface]
 public class OrthodoxCommanderSettings
 {
     public bool AltCharActivatesSearch { get; init; }
 
     /// <summary>
-    ///     State: location of the default catalog in the left panel
+    ///     Location of the left panel when started by a launcher, wins over <see cref="OrthodoxCommanderState.LeftPath" />
     /// </summary>
-    public string? LeftPath { get; set; }
+    public string? StartupLocationLeft { get; init; }
 
     /// <summary>
-    ///     <see cref="LeftPath" />
+    ///     <see cref="StartupLocationLeft" />
     /// </summary>
-    public string? RightPath { get; set; }
+    public string? StartupLocationRight { get; init; }
 }

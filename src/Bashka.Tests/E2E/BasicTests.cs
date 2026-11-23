@@ -213,7 +213,7 @@ public class BasicTests : BashkaAppTestBase
     {
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            MainWindow.Scope.Resolve<OrthodoxCommanderSettings>().LeftPath = location;
+            MainWindow.Scope.Resolve<OrthodoxCommanderState>().LeftPath = location;
             Commander.RecreatePanel(Commander.LeftPanel, new LocalSystemShellConnection());
         });
     }

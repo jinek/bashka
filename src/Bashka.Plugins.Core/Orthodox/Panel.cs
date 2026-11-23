@@ -4,6 +4,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Autofac.Core;
 using Autofac.Features.Indexed;
+using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
@@ -21,14 +22,17 @@ public class Panel : BaseObject, IPanel
     private readonly ICommandSelector _commandSelector;
     private readonly bool _isLeft = OrthodoxCommander.CreatingLeftPanel.CurrentValue;
     private readonly OrthodoxCommanderSettings _settings;
+    private readonly OrthodoxCommanderState _state;
     private string? _defaultCatalogTypeKey;
 
     public Panel(ICommandSelector commandSelector, 
         IIndex<string, ICatalog> catalogsFactory,
         IShellConnection shellConnection,
-        OrthodoxCommanderSettings settings)
+        OrthodoxCommanderSettings settings,
+        OrthodoxCommanderState state)
     {
         _settings = settings;
+        _state = state;
         ShellConnection = shellConnection;
         RootsCatalog = catalogsFactory[ICatalog.RootCatalogKey];
         _commandSelector = commandSelector;
@@ -169,9 +173,10 @@ public class Panel : BaseObject, IPanel
         _defaultCatalogTypeKey = catalog.TypeKey;
         _catalogStack.Clear();
 
-        await catalog.NavigateAsync(IsOnDefaultConnection 
-                                    && SavedLocation is { Length: > 0 } saved
-            ? saved
+        await catalog.NavigateAsync(IsOnDefaultConnection
+                                    && BashkaHelpers.IsStartedByLauncher
+                                    && (StartupLocation ?? SavedLocation) is { Length: > 0 } location
+            ? location
             : await catalog.ResolveCurrentPathAsync());
 
         Push(catalog);
@@ -182,16 +187,15 @@ public class Panel : BaseObject, IPanel
         InitializeCatalogs();
     }
 
-    /// <summary>
-    ///     Location of the default catalog is kept in the state per side of the commander
-    /// </summary>
+    private string? StartupLocation => _isLeft ? _settings.StartupLocationLeft : _settings.StartupLocationRight;
+
     private string? SavedLocation
     {
-        get => _isLeft ? _settings.LeftPath : _settings.RightPath;
+        get => _isLeft ? _state.LeftPath : _state.RightPath;
         set
         {
-            if (_isLeft) _settings.LeftPath = value;
-            else _settings.RightPath = value;
+            if (_isLeft) _state.LeftPath = value;
+            else _state.RightPath = value;
         }
     }
     

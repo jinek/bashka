@@ -34,7 +34,10 @@ public class SettingsTests
                                                                                InvertMarksCommand = CTRL+I
                                                                                [OrthodoxCommander]
                                                                                AltCharActivatesSearch = false
+                                                                               StartupLocationLeft = %HOME%/work
+                                                                               StartupLocationRight = %BASHKA_TEST%/x
                                                                                """);
+        Environment.SetEnvironmentVariable("BASHKA_TEST", "/expanded");
         File.WriteAllText(Path.Combine(Settings.UserDirectory, "20-later.ini"),
             "[OrthodoxCommander(keys)]\nInvertMarksCommand = CTRL+J\n");
         File.WriteAllText(Path.Combine(Settings.UserDirectory, "30-upper.INI"),
@@ -56,8 +59,12 @@ public class SettingsTests
             Assert.That(Bound("ADD"), Is.Empty, "empty value unbinds the default");
             Assert.That(Bound("CTRL+J"), Is.EqualTo(new[] { "InvertMarksCommand" }), "user files merge in name order");
             Assert.That(Bound("CTRL+U"), Is.EqualTo(new[] { "UnmarkAllCommand" }), "extension case does not matter");
-            Assert.That(container.Resolve<OrthodoxCommanderSettings>().AltCharActivatesSearch, Is.False,
-                "only ini files are merged");
+            var commanderSettings = container.Resolve<OrthodoxCommanderSettings>();
+            Assert.That(commanderSettings.AltCharActivatesSearch, Is.False, "only ini files are merged");
+            Assert.That(commanderSettings.StartupLocationLeft,
+                Is.EqualTo(Environment.GetEnvironmentVariable("HOME") + "/work"));
+            Assert.That(commanderSettings.StartupLocationRight, Is.EqualTo("/expanded/x"),
+                "environment variables are expanded");
 
             container.Resolve<PanelState>().LeftPath = "/home";
 

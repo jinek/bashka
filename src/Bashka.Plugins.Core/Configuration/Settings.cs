@@ -9,6 +9,7 @@ namespace Bashka.Plugins.Core.Configuration;
 /// <summary>
 ///     Merged once at startup, later wins key by key: ini files of plugins in registration order, user ini files in name
 ///     order, state. An empty value unsets the key. Changes of files apply after restart.
+///     Environment variables in values are expanded.
 ///     Every file has a single owner: Bashka writes only the state file.
 /// </summary>
 public sealed class Settings
@@ -55,7 +56,7 @@ public sealed class Settings
 
         foreach (PropertyInfo property in properties)
             if (settings.Get(section, property.Name) is { } value)
-                property.SetValue(instance, Converter(property).ConvertFromInvariantString(value));
+                property.SetValue(instance, Converter(property).ConvertFromInvariantString(Expand(value)));
 
         if (instance is INotifyPropertyChanged notifying)
             notifying.PropertyChanged += (_, args) =>
@@ -71,6 +72,11 @@ public sealed class Settings
         static TypeConverter Converter(PropertyInfo property)
         {
             return TypeDescriptor.GetConverter(property.PropertyType);
+        }
+
+        static string Expand(string value)
+        {
+            return Environment.ExpandEnvironmentVariables(value);
         }
     }
 
