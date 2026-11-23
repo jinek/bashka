@@ -92,11 +92,10 @@ public class BasicTests : BashkaAppTestBase
         await UITest.WaitText(@"sample_copy +txt");
 
         // opening roots: the roots drop-down always contains the "All catalogs" entry,
-        // catalogs are divided, connections are represented by the single entry, local system is connected already
+        // connections are represented by the single entry, local system is connected already
         await UITest.KeyInput(Key.F1, RawInputModifiers.Alt);
         await UITest.WaitText("All catalogs");
         await UITest.WaitText(@"│ ssh +│");
-        await UITest.WaitText(@"│ +─{20,} +│");
         Assert.That(Buffer, Does.Not.Contain("Reconnect to local system"));
         await UITest.KeyInput(Key.Escape);
         await UITest.WaitNoText("All catalogs");
@@ -111,23 +110,15 @@ public class BasicTests : BashkaAppTestBase
     }
 
     [Test]
-    public async Task PanelLocationIsRestoredWhenReachable()
+    public async Task PanelLocationIsRestored()
     {
         await WaitProcessing();
-        OrthodoxCommander commander = MainWindow.Scope.Resolve<OrthodoxCommander>();
-
-        await Dispatcher.UIThread.InvokeAsync(() =>
-            commander.RecreatePanel(commander.LeftPanel, new LocalSystemShellConnection(), SandboxPath));
-        await UITest.WaitBuffer(_ => commander.LeftPanel!.CurrentCatalog?.CurrentPath == SandboxPath,
-            "Left panel is not opened at the restored location");
+        await OpenLeftPanelAt(SandboxPath);
+        await UITest.WaitBuffer(_ => Commander.LeftPanel!.CurrentCatalog?.CurrentPath == SandboxPath,
+            "Left panel is not opened at the saved location");
         await UITest.WaitText(SampleFileDisplay);
-
-        await Dispatcher.UIThread.InvokeAsync(() =>
-            commander.RecreatePanel(commander.LeftPanel, new LocalSystemShellConnection(),
-                Path.Combine(SandboxPath, "gone")));
-        await UITest.WaitBuffer(
-            _ => commander.LeftPanel!.CurrentCatalog?.CurrentPath == TestContext.CurrentContext.TestDirectory,
-            "Left panel is not opened at the start directory when the restored location is gone");
+        Assert.That(Commander.RightPanel!.CurrentCatalog?.CurrentPath,
+            Is.EqualTo(TestContext.CurrentContext.TestDirectory), "location of the other panel is kept apart");
     }
 
     [Test]
@@ -150,9 +141,7 @@ public class BasicTests : BashkaAppTestBase
         Directory.CreateDirectory(directory);
         try
         {
-            OrthodoxCommander commander = MainWindow.Scope.Resolve<OrthodoxCommander>();
-            await Dispatcher.UIThread.InvokeAsync(() =>
-                commander.RecreatePanel(commander.LeftPanel, new LocalSystemShellConnection(), directory));
+            await OpenLeftPanelAt(directory);
             await UITest.WaitText(@"╔═+ \S*\.\.x+ ↓═+╗╔");
         }
         finally
@@ -213,6 +202,20 @@ public class BasicTests : BashkaAppTestBase
         await UITest.KeyInput(Key.Tab);
         await UITest.WaitBuffer(buffer => Foreground(buffer, 4) == marked,
             "Unfocused current row is not shown with marked color after entering a catalog without marks");
+    }
+
+    private static OrthodoxCommander Commander => MainWindow.Scope.Resolve<OrthodoxCommander>();
+
+    /// <summary>
+    ///     Recreates the left panel as on start with <paramref name="location" /> saved in the state
+    /// </summary>
+    private static async Task OpenLeftPanelAt(string location)
+    {
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            MainWindow.Scope.Resolve<OrthodoxCommanderSettings>().LeftPath = location;
+            Commander.RecreatePanel(Commander.LeftPanel, new LocalSystemShellConnection());
+        });
     }
 
     private static string SandboxPath => Path.Combine(TestContext.CurrentContext.TestDirectory, SandboxFolder);

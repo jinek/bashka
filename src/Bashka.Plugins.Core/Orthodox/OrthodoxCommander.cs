@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Reactive;
+using AsyncLocalRegion;
 using Autofac;
 using Autofac.Features.Indexed;
 using Bashka.Plugins.Core.Abstract;
@@ -13,20 +14,19 @@ namespace Bashka.Plugins.Core.Orthodox;
 
 public class OrthodoxCommander : BaseObject, IUIRoot
 {
+    internal static readonly AsyncLocalParameter<bool> CreatingLeftPanel = new();
+
     private readonly IIndex<string, ICommand> _commandFactory;
-    private readonly Func<IShellConnection> _connectionFactory;
     private readonly OrthodoxCommanderKeyBindings _keyBindings;
     private readonly OrthodoxCommanderSettings _settings;
 
 
-    public OrthodoxCommander(Func<IShellConnection> connectionFactory,
-        OrthodoxCommanderKeyBindings keyBindings,
+    public OrthodoxCommander(OrthodoxCommanderKeyBindings keyBindings,
         IIndex<string, ICommand> commandFactory,
         FunctionBar functionBar,
         OrthodoxCommanderSettings settings)
     {
         FunctionBar = functionBar;
-        _connectionFactory = connectionFactory;
         _keyBindings = keyBindings;
         _commandFactory = commandFactory;
         _settings = settings;
@@ -107,10 +107,15 @@ public class OrthodoxCommander : BaseObject, IUIRoot
     public void StartPanels()
     {
         //left
-        RecreatePanel(null, _connectionFactory());
+        RecreatePanel(null, CreateDefaultConnection());
         LeftPanel!.IsFocused = true;
         //right
-        RecreatePanel(null, _connectionFactory());
+        RecreatePanel(null, CreateDefaultConnection());
+
+        IShellConnection CreateDefaultConnection()
+        {
+            return LifetimeScope.ResolveKeyed<IShellConnection>(IShellConnection.DefaultShellConnectionKey);
+        }
     }
 
     public IPanel RecreatePanel(IPanel? panelToRecreate, IShellConnection shellConnection)
@@ -122,7 +127,9 @@ public class OrthodoxCommander : BaseObject, IUIRoot
         var panelFactory = newScope.Resolve<Func<IPanel>>();
 
         bool isLeft = panelToRecreate == LeftPanel;
-        IPanel newPanel = panelFactory();
+        IPanel newPanel;
+        using (CreatingLeftPanel.StartRegion(isLeft))
+            newPanel = panelFactory();
         if (isLeft)
         {
             // null setups needed because of some avalonia binding issue

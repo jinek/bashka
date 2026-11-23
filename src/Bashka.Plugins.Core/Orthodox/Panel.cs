@@ -2,6 +2,7 @@ using System.IO.Enumeration;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using Autofac.Core;
 using Autofac.Features.Indexed;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
@@ -18,11 +19,16 @@ public class Panel : BaseObject, IPanel
     private readonly Stack<(ICatalog, int)> _catalogStack = new();
     private readonly IIndex<string, ICatalog> _catalogsFactory;
     private readonly ICommandSelector _commandSelector;
+    private readonly bool _isLeft = OrthodoxCommander.CreatingLeftPanel.CurrentValue;
+    private readonly OrthodoxCommanderSettings _settings;
+    private string? _defaultCatalogTypeKey;
 
     public Panel(ICommandSelector commandSelector, 
         IIndex<string, ICatalog> catalogsFactory,
-        IShellConnection shellConnection)
+        IShellConnection shellConnection,
+        OrthodoxCommanderSettings settings)
     {
+        _settings = settings;
         ShellConnection = shellConnection;
         RootsCatalog = catalogsFactory[ICatalog.RootCatalogKey];
         _commandSelector = commandSelector;
@@ -70,7 +76,10 @@ public class Panel : BaseObject, IPanel
                     SelectedRoot = null;
             });
 
-        InitializeCatalogs();
+        this.WhenChanged(panel => panel.CurrentCatalog!.CurrentPath, (panel, _) => panel.CurrentCatalog)
+            .Where(catalog => catalog is { CurrentPath.Length: > 0 } && catalog.TypeKey == _defaultCatalogTypeKey &&
+                              IsOnDefaultConnection)
+            .Subscribe(catalog => SavedLocation = catalog!.CurrentPath);
     }
 
     [AutoWire] public Lazy<OrthodoxCommander> Commander { get; [UsedImplicitly] internal init; } = null!;
@@ -157,12 +166,40 @@ public class Panel : BaseObject, IPanel
     public async Task OpenDefaultCatalogAsync()
     {
         ICatalog catalog = _catalogsFactory[ICatalog.DefeaultCatalogTypeKey];
+        _defaultCatalogTypeKey = catalog.TypeKey;
         _catalogStack.Clear();
 
-        await catalog.NavigateAsync(await catalog.ResolveCurrentPathAsync());
+        await catalog.NavigateAsync(IsOnDefaultConnection 
+                                    && SavedLocation is { Length: > 0 } saved
+            ? saved
+            : await catalog.ResolveCurrentPathAsync());
 
         Push(catalog);
     }
+
+    protected override void OnScopeInitialized()
+    {
+        InitializeCatalogs();
+    }
+
+    /// <summary>
+    ///     Location of the default catalog is kept in the state per side of the commander
+    /// </summary>
+    private string? SavedLocation
+    {
+        get => _isLeft ? _settings.LeftPath : _settings.RightPath;
+        set
+        {
+            if (_isLeft) _settings.LeftPath = value;
+            else _settings.RightPath = value;
+        }
+    }
+    
+    private bool IsOnDefaultConnection =>
+        LifetimeScope.ComponentRegistry.TryGetServiceRegistration(
+            new KeyedService(IShellConnection.DefaultShellConnectionKey, typeof(IShellConnection)),
+            out ServiceRegistration registration) &&
+        registration.Registration.Activator.LimitType == ShellConnection.GetType();
 
     [UsedImplicitly]
     public void OnSortModeChanged()

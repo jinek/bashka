@@ -46,6 +46,10 @@ public class ConnectionEditingTests : BashkaAppTestBase
                 execution = catalog.NavigateAsync(string.Empty);
             });
             await execution.WaitAsync(TimeSpan.FromSeconds(20));
+            Entry ssh = catalog.Children.Single();
+            Assert.That(ssh.Name, Is.EqualTo("ssh"), "connections are children of the only root");
+            await Dispatcher.UIThread.InvokeAsync(() => { execution = catalog.NavigateAsync(ssh.Path); });
+            await execution.WaitAsync(TimeSpan.FromSeconds(20));
             Assert.That(catalog.CurrentPath, Is.EqualTo(ConnectionsCatalog.ConnectionsDirectory));
             Assert.That(catalog.ShellSession.ShellConnection, Is.TypeOf<LocalSystemShellConnection>());
             Assert.That(catalog.CanNavigateBack, Is.False);
@@ -109,6 +113,11 @@ public class ConnectionEditingTests : BashkaAppTestBase
                 Assert.That(MainWindow.Scope.ResolveKeyed<ICommand>(ICommand.EditCommandKey),
                     Is.TypeOf<EditFileCommand>());
                 catalog = scope.Resolve<ConnectionsCatalog>();
+                execution = catalog.NavigateAsync(ConnectionsCatalog.ConnectionsDirectory);
+            });
+            await execution.WaitAsync(TimeSpan.FromSeconds(20));
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
                 var context = new CommandExecutionContext([], catalog, null, null, null);
                 execution = scope.Resolve<NewConnectionCommand>().ExecuteAsync(context);
             });
