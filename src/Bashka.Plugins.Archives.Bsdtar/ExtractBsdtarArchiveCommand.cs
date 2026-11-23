@@ -1,3 +1,4 @@
+using Bashka.Helpers;
 using Bashka.Plugins.Archives.Bsdtar.Scripts;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
@@ -55,7 +56,7 @@ public class ExtractBsdtarArchiveCommand()
         {
             foreach (FileEntry entry in entries)
                 catalog.ShellSession.ExecuteNonQuery(new BsdtarExtractToDirectoryShellMultiScript(
-                    Path.Combine(catalog.CurrentPath!, entry.Name),
+                    BashkaHelpers.PathJoin(catalog.CurrentPath!, entry.Name),
                     destinationCatalog.CurrentPath!,
                     string.Empty));
         });

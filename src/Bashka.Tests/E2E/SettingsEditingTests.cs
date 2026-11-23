@@ -83,10 +83,10 @@ public class SettingsEditingTests : BashkaAppTestBase
     {
         await UITest.WaitNoText("Processing");
         await UITest.KeyInput(Key.F1, RawInputModifiers.Alt);
-        await UITest.WaitText("All catalogs");
+        await UITest.WaitText("everything");
         await UITest.WaitNoText("orthodoxcommander");
         await UITest.KeyInput(Key.Escape);
-        await UITest.WaitNoText("All catalogs");
+        await UITest.WaitNoText("everything");
 
         await UITest.KeyInput(Key.F9);
         await UITest.KeyInput(3, Key.Right);
@@ -95,6 +95,28 @@ public class SettingsEditingTests : BashkaAppTestBase
         await UITest.KeyInput(Key.Enter);
         await UITest.WaitText(@"orthodoxcommander \(Bashka\.Plugins\.Core\)");
         await UITest.WaitText(@"texteditor \(Bashka\.Plugins\.Foundation\)");
+
+        // cloning defaults of a plugin into a user settings file
+        TestDataDirectory.DeleteSettings();
+        try
+        {
+            await UITest.KeyInput(Key.F, RawInputModifiers.Control);
+            await UITest.StringInput("orthodoxcommander");
+            await UITest.KeyInput(Key.Escape);
+            await UITest.WaitText("Clone");
+            await UITest.KeyInput(Key.F6);
+            await UITest.WaitText("Enter user settings file name");
+            await UITest.KeyInput(Key.A, RawInputModifiers.Control);
+            await UITest.StringInput("mine");
+            await UITest.KeyInput(Key.Enter);
+            await UITest.WaitText(@"mine \(User\)");
+            Assert.That(await File.ReadAllTextAsync(Path.Combine(Settings.UserDirectory, "mine.ini")),
+                Does.Contain("QuickSearchCommand = CTRL+F"));
+        }
+        finally
+        {
+            TestDataDirectory.DeleteSettings();
+        }
     }
 
     private sealed class RecordingEditor : ICommand

@@ -32,8 +32,7 @@ public class ConnectionsCatalog : FileSystemCatalog
 
     public override Task NavigateAsync(string path)
     {
-        if (path != string.Empty) throw new NotSupportedException();
-        return base.NavigateAsync(ConnectionsDirectory);
+        return path != string.Empty ? throw new NotSupportedException() : base.NavigateAsync(ConnectionsDirectory);
     }
 
     public override Task NavigateBack()

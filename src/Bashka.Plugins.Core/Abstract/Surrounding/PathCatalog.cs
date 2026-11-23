@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Scoping;
 using Bashka.Plugins.Core.Worker.Schedulers;
@@ -34,19 +35,17 @@ public abstract class PathCatalog : BaseObject, ICatalog
 
     public virtual async Task NavigateAsync(string path)
     {
-        string newPath =
-            string.IsNullOrEmpty(CurrentPath) ? path : PathJoin(CurrentPath, path); //todo: may be just pathJoin?
-        await ChangePathAndPreloadAsync(newPath);
+        await ChangePathAndPreloadAsync(BashkaHelpers.PathJoin(CurrentPath ?? string.Empty, path));
     }
 
-    public virtual bool CanNavigateBack => CurrentPath != null && PathSegments(CurrentPath).Length > 1;
+    public virtual bool CanNavigateBack => CurrentPath != null && BashkaHelpers.PathSegments(CurrentPath).Length > 1;
 
     public virtual async Task NavigateBack()
     {
-        string[] pathSegments = PathSegments(CurrentPath!);
+        string[] pathSegments = BashkaHelpers.PathSegments(CurrentPath!);
         if (pathSegments.Length == 0)
             throw new NavigationException();
-        string directoryName = PathJoin(pathSegments[..^1]);
+        string directoryName = BashkaHelpers.PathJoin(pathSegments[..^1]);
         await ChangePathAndPreloadAsync(directoryName);
     }
 
@@ -87,27 +86,4 @@ public abstract class PathCatalog : BaseObject, ICatalog
     public event Action? OnInitialized;
 
     protected abstract Task<IEnumerable<Entry>> GetChildrenInternal();
-
-    public static string PathJoin(params string[] pathSegments)
-    {
-        return Path.Combine(pathSegments).Replace(@"\", @"/");
-    }
-
-    public static string[] PathSegments(string path2, int number = int.MaxValue)
-    {
-        string? path = path2;
-        var result = new List<string>();
-        while (path != string.Empty)
-        {
-            string fileName = Path.GetFileName(path);
-            result.Add(fileName != string.Empty ? fileName : path);
-            path = Path.GetDirectoryName(path);
-            if (path == null) break;
-            if (--number != 0) continue;
-            result.Add(path);
-            break;
-        }
-
-        return result.AsEnumerable().Reverse().ToArray();
-    }
 }

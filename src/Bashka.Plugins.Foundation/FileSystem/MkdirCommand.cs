@@ -1,3 +1,4 @@
+using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Core.Dialog.Abstract;
@@ -34,7 +35,7 @@ public class MkdirCommand : TypeKeyedObject, IFunctionBarCommand<ShellCatalog>
 
         await _workerTaskFactory.StartNewWorkerTask(async (_, _, _) =>
         {
-            string path = Path.Combine(context.Catalog!.CurrentPath!, fileName);
+            string path = BashkaHelpers.PathJoin(context.Catalog!.CurrentPath!, fileName);
             ((ShellCatalog)context.Catalog)
                 .ShellSession
                 .ExecuteNonQuery(new MkdirMultiScript(path));

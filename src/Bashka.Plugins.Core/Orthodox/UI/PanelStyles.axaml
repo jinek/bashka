@@ -21,6 +21,13 @@
                                             DeletedBrush="{DynamicResource BashkaDeletedBrush}" />
     </Styles.Resources>
 
+    <Style Selector="Grid.Bashka.Panel:focus-within ComboBox#RootsComboBox">
+        <Setter Property="Background"
+                Value="{StaticResource ThemeActionBackgroundBrush}" />
+        <Setter Property="Foreground"
+                Value="{StaticResource ThemeSelectionForegroundBrush}" />
+    </Style>
+
     <!--Current row is highlighted only in the focused panel-->
     <Style Selector="Grid.Bashka.Panel:not(:focus-within) DataGridRow:selected /template/ Rectangle#SelectionRectangle">
         <Setter Property="IsVisible"
@@ -46,5 +53,15 @@
     <Style Selector="Grid.Bashka.Panel.NoMarked:not(:focus-within) DataGridRow:selected">
         <Setter Property="Foreground"
                 Value="{DynamicResource BashkaMarkedBrush}" />
+    </Style>
+
+    <!--Info line shows the current entry or, when there are marked entries, their summary-->
+    <Style Selector="Grid.Bashka.Panel.NoMarked TextBlock.Bashka.MarkedSummary">
+        <Setter Property="IsVisible"
+                Value="False" />
+    </Style>
+    <Style Selector="Grid.Bashka.Panel:not(.NoMarked) DockPanel.Bashka.EntryInfo">
+        <Setter Property="IsVisible"
+                Value="False" />
     </Style>
 </Styles>

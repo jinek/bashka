@@ -21,7 +21,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <ProjectVersion>1.0</ProjectVersion>
+        <ProjectVersion>2.0</ProjectVersion>
         <ConsoloniaVersion>12.1.4</ConsoloniaVersion>
         <ConsoloniaVersionLatest>$(ConsoloniaVersion).*</ConsoloniaVersionLatest>
         <!--If ran not by pipeline - defining for local run-->

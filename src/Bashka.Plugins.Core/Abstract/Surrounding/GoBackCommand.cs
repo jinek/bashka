@@ -1,3 +1,4 @@
+using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract.Data;
 
 namespace Bashka.Plugins.Core.Abstract.Surrounding;
@@ -16,7 +17,7 @@ public class GoBackCommand : CatalogCommand<ICatalog, GoBackEntry>
 
         if (catalog.CanNavigateBack)
         {
-            string lastDirName = PathCatalog.PathSegments(catalog.CurrentPath!)[^1];
+            string lastDirName = BashkaHelpers.PathSegments(catalog.CurrentPath!)[^1];
 
             await catalog.NavigateBack();
 

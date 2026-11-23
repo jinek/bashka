@@ -4,7 +4,7 @@ using Bashka.Plugins.Core.Scoping;
 
 namespace Bashka.Plugins.Foundation.ShellInteraction;
 
-public class LocalSystemConnectionCatalog : BaseObject, ICatalog
+public class LocalSystemConnectionCatalog(IShellConnection shellConnection) : BaseObject, ICatalog
 {
     public string CurrentPath => string.Empty;
     public string Title => "▸Local system◂";
@@ -12,11 +12,13 @@ public class LocalSystemConnectionCatalog : BaseObject, ICatalog
 
     public Task NavigateAsync(string path)
     {
-        Children = new[]
-        {
-            new SwitchConnectionEntry("Reconnect to local system...", this,
-                () => new LocalSystemShellConnection() /*todo: resolve by typekey and same in ssh?*/)
-        };
+        Children = shellConnection is LocalSystemShellConnection
+            ? []
+            :
+            [
+                new SwitchConnectionEntry("Reconnect to local system...", this,
+                    () => new LocalSystemShellConnection() /*todo: resolve by typekey and same in ssh?*/)
+            ];
         return Task.CompletedTask;
     }
 

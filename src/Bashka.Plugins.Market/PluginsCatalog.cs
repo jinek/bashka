@@ -1,5 +1,6 @@
 using BaGetter.Protocol;
 using BaGetter.Protocol.Models;
+using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
 using Bashka.Plugins.Foundation.FileSystem;
@@ -24,19 +25,6 @@ public sealed class PluginsCatalog : PathCatalog, IReadStreamCatalog, IWriteStre
 
     protected override async Task<IEnumerable<Entry>> GetChildrenInternal()
     {
-        if (CurrentPath! == string.Empty)
-            return
-            [
-                new Entry
-                {
-                    Path = PluginEntry.RootPath,
-                    Name = PluginEntry.RootPath,
-                    Size = -1,
-                    IsDirectory = true,
-                    ParentCatalog = this
-                }
-            ];
-
         string pluginsDirectory = MarketHelpers.PluginsDirectory;
         var installed = new Dictionary<string, PluginMetadata>(StringComparer.OrdinalIgnoreCase);
         if (Directory.Exists(pluginsDirectory))
@@ -103,7 +91,7 @@ public sealed class PluginsCatalog : PathCatalog, IReadStreamCatalog, IWriteStre
             {
                 Path = package.PackageId,
                 Name = package.PackageId,
-                FullPath = PathJoin(PluginEntry.RootPath, package.PackageId),
+                FullPath = BashkaHelpers.PathJoin(PluginEntry.RootPath, package.PackageId),
                 ParentCatalog = this,
                 Package = package,
                 LocalOnly = localOnlyParameter

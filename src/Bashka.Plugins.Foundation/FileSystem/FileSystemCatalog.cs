@@ -1,5 +1,6 @@
 using System.Globalization;
 using Avalonia.Threading;
+using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Dialog.Abstract;
@@ -117,7 +118,7 @@ public class FileSystemCatalog : ShellCatalog, IReadStreamCatalog, IWriteStreamC
             progress.ReportProgress($"Listing {name}",
                 totalBytes > 0 ? (byte)Math.Min(100, processedBytes * 100 / totalBytes) : (byte)0);
             var category = EntryCategory.Default;
-            string fullPath = PathJoin(path, name);
+            string fullPath = BashkaHelpers.PathJoin(path, name);
 
             if (name.StartsWith(".", StringComparison.Ordinal))
             {

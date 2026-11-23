@@ -137,6 +137,11 @@ public class ConnectionEditingTests : BashkaAppTestBase
 
             var local = scope.Resolve<LocalSystemConnectionCatalog>();
             await local.NavigateAsync(string.Empty);
+            Assert.That(local.Children, Is.Empty, "local system is connected already");
+            using ILifetimeScope remoteScope = scope.BeginLifetimeScope(builder =>
+                builder.RegisterInstance(new UnavailableRemoteConnection()).As<IShellConnection>());
+            local = remoteScope.Resolve<LocalSystemConnectionCatalog>();
+            await local.NavigateAsync(string.Empty);
             Entry localEntry = local.Children.Single();
             var localContext = new CommandExecutionContext([localEntry], local, null, null, null);
             Assert.That(new SwitchConnectionCommand().CanExecute(localContext), Is.True);

@@ -2,7 +2,9 @@ using System.IO.Enumeration;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using Autofac.Core;
 using Autofac.Features.Indexed;
+using Bashka.Helpers;
 using Bashka.Plugins.Core.Abstract;
 using Bashka.Plugins.Core.Abstract.Data;
 using Bashka.Plugins.Core.Abstract.Surrounding;
@@ -18,10 +20,19 @@ public class Panel : BaseObject, IPanel
     private readonly Stack<(ICatalog, int)> _catalogStack = new();
     private readonly IIndex<string, ICatalog> _catalogsFactory;
     private readonly ICommandSelector _commandSelector;
+    private readonly bool _isLeft = OrthodoxCommander.CreatingLeftPanel.CurrentValue;
+    private readonly OrthodoxCommanderSettings _settings;
+    private readonly OrthodoxCommanderState _state;
+    private string? _defaultCatalogTypeKey;
 
-    public Panel(ICommandSelector commandSelector, IIndex<string, ICatalog> catalogsFactory,
-        IShellConnection shellConnection)
+    public Panel(ICommandSelector commandSelector,
+        IIndex<string, ICatalog> catalogsFactory,
+        IShellConnection shellConnection,
+        OrthodoxCommanderSettings settings,
+        OrthodoxCommanderState state)
     {
+        _settings = settings;
+        _state = state;
         ShellConnection = shellConnection;
         RootsCatalog = catalogsFactory[ICatalog.RootCatalogKey];
         _commandSelector = commandSelector;
@@ -69,10 +80,31 @@ public class Panel : BaseObject, IPanel
                     SelectedRoot = null;
             });
 
-        InitializeCatalogs();
+        this.WhenChanged(panel => panel.CurrentCatalog!.CurrentPath, (panel, _) => panel.CurrentCatalog)
+            .Where(catalog => catalog is { CurrentPath.Length: > 0 } && catalog.TypeKey == _defaultCatalogTypeKey &&
+                              IsOnDefaultConnection)
+            .Subscribe(catalog => SavedLocation = catalog!.CurrentPath);
     }
 
     [AutoWire] public Lazy<OrthodoxCommander> Commander { get; [UsedImplicitly] internal init; } = null!;
+
+    private string? StartupLocation => _isLeft ? _settings.StartupLocationLeft : _settings.StartupLocationRight;
+
+    private string? SavedLocation
+    {
+        get => _isLeft ? _state.LeftPath : _state.RightPath;
+        set
+        {
+            if (_isLeft) _state.LeftPath = value;
+            else _state.RightPath = value;
+        }
+    }
+
+    private bool IsOnDefaultConnection =>
+        LifetimeScope.ComponentRegistry.TryGetServiceRegistration(
+            new KeyedService(IShellConnection.DefaultShellConnectionKey, typeof(IShellConnection)),
+            out ServiceRegistration registration) &&
+        registration.Registration.Activator.LimitType == ShellConnection.GetType();
 
     public IShellConnection ShellConnection { get; }
     public ICatalog RootsCatalog { get; }
@@ -156,11 +188,21 @@ public class Panel : BaseObject, IPanel
     public async Task OpenDefaultCatalogAsync()
     {
         ICatalog catalog = _catalogsFactory[ICatalog.DefeaultCatalogTypeKey];
+        _defaultCatalogTypeKey = catalog.TypeKey;
         _catalogStack.Clear();
 
-        await catalog.NavigateAsync(await catalog.ResolveCurrentPathAsync());
+        await catalog.NavigateAsync(IsOnDefaultConnection
+                                    && BashkaHelpers.IsStartedByLauncher
+                                    && (StartupLocation ?? SavedLocation) is { Length: > 0 } location
+            ? location
+            : await catalog.ResolveCurrentPathAsync());
 
         Push(catalog);
+    }
+
+    protected override void OnScopeInitialized()
+    {
+        InitializeCatalogs();
     }
 
     [UsedImplicitly]
@@ -217,7 +259,16 @@ public class Panel : BaseObject, IPanel
             return;
 
         _catalogStack.Clear();
-        await EnterAsync(newRoot, RootsCatalog);
+        try
+        {
+            await EnterAsync(newRoot, RootsCatalog);
+        }
+        finally
+        {
+            // focusing datagrid again
+            IsFocused = false;
+            IsFocused = true;
+        }
     }
 
     [UsedImplicitly]

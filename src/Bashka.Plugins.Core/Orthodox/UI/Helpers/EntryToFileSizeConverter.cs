@@ -30,7 +30,7 @@ public class EntryToFileSizeConverter : IValueConverter
         throw new NotSupportedException();
     }
 
-    private static string FormatSize(long bytes)
+    internal static string FormatSize(long bytes)
     {
         if (bytes == -1) return string.Empty;
 

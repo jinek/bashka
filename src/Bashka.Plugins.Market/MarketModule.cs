@@ -9,7 +9,7 @@ public sealed class MarketModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.FullRegister<PluginsCatalog, ICatalog>();
+        builder.RegisterCatalog<PluginsCatalog>("Plugins");
         builder.FullRegister<MarketVisualExtension, VisualExtension>();
         builder.RegisterFCommand<ShowPluginDetailsCommand, PluginsCatalog>(FunctionPage.Default, FunctionKey.F3,
             "View");
