@@ -129,7 +129,10 @@ public class OrthodoxCommander : BaseObject, IUIRoot
         bool isLeft = panelToRecreate == LeftPanel;
         IPanel newPanel;
         using (CreatingLeftPanel.StartRegion(isLeft))
+        {
             newPanel = panelFactory();
+        }
+
         if (isLeft)
         {
             // null setups needed because of some avalonia binding issue

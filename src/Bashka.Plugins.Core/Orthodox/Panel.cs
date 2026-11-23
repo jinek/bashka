@@ -25,7 +25,7 @@ public class Panel : BaseObject, IPanel
     private readonly OrthodoxCommanderState _state;
     private string? _defaultCatalogTypeKey;
 
-    public Panel(ICommandSelector commandSelector, 
+    public Panel(ICommandSelector commandSelector,
         IIndex<string, ICatalog> catalogsFactory,
         IShellConnection shellConnection,
         OrthodoxCommanderSettings settings,
@@ -87,6 +87,24 @@ public class Panel : BaseObject, IPanel
     }
 
     [AutoWire] public Lazy<OrthodoxCommander> Commander { get; [UsedImplicitly] internal init; } = null!;
+
+    private string? StartupLocation => _isLeft ? _settings.StartupLocationLeft : _settings.StartupLocationRight;
+
+    private string? SavedLocation
+    {
+        get => _isLeft ? _state.LeftPath : _state.RightPath;
+        set
+        {
+            if (_isLeft) _state.LeftPath = value;
+            else _state.RightPath = value;
+        }
+    }
+
+    private bool IsOnDefaultConnection =>
+        LifetimeScope.ComponentRegistry.TryGetServiceRegistration(
+            new KeyedService(IShellConnection.DefaultShellConnectionKey, typeof(IShellConnection)),
+            out ServiceRegistration registration) &&
+        registration.Registration.Activator.LimitType == ShellConnection.GetType();
 
     public IShellConnection ShellConnection { get; }
     public ICatalog RootsCatalog { get; }
@@ -186,24 +204,6 @@ public class Panel : BaseObject, IPanel
     {
         InitializeCatalogs();
     }
-
-    private string? StartupLocation => _isLeft ? _settings.StartupLocationLeft : _settings.StartupLocationRight;
-
-    private string? SavedLocation
-    {
-        get => _isLeft ? _state.LeftPath : _state.RightPath;
-        set
-        {
-            if (_isLeft) _state.LeftPath = value;
-            else _state.RightPath = value;
-        }
-    }
-    
-    private bool IsOnDefaultConnection =>
-        LifetimeScope.ComponentRegistry.TryGetServiceRegistration(
-            new KeyedService(IShellConnection.DefaultShellConnectionKey, typeof(IShellConnection)),
-            out ServiceRegistration registration) &&
-        registration.Registration.Activator.LimitType == ShellConnection.GetType();
 
     [UsedImplicitly]
     public void OnSortModeChanged()

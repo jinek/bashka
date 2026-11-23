@@ -6,9 +6,9 @@ namespace Bashka.Plugins.Core.Abstract.Surrounding;
 
 public class RootsCatalog : PathCatalog, IRootsCatalog
 {
+    private const int FavoritesPerCatalog = 6;
     private readonly Func<IEnumerable<ICatalog>> _catalogsFunction;
     private readonly UITaskFactory _iuiTaskFactory;
-    private const int FavoritesPerCatalog = 6;
     private ICatalog[]? _catalogs;
 
     public RootsCatalog(Func<IEnumerable<ICatalog>> catalogsFunction, IUITaskFactory iuiTaskFactory)

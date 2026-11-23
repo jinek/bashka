@@ -13,6 +13,12 @@ namespace Bashka.Tests.E2E;
 [TestFixture]
 public class StartupLocationTests : BashkaAppTestBase
 {
+    [TearDown]
+    public void DeleteSettings()
+    {
+        TestDataDirectory.DeleteSettings();
+    }
+
     private static string Home => Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
     internal static string Sandbox => Path.Combine(TestContext.CurrentContext.TestDirectory, "E2ESandbox");
     internal static OrthodoxCommander Commander => MainWindow.Scope.Resolve<OrthodoxCommander>();
@@ -24,14 +30,9 @@ public class StartupLocationTests : BashkaAppTestBase
         Directory.CreateDirectory(Settings.UserDirectory);
         File.WriteAllText(Path.Combine(Settings.UserDirectory, "startup.ini"),
             "[OrthodoxCommander]\nStartupLocationLeft = %HOME%\n");
-        File.WriteAllText(Settings.StateFilePath, $"[OrthodoxCommander(state)]\nLeftPath = {Sandbox}\nRightPath = {Sandbox}\n");
+        File.WriteAllText(Settings.StateFilePath,
+            $"[OrthodoxCommander(state)]\nLeftPath = {Sandbox}\nRightPath = {Sandbox}\n");
         return builder;
-    }
-
-    [TearDown]
-    public void DeleteSettings()
-    {
-        TestDataDirectory.DeleteSettings();
     }
 
     [Test]
@@ -47,6 +48,13 @@ public class StartupLocationTests : BashkaAppTestBase
 [TestFixture]
 public class StartupFromTerminalTests : BashkaAppTestBase
 {
+    [TearDown]
+    public void RestoreDirectory()
+    {
+        Environment.CurrentDirectory = _previousDirectory;
+        TestDataDirectory.DeleteSettings();
+    }
+
     private static string Sandbox => StartupLocationTests.Sandbox;
     private static OrthodoxCommander Commander => StartupLocationTests.Commander;
     private string _previousDirectory = null!;
@@ -62,13 +70,6 @@ public class StartupFromTerminalTests : BashkaAppTestBase
         _previousDirectory = Environment.CurrentDirectory;
         Environment.CurrentDirectory = Sandbox;
         return builder;
-    }
-
-    [TearDown]
-    public void RestoreDirectory()
-    {
-        Environment.CurrentDirectory = _previousDirectory;
-        TestDataDirectory.DeleteSettings();
     }
 
     [Test]

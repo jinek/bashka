@@ -19,7 +19,7 @@ public class ClonePluginSettingsCommand(IDialogProvider dialogProvider, WorkerTa
     public override async Task ExecuteAsync(CatalogCommandContext<SettingsCatalog, PluginSettingsEntry> context)
     {
         const string iniExtension = ".ini";
-        
+
         PluginSettingsEntry entry = context.SingleEntry;
         string fileName = await dialogProvider.ShowOkCancelDialogAsync(
             new StringInputDialog("Enter user settings file name", entry.File.ResourceName));
@@ -27,15 +27,15 @@ public class ClonePluginSettingsCommand(IDialogProvider dialogProvider, WorkerTa
             fileName += iniExtension;
 
         string path = Path.Combine(Settings.UserDirectory, fileName);
-        
+
         await workerTaskFactory.StartNewWorkerTask(async (cancellationToken, _, _) =>
         {
             if (System.IO.File.Exists(path))
                 throw new UserErrorException($"{fileName} already exists");
             System.IO.Directory.CreateDirectory(Settings.UserDirectory);
             await System.IO.File.WriteAllTextAsync(path, entry.File.Content, cancellationToken);
-        },"Copying...");
-        
+        }, "Copying...");
+
 
         var catalog = (SettingsCatalog)entry.ParentCatalog;
         await catalog.NavigateAsync(string.Empty);

@@ -42,11 +42,11 @@ public class ConnectionsCatalog : FileSystemCatalog
             [
                 new Entry
                 {
-                    Path = ConnectionsDirectory, 
-                    Name = "ssh", 
-                    Size = -1, 
+                    Path = ConnectionsDirectory,
+                    Name = "ssh",
+                    Size = -1,
                     TimeStamp = DateTime.Now,
-                    IsDirectory = true, 
+                    IsDirectory = true,
                     ParentCatalog = this
                 }
             ];

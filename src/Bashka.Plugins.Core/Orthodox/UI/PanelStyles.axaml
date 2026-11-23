@@ -20,14 +20,14 @@
                                             MarkedBrush="{DynamicResource BashkaMarkedBrush}"
                                             DeletedBrush="{DynamicResource BashkaDeletedBrush}" />
     </Styles.Resources>
-    
+
     <Style Selector="Grid.Bashka.Panel:focus-within ComboBox#RootsComboBox">
         <Setter Property="Background"
                 Value="{StaticResource ThemeActionBackgroundBrush}" />
         <Setter Property="Foreground"
                 Value="{StaticResource ThemeSelectionForegroundBrush}" />
     </Style>
-    
+
     <!--Current row is highlighted only in the focused panel-->
     <Style Selector="Grid.Bashka.Panel:not(:focus-within) DataGridRow:selected /template/ Rectangle#SelectionRectangle">
         <Setter Property="IsVisible"
