@@ -6,7 +6,7 @@
         <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
         <PackageReference Include="coverlet.collector" Version="10.0.1" />
         <PackageReference Include="NUnit.Analyzers" Version="4.7.0"/>
-        <PackageReference Include="Consolonia.NUnit" Version="$(ConsoloniaVersionLatest)"/>
+        <PackageReference Include="Consolonia.NUnit" Version="$(ConsoloniaVersion).18"/>
     </ItemGroup>
 
     <ItemGroup>
