@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other", "Other", "{6B3A35DF
 		..\.editorconfig = ..\.editorconfig
 		..\.env = ..\.env
 		..\.gitignore = ..\.gitignore
+		Directory.Build.targets = Directory.Build.targets
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bashka.Plugins.Archives", "Bashka.Plugins.Archives\Bashka.Plugins.Archives.csproj", "{B7E0E2E2-13EE-4923-B589-AA8F52C454AC}"

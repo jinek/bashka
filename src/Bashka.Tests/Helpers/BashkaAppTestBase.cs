@@ -10,8 +10,6 @@ public abstract class BashkaAppTestBase() : ConsoloniaAppTestBase<App>(new Pixel
 {
     protected override AppBuilder CreateAppBuilder()
     {
-        // Consolonia.NUnit recreates the dispatcher but retains the previous app's synchronization context.
-        SynchronizationContext.SetSynchronizationContext(null);
         // panel locations are restored from the state, every test starts from the default ones
         if (File.Exists(Settings.StateFilePath)) File.Delete(Settings.StateFilePath);
         return base.CreateAppBuilder();
