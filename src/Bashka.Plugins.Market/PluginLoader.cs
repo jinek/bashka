@@ -1,8 +1,12 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
 using System.Runtime.Loader;
 using System.Text.Json;
 using Autofac;
+using Autofac.Core;
 using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Versioning;
@@ -12,7 +16,10 @@ namespace Bashka.Plugins.Market;
 
 public static class PluginLoader
 {
-    public static void LoadInstalledPlugins(ContainerBuilder builder)
+    [SuppressMessage("Design", "CA1031", Justification = "Exceptions will be re-thrown")]
+    public static void LoadInstalledPlugins(ContainerBuilder builder,
+        Action<string, string> onIncompatiblePlugin,
+        Action<Exception> onPluginFailed)
     {
         if (!Directory.Exists(MarketHelpers.PluginsDirectory)) return;
 
@@ -33,80 +40,159 @@ public static class PluginLoader
             string lockFile = Path.Combine(directory, "paket.lock");
             if (!File.Exists(lockFile)) continue;
             string id = Path.GetFileName(directory);
-            PackageResolver.ResolvedPackage[] packages =
-            [
-                .. LockFile.LoadFrom(lockFile)
-                    .GetGroup(Constants.MainDependencyGroup).Resolution.Values
-            ];
-            PackageResolver.ResolvedPackage root = packages.SingleOrDefault(package =>
-                                                       StringComparer.OrdinalIgnoreCase.Equals(package.Name.Name, id))
-                                                   ?? throw new InvalidDataException(
-                                                       $"Plugin {id} is missing from {lockFile}.");
-            var assemblies = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            var nativeLibraries = new Dictionary<string, string>(OperatingSystem.IsWindows()
-                ? StringComparer.OrdinalIgnoreCase
-                : StringComparer.Ordinal);
-            string? entryPath = null;
-            foreach (PackageResolver.ResolvedPackage package in packages)
+            try
             {
-                string packageDirectory =
-                    paths.GetInstallPath(package.Name.Name, NuGetVersion.Parse(package.Version.ToString()));
-                if (!Directory.Exists(packageDirectory))
-                    throw new DirectoryNotFoundException(
-                        $"Plugin {id} requires missing package {package.Name.Name} {package.Version}: {packageDirectory}");
-
-                var packageAssemblies = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                AddManagedFiles(Path.Combine(packageDirectory, "lib"));
-                foreach (string runtimeId in runtimeIds.Reverse())
+                PackageResolver.ResolvedPackage[] packages =
+                [
+                    .. LockFile.LoadFrom(lockFile)
+                        .GetGroup(Constants.MainDependencyGroup).Resolution.Values
+                ];
+                PackageResolver.ResolvedPackage root = packages.SingleOrDefault(package =>
+                                                           StringComparer.OrdinalIgnoreCase.Equals(package.Name.Name,
+                                                               id))
+                                                       ?? throw new InvalidDataException(
+                                                           $"Plugin {id} is missing from {lockFile}.");
+                var assemblies = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                var nativeLibraries = new Dictionary<string, string>(OperatingSystem.IsWindows()
+                    ? StringComparer.OrdinalIgnoreCase
+                    : StringComparer.Ordinal);
+                string? entryPath = null;
+                foreach (PackageResolver.ResolvedPackage package in packages)
                 {
-                    string runtimeDirectory = Path.Combine(packageDirectory, "runtimes", runtimeId);
-                    AddManagedFiles(Path.Combine(runtimeDirectory, "lib"));
-                    string nativeDirectory = Path.Combine(runtimeDirectory, "native");
-                    if (Directory.Exists(nativeDirectory))
-                        foreach (string file in Directory.EnumerateFiles(nativeDirectory, "*",
-                                     SearchOption.AllDirectories))
-                            nativeLibraries[Path.GetFileName(file)] = file;
-                }
+                    string packageDirectory =
+                        paths.GetInstallPath(package.Name.Name, NuGetVersion.Parse(package.Version.ToString()));
+                    if (!Directory.Exists(packageDirectory))
+                        throw new DirectoryNotFoundException(
+                            $"Plugin {id} requires missing package {package.Name.Name} {package.Version}: {packageDirectory}");
 
-                foreach (KeyValuePair<string, string> assembly in packageAssemblies)
-                    if (!assemblies.TryAdd(assembly.Key, assembly.Value))
-                        throw new InvalidDataException(
-                            $"Plugin {id} has multiple runtime assemblies named {assembly.Key}.");
-                if (package.Equals(root))
-                    entryPath = packageAssemblies.Values.SingleOrDefault(file =>
-                        Path.GetFileName(file).Equals($"{id}.dll", StringComparison.OrdinalIgnoreCase));
-                continue;
-
-                void AddManagedFiles(string libraryDirectory)
-                {
-                    foreach (string file in GetFrameworkFiles(libraryDirectory, framework))
+                    var packageAssemblies = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                    AddManagedFiles(Path.Combine(packageDirectory, "lib"));
+                    foreach (string runtimeId in runtimeIds.Reverse())
                     {
-                        var name = AssemblyName.GetAssemblyName(file);
-                        packageAssemblies[AssemblyKey(name)] = file;
+                        string runtimeDirectory = Path.Combine(packageDirectory, "runtimes", runtimeId);
+                        AddManagedFiles(Path.Combine(runtimeDirectory, "lib"));
+                        string nativeDirectory = Path.Combine(runtimeDirectory, "native");
+                        if (Directory.Exists(nativeDirectory))
+                            foreach (string file in Directory.EnumerateFiles(nativeDirectory, "*",
+                                         SearchOption.AllDirectories))
+                                nativeLibraries[Path.GetFileName(file)] = file;
+                    }
+
+                    foreach (KeyValuePair<string, string> assembly in packageAssemblies)
+                        if (!assemblies.TryAdd(assembly.Key, assembly.Value))
+                            throw new InvalidDataException(
+                                $"Plugin {id} has multiple runtime assemblies named {assembly.Key}.");
+                    if (package.Equals(root))
+                        entryPath = packageAssemblies.Values.SingleOrDefault(file =>
+                            Path.GetFileName(file).Equals($"{id}.dll", StringComparison.OrdinalIgnoreCase));
+                    continue;
+
+                    void AddManagedFiles(string libraryDirectory)
+                    {
+                        foreach (string file in GetFrameworkFiles(libraryDirectory, framework))
+                        {
+                            var name = AssemblyName.GetAssemblyName(file);
+                            packageAssemblies[AssemblyKey(name)] = file;
+                        }
                     }
                 }
-            }
 
-            if (entryPath == null)
-                throw new FileNotFoundException(
-                    $"No compatible {id}.dll was found for {framework.GetShortFolderName()} / {RuntimeInformation.RuntimeIdentifier}.");
-            string assemblyName = AssemblyName.GetAssemblyName(entryPath).Name!;
-            contexts.Add(assemblyName,
-                new PluginLoadContext(id, entryPath, assemblies, nativeLibraries, hostAssemblies, contexts));
+                if (entryPath == null)
+                    throw new FileNotFoundException(
+                        $"No compatible {id}.dll was found for {framework.GetShortFolderName()} / {RuntimeInformation.RuntimeIdentifier}.");
+                string? incompatibility = assemblies.Values
+                    .Select(assembly => FindIncompatibility(id, assembly, hostAssemblies))
+                    .FirstOrDefault(reason => reason != null);
+                if (incompatibility != null)
+                {
+                    onIncompatiblePlugin(id, incompatibility);
+                    continue;
+                }
+
+                string assemblyName = AssemblyName.GetAssemblyName(entryPath).Name!;
+                contexts.Add(assemblyName,
+                    new PluginLoadContext(id, entryPath, assemblies, nativeLibraries, hostAssemblies, contexts));
+            }
+            catch (Exception exception)
+            {
+                onPluginFailed(new InvalidOperationException($"Plugin '{id}' failed to load.", exception));
+            }
         }
 
-        var registered = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var registered = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
         foreach (string name in contexts.Keys) Register(name);
 
-        void Register(string name)
+        bool Register(string name)
         {
-            if (!registered.Add(name)) return;
-            Assembly assembly = contexts[name].LoadEntryAssembly();
-            foreach (AssemblyName reference in assembly.GetReferencedAssemblies())
-                if (reference.Name != null && contexts.ContainsKey(reference.Name))
-                    Register(reference.Name);
-            builder.RegisterAssemblyModules(assembly);
+            if (registered.TryGetValue(name, out bool isRegistered)) return isRegistered;
+            registered[name] = false;
+            try
+            {
+                Assembly assembly = contexts[name].LoadEntryAssembly();
+                foreach (AssemblyName reference in assembly.GetReferencedAssemblies())
+                    if (reference.Name != null && contexts.ContainsKey(reference.Name) && !Register(reference.Name))
+                        throw new FileLoadException(
+                            $"Plugin '{name}' depends on plugin '{reference.Name}' which was skipped.");
+
+                IModule[] modules =
+                [
+                    .. assembly.GetTypes()
+                        .Where(type => type is { IsAbstract: false, IsClass: true } &&
+                                       typeof(IModule).IsAssignableFrom(type))
+                        .Select(type => (IModule)Activator.CreateInstance(type)!)
+                ];
+                foreach (IModule module in modules)
+                    builder.RegisterCallback(registry =>
+                    {
+                        try
+                        {
+                            module.Configure(registry);
+                        }
+                        catch (Exception exception)
+                        {
+                            onPluginFailed(
+                                new InvalidOperationException($"Plugin '{name}' failed to load.", exception));
+                        }
+                    });
+                return registered[name] = true;
+            }
+            catch (Exception exception)
+            {
+                onPluginFailed(new InvalidOperationException($"Plugin '{name}' failed to load.", exception));
+                return false;
+            }
         }
+    }
+
+    private static string? FindIncompatibility(string id, string assemblyPath, IReadOnlySet<string> hostAssemblies)
+    {
+        using var peReader = new PEReader(File.OpenRead(assemblyPath));
+        MetadataReader metadata = peReader.GetMetadataReader();
+        return metadata.AssemblyReferences
+            .Select(handle => metadata.GetAssemblyReference(handle).GetAssemblyName())
+            .Where(reference => IsBashkaHostAssembly(reference, hostAssemblies))
+            .Select(reference => LoadBashkaHostAssembly(id, reference).Incompatibility)
+            .FirstOrDefault(reason => reason != null);
+    }
+
+    private static bool IsBashkaHostAssembly(AssemblyName assemblyName, IReadOnlySet<string> hostAssemblies)
+    {
+        return assemblyName.Name != null && hostAssemblies.Contains(assemblyName.Name) &&
+               assemblyName.Name.StartsWith("Bashka.", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static (Assembly Host, string? Incompatibility) LoadBashkaHostAssembly(string id,
+        AssemblyName assemblyName)
+    {
+        var hostIdentity = (AssemblyName)assemblyName.Clone();
+        hostIdentity.Version = null;
+        Assembly host = AssemblyLoadContext.Default.LoadFromAssemblyName(hostIdentity);
+        Version? available = host.GetName().Version;
+        return assemblyName.Version is { } required &&
+               (available == null || available.Major != required.Major || available.Minor < required.Minor)
+            ? (host, $"Plugin '{id}' requires Bashka assembly '{assemblyName.Name}' version {required}, " +
+                     $"but the host provides {available?.ToString() ?? "an unknown version"}.")
+            : (host, null);
     }
 
     private static IEnumerable<string> GetFrameworkFiles(string directory, NuGetFramework framework)
@@ -164,24 +250,14 @@ public static class PluginLoader
 
         protected override Assembly? Load(AssemblyName assemblyName)
         {
-            if (assemblyName.Name != null && hostAssemblies.Contains(assemblyName.Name))
+            if (IsBashkaHostAssembly(assemblyName, hostAssemblies))
             {
-                if (!assemblyName.Name.StartsWith("Bashka.", StringComparison.OrdinalIgnoreCase))
-                    return Default.LoadFromAssemblyName(assemblyName);
-
-                var hostIdentity = (AssemblyName)assemblyName.Clone();
-                hostIdentity.Version = null;
-                Assembly host = Default.LoadFromAssemblyName(hostIdentity);
-                if (assemblyName.Version is { } required)
-                {
-                    Version? available = host.GetName().Version;
-                    if (available == null || available.Major != required.Major || available.Minor < required.Minor)
-                        throw new FileLoadException($"Plugin '{id}' requires Bashka assembly '{assemblyName.Name}' " +
-                                                    $"version {required}, but the host provides {available?.ToString() ?? "an unknown version"}.");
-                }
-
-                return host;
+                (Assembly host, string? incompatibility) = LoadBashkaHostAssembly(id, assemblyName);
+                return incompatibility == null ? host : throw new FileLoadException(incompatibility);
             }
+
+            if (assemblyName.Name != null && hostAssemblies.Contains(assemblyName.Name))
+                return Default.LoadFromAssemblyName(assemblyName);
 
             if (assemblyName.Name != null && plugins.TryGetValue(assemblyName.Name, out PluginLoadContext? plugin) &&
                 plugin != this)
