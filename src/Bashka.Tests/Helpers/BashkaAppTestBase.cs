@@ -45,6 +45,7 @@ public abstract class BashkaAppTestBase() : ConsoloniaAppTestBase<App>(new Pixel
         tick.SetValue(timer, (Action<TimeSpan>)(_ =>
         {
             tick.SetValue(timer, null);
+            // ReSharper disable once AccessToDisposedClosure Let it fail if needed
             lastTickFinished.Set();
         }));
         if (!lastTickFinished.Wait(TimeSpan.FromSeconds(5)))
