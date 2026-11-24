@@ -53,7 +53,7 @@ public abstract class BashkaAppTestBase() : ConsoloniaAppTestBase<App>(new Pixel
     }
 
     /// <summary>
-    /// todo: Vibe-coded, remove this in some time
+    ///     todo: Vibe-coded, remove this in some time
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     private sealed class StopRenderTimerAfterTestAttribute : Attribute, ITestAction
@@ -64,6 +64,9 @@ public abstract class BashkaAppTestBase() : ConsoloniaAppTestBase<App>(new Pixel
         {
         }
 
-        public void AfterTest(ITest test) => (test.Fixture as BashkaAppTestBase)?.StopRenderTimer();
+        public void AfterTest(ITest test)
+        {
+            (test.Fixture as BashkaAppTestBase)?.StopRenderTimer();
+        }
     }
 }
