@@ -17,7 +17,7 @@ namespace Bashka.Plugins.Market;
 public static class PluginLoader
 {
     [SuppressMessage("Design", "CA1031", Justification = "Exceptions will be re-thrown")]
-    public static void LoadInstalledPlugins(ContainerBuilder builder, 
+    public static void LoadInstalledPlugins(ContainerBuilder builder,
         Action<string, string> onIncompatiblePlugin,
         Action<Exception> onPluginFailed)
     {
@@ -48,7 +48,8 @@ public static class PluginLoader
                         .GetGroup(Constants.MainDependencyGroup).Resolution.Values
                 ];
                 PackageResolver.ResolvedPackage root = packages.SingleOrDefault(package =>
-                                                           StringComparer.OrdinalIgnoreCase.Equals(package.Name.Name, id))
+                                                           StringComparer.OrdinalIgnoreCase.Equals(package.Name.Name,
+                                                               id))
                                                        ?? throw new InvalidDataException(
                                                            $"Plugin {id} is missing from {lockFile}.");
                 var assemblies = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);

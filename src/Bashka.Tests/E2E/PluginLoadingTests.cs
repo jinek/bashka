@@ -13,6 +13,21 @@ namespace Bashka.Tests.E2E;
 [TestFixture]
 public class PluginLoadingTests : BashkaAppTestBase
 {
+    [TearDown]
+    public void DeletePlugins()
+    {
+        foreach (string plugin in new[] { OutdatedPlugin })
+        foreach (string directory in new[]
+                 {
+                     Path.Combine(MarketHelpers.PluginsDirectory, plugin),
+#pragma warning disable CA1308 //todo: what?????
+                     Path.Combine(MarketHelpers.PackagesDirectory, plugin.ToLowerInvariant())
+#pragma warning restore CA1308
+                 })
+            if (Directory.Exists(directory))
+                Directory.Delete(directory, true);
+    }
+
     private const string OutdatedPlugin = "Bashka.Test.Outdated";
     private static readonly NuGetVersion Version = new(1, 0, 0);
 
@@ -29,21 +44,6 @@ public class PluginLoadingTests : BashkaAppTestBase
         return base.CreateAppBuilder();
     }
 
-    [TearDown]
-    public void DeletePlugins()
-    {
-        foreach (string plugin in new[] { OutdatedPlugin })
-        foreach (string directory in new[]
-                 {
-                     Path.Combine(MarketHelpers.PluginsDirectory, plugin),
-#pragma warning disable CA1308 //todo: what?????
-                     Path.Combine(MarketHelpers.PackagesDirectory, plugin.ToLowerInvariant())
-#pragma warning restore CA1308
-                 })
-            if (Directory.Exists(directory))
-                Directory.Delete(directory, true);
-    }
-
     [Test]
     public async Task IncompatiblePluginIsSkippedWithToast()
     {
@@ -58,10 +58,10 @@ public class PluginLoadingTests : BashkaAppTestBase
         string directory = Path.Combine(MarketHelpers.PluginsDirectory, id);
         Directory.CreateDirectory(directory);
         File.WriteAllText(Path.Combine(directory, "paket.lock"), $"""
-            NUGET
-              remote: https://api.nuget.org/v3/index.json
-                {id} ({Version})
-            """);
+                                                                  NUGET
+                                                                    remote: https://api.nuget.org/v3/index.json
+                                                                      {id} ({Version})
+                                                                  """);
     }
 
     private static void WriteAssembly(string path, string name, AssemblyName reference)
