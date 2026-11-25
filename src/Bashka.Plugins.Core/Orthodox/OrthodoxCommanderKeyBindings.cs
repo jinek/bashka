@@ -11,6 +11,7 @@ namespace Bashka.Plugins.Core.Orthodox;
 public class OrthodoxCommanderKeyBindings : KeyBindings
 {
     public string? QuickSearchCommand { get; init; }
+    public string? SwitchPanelCommand { get; init; }
     public string? ToggleMarkCommand { get; init; }
     public string? ToggleMarkUpCommand { get; init; }
     public string? MarkAllCommand { get; init; }
