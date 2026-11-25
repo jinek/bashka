@@ -43,6 +43,7 @@ public sealed class CoreModule : Module
         builder.FullRegister<UnmarkAllCommand, ICommand>().Keyed<ICommand>("UnmarkAllCommand");
         builder.FullRegister<InvertMarksCommand, ICommand>().Keyed<ICommand>("InvertMarksCommand");
         builder.FullRegister<QuickSearchCommand, ICommand>().Keyed<ICommand>("QuickSearchCommand");
+        builder.FullRegister<SwitchPanelCommand, ICommand>().Keyed<ICommand>(nameof(SwitchPanelCommand));
         builder.FullRegister<OpenSettingsCommand, ICommand>().Keyed<ICommand>(nameof(OpenSettingsCommand));
 
         builder.RegisterFCommand<ShowLeftRootsCatalogCommand, ICatalog>(FunctionPage.Alt, FunctionKey.F1, "Left");
